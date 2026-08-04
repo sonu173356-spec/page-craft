@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, ChevronDown, BookOpen, PenTool, Globe, Printer, BookType, Sparkles, Megaphone, CheckCircle2 } from 'lucide-react';
+import { Menu, X, ChevronDown, BookOpen, PenTool, Globe, Printer, BookType, Sparkles, Megaphone, CheckCircle2, ExternalLink, ShieldCheck, LayoutDashboard } from 'lucide-react';
 import { Logo } from '@/components/ui/Logo';
 import { NAV_ITEMS, NavItem } from '@/lib/constants';
 
@@ -18,6 +18,10 @@ const iconMap: Record<string, React.ReactNode> = {
   'Marketing Services': <Megaphone className="w-5 h-5" />,
   'Book Editing': <BookType className="w-5 h-5" />,
   'Book Design': <Sparkles className="w-5 h-5" />,
+  'Author Portal': <LayoutDashboard className="w-5 h-5 text-[#8B1A1A]" />,
+  'Upload Book Desk': <PenTool className="w-5 h-5 text-[#8B1A1A]" />,
+  'Content Manager': <Sparkles className="w-5 h-5 text-[#8B1A1A]" />,
+  'Order Requests Desk': <ShieldCheck className="w-5 h-5 text-[#8B1A1A]" />,
 };
 
 export default function Navbar() {
@@ -97,6 +101,8 @@ export default function Navbar() {
                 >
                   <Link
                     href={item.href}
+                    target={item.isDashboard ? '_blank' : undefined}
+                    rel={item.isDashboard ? 'noopener noreferrer' : undefined}
                     className={`flex items-center text-sm font-medium transition-colors ${
                       isActive
                         ? 'text-[#8B1A1A]'
@@ -126,14 +132,19 @@ export default function Navbar() {
                                 <Link
                                   key={child.label}
                                   href={child.href}
+                                  target={child.isDashboard || child.href.startsWith('/author') || child.href.startsWith('/admin') ? '_blank' : undefined}
+                                  rel={child.isDashboard || child.href.startsWith('/author') || child.href.startsWith('/admin') ? 'noopener noreferrer' : undefined}
                                   className="flex items-start gap-4 p-3 rounded-lg hover:bg-[#FDFAF6] transition-colors group/item"
                                 >
                                   <div className="flex-shrink-0 mt-1 text-[#C5A55A] group-hover/item:text-[#8B1A1A] transition-colors">
                                     {iconMap[child.label] || <BookOpen className="w-5 h-5" />}
                                   </div>
                                   <div>
-                                    <h4 className="text-sm font-semibold text-gray-900 mb-1 group-hover/item:text-[#8B1A1A] transition-colors">
+                                    <h4 className="text-sm font-semibold text-gray-900 mb-1 group-hover/item:text-[#8B1A1A] transition-colors flex items-center gap-1">
                                       {child.label}
+                                      {(child.isDashboard || child.href.startsWith('/author') || child.href.startsWith('/admin')) && (
+                                        <ExternalLink className="w-3 h-3 text-gray-400" />
+                                      )}
                                     </h4>
                                     <p className="text-xs text-gray-500 leading-snug">
                                       {child.description}
@@ -155,10 +166,13 @@ export default function Navbar() {
           {/* CTA & Mobile Toggle */}
           <div className="flex items-center gap-4">
             <Link
-              href="/contact"
-              className="hidden md:inline-flex items-center justify-center px-6 py-2.5 text-sm font-semibold text-white bg-[#8B1A1A] rounded-full hover:bg-[#722F37] transition-colors shadow-md hover:shadow-lg"
+              href="/author/upload-book"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden md:inline-flex items-center justify-center px-6 py-2.5 text-sm font-semibold text-white bg-[#8B1A1A] rounded-full hover:bg-[#722F37] transition-colors shadow-md hover:shadow-lg gap-1.5"
             >
               Get Published
+              <ExternalLink className="w-3.5 h-3.5 opacity-80" />
             </Link>
             
             <button
@@ -194,10 +208,12 @@ export default function Navbar() {
               ))}
               <div className="pt-6 border-t border-gray-100">
                 <Link
-                  href="/contact"
-                  className="flex items-center justify-center w-full px-6 py-3 text-base font-semibold text-white bg-[#8B1A1A] rounded-full hover:bg-[#722F37] transition-colors"
+                  href="/author/upload-book"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center w-full px-6 py-3 text-base font-semibold text-white bg-[#8B1A1A] rounded-full hover:bg-[#722F37] transition-colors gap-2"
                 >
-                  Get Published
+                  Get Published ↗
                 </Link>
               </div>
             </div>
@@ -227,6 +243,8 @@ function MobileNavItem({
     return (
       <Link
         href={item.href}
+        target={item.isDashboard ? '_blank' : undefined}
+        rel={item.isDashboard ? 'noopener noreferrer' : undefined}
         className={`block px-4 py-2 text-base font-medium rounded-lg transition-colors ${
           isActive ? 'text-[#8B1A1A] bg-[#FDFAF6]' : 'text-gray-900 hover:bg-gray-50'
         }`}
@@ -264,6 +282,8 @@ function MobileNavItem({
                 <Link
                   key={child.label}
                   href={child.href}
+                  target={child.isDashboard || child.href.startsWith('/author') || child.href.startsWith('/admin') ? '_blank' : undefined}
+                  rel={child.isDashboard || child.href.startsWith('/author') || child.href.startsWith('/admin') ? 'noopener noreferrer' : undefined}
                   className={`block py-2 text-sm transition-colors ${
                     pathname === child.href ? 'text-[#8B1A1A] font-medium' : 'text-gray-600 hover:text-[#8B1A1A]'
                   }`}

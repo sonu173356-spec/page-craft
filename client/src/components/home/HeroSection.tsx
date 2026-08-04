@@ -2,8 +2,8 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Button, CloudBackground } from '@/components/ui';
-import { Star } from 'lucide-react';
+import { CloudBackground } from '@/components/ui';
+import { Star, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
 
 export default function HeroSection() {
@@ -56,11 +56,12 @@ export default function HeroSection() {
             variants={itemVariants}
             className="flex flex-col sm:flex-row justify-center items-center gap-4 sm:gap-5 mb-16"
           >
-            <Link href="/author/upload-book">
+            <Link href="/author/upload-book" target="_blank" rel="noopener noreferrer">
               <button
-                className="bg-[#8B1A1A] hover:bg-[#722F37] text-white rounded-full font-bold px-8 py-3.5 text-base shadow-md hover:shadow-xl transition-all transform hover:-translate-y-0.5 flex items-center justify-center h-[52px]"
+                className="bg-[#8B1A1A] hover:bg-[#722F37] text-white rounded-full font-bold px-8 py-3.5 text-base shadow-md hover:shadow-xl transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-2 h-[52px] cursor-pointer"
               >
                 Publish My Book
+                <ExternalLink className="w-4 h-4 opacity-80" />
               </button>
             </Link>
 

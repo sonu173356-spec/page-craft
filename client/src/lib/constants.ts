@@ -29,6 +29,7 @@ export const SITE_CONFIG = {
 export interface NavItem {
   label: string;
   href: string;
+  isDashboard?: boolean;
   children?: NavItem[];
   description?: string;
   icon?: string;
@@ -127,6 +128,36 @@ export const NAV_ITEMS: NavItem[] = [
       },
     ],
   },
+  {
+    label: 'Dashboards',
+    href: '/author/dashboard',
+    children: [
+      {
+        label: 'Author Portal',
+        href: '/author/dashboard',
+        isDashboard: true,
+        description: 'Access author book sales, royalties & tools',
+      },
+      {
+        label: 'Upload Book Desk',
+        href: '/author/upload-book',
+        isDashboard: true,
+        description: 'Publish manuscript PDFs & book covers',
+      },
+      {
+        label: 'Content Manager',
+        href: '/admin/internal-dashboard',
+        isDashboard: true,
+        description: 'Live admin visual book editor',
+      },
+      {
+        label: 'Order Requests Desk',
+        href: '/admin/orders',
+        isDashboard: true,
+        description: 'Fulfill customer reader orders & tracking',
+      },
+    ],
+  },
   { label: 'Contact', href: '/contact' },
 ];
 
@@ -146,6 +177,12 @@ export const FOOTER_LINKS = {
     { label: 'Blog', href: '/blog' },
     { label: 'Contact', href: '/contact' },
     { label: 'Testimonials', href: '/testimonials' },
+  ],
+  dashboards: [
+    { label: 'Author Portal ↗', href: '/author/dashboard', isDashboard: true },
+    { label: 'Upload Book ↗', href: '/author/upload-book', isDashboard: true },
+    { label: 'Content Manager ↗', href: '/admin/internal-dashboard', isDashboard: true },
+    { label: 'Order Desk ↗', href: '/admin/orders', isDashboard: true },
   ],
   support: [
     { label: 'FAQs', href: '/faq' },

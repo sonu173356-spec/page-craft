@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { Mail, ArrowRight, MapPin, Phone, Globe } from 'lucide-react';
+import { Mail, ArrowRight, MapPin, Phone, Globe, ExternalLink } from 'lucide-react';
 import { Logo } from '@/components/ui/Logo';
 import { FOOTER_LINKS, SITE_CONFIG } from '@/lib/constants';
 
@@ -12,7 +12,6 @@ export default function Footer() {
 
   const handleSubscribe = (e: React.FormEvent) => {
     e.preventDefault();
-    // Implementation for newsletter subscription
     console.log('Subscribed:', email);
     setEmail('');
   };
@@ -59,7 +58,7 @@ export default function Footer() {
         </div>
       </div>
 
-      {/* Main Section: 4 Columns */}
+      {/* Main Section: Columns */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 lg:gap-8">
           
@@ -97,7 +96,7 @@ export default function Footer() {
                 <li key={link.label}>
                   <Link
                     href={link.href}
-                    className="text-gray-400 hover:text-[#C5A55A] transition-colors inline-flex items-center group"
+                    className="text-gray-400 hover:text-[#C5A55A] transition-colors inline-flex items-center group text-sm"
                   >
                     <ArrowRight className="w-4 h-4 opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all mr-2" />
                     {link.label}
@@ -107,31 +106,35 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Column 3: Company & Support */}
-          <div className="lg:col-span-3 grid grid-cols-2 gap-8">
+          {/* Column 3: Dashboards & Portals */}
+          <div className="lg:col-span-3 space-y-6">
             <div>
-              <h4 className="text-lg font-playfair font-semibold text-white mb-6">Company</h4>
-              <ul className="space-y-4">
-                {FOOTER_LINKS.company.map((link) => (
+              <h4 className="text-lg font-playfair font-semibold text-white mb-4">Dashboards & Portals</h4>
+              <ul className="space-y-3">
+                {FOOTER_LINKS.dashboards?.map((link) => (
                   <li key={link.label}>
                     <Link
                       href={link.href}
-                      className="text-gray-400 hover:text-[#C5A55A] transition-colors"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-gray-300 hover:text-[#C5A55A] transition-colors text-sm flex items-center gap-1.5 font-medium"
                     >
                       {link.label}
+                      <ExternalLink className="w-3 h-3 text-[#C5A55A]" />
                     </Link>
                   </li>
                 ))}
               </ul>
             </div>
+
             <div>
-              <h4 className="text-lg font-playfair font-semibold text-white mb-6">Support</h4>
-              <ul className="space-y-4">
-                {FOOTER_LINKS.support.map((link) => (
+              <h4 className="text-lg font-playfair font-semibold text-white mb-4">Company</h4>
+              <ul className="space-y-2">
+                {FOOTER_LINKS.company.slice(0, 3).map((link) => (
                   <li key={link.label}>
                     <Link
                       href={link.href}
-                      className="text-gray-400 hover:text-[#C5A55A] transition-colors"
+                      className="text-sm text-gray-400 hover:text-[#C5A55A] transition-colors"
                     >
                       {link.label}
                     </Link>
@@ -144,7 +147,7 @@ export default function Footer() {
           {/* Column 4: Legal & Contact */}
           <div className="lg:col-span-3">
             <h4 className="text-lg font-playfair font-semibold text-white mb-6">Contact Us</h4>
-            <ul className="space-y-4 text-gray-400 mb-8">
+            <ul className="space-y-4 text-gray-400 mb-8 text-sm">
               <li className="flex items-start gap-3">
                 <MapPin className="w-5 h-5 text-[#C5A55A] flex-shrink-0 mt-1" />
                 <span>
