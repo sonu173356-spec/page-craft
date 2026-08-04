@@ -17,4 +17,5 @@ export * from './SectionHeading';
 export * from './AnimatedCounter';
 export * from './Logo';
 export * from './CloudBackground';
-export * from './CloudinaryUploader';
+export * from './FileUploader';
+
