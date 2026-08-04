@@ -1,0 +1,19 @@
+# Page Craft — Robots.txt
+# https://www.thepagecraft.com
+
+User-agent: *
+Allow: /
+
+# Disallow admin and auth pages from indexing
+Disallow: /admin/
+Disallow: /author/
+Disallow: /login
+Disallow: /register
+Disallow: /forgot-password
+Disallow: /reset-password
+Disallow: /verify-email
+Disallow: /verify-otp
+Disallow: /bookstore/checkout
+
+# Sitemap
+Sitemap: https://www.thepagecraft.com/sitemap.xml

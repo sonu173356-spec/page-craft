@@ -1,0 +1,131 @@
+'use client';
+
+import React from 'react';
+import { motion } from 'framer-motion';
+import { Button, CloudBackground } from '@/components/ui';
+import { Star } from 'lucide-react';
+import Link from 'next/link';
+
+export default function HeroSection() {
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.15,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
+  };
+
+  return (
+    <section className="relative min-h-[90vh] flex items-center bg-gradient-to-b from-[#FFF5F5] via-[#FFF9F6] to-[#FDFAF6] overflow-hidden pt-24 pb-16">
+      {/* Animated Soft Floating Clouds */}
+      <CloudBackground />
+
+      <div className="container mx-auto px-4 relative z-10">
+        <motion.div
+          className="max-w-4xl mx-auto text-center"
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+        >
+          {/* Main Hero Title */}
+          <motion.h1
+            variants={itemVariants}
+            className="text-5xl md:text-7xl font-playfair font-bold text-[#8B1A1A] leading-[1.15] mb-6"
+          >
+            Publishing Made Easy
+          </motion.h1>
+
+          {/* Subtitle */}
+          <motion.p
+            variants={itemVariants}
+            className="text-lg md:text-xl text-[#4A4A5A] mb-10 max-w-3xl mx-auto font-inter leading-relaxed"
+          >
+            Realise your dream of becoming a published author with Page Craft, India’s most trusted Self-Publishing Platform.
+            Publish in paperback and eBook, sell globally in 150+ countries and earn 100% royalty.
+          </motion.p>
+
+          {/* CTA Buttons + Reviews Badge Stack */}
+          <motion.div
+            variants={itemVariants}
+            className="flex flex-col sm:flex-row justify-center items-center gap-6 mb-16"
+          >
+            <Link href="/publishing-plans">
+              <Button
+                size="lg"
+                className="bg-[#FF5A5F] hover:bg-[#E0484C] text-white rounded-full font-semibold px-8 py-4 text-lg shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5"
+              >
+                Publish My Book
+              </Button>
+            </Link>
+
+            {/* Author Avatars Stack + Rating Badge */}
+            <div className="flex items-center gap-3 bg-white/80 backdrop-blur-md px-5 py-2.5 rounded-full shadow-sm border border-rose-100">
+              <div className="flex -space-x-3 overflow-hidden">
+                <div className="w-9 h-9 rounded-full bg-rose-400 border-2 border-white flex items-center justify-center text-white text-xs font-bold">
+                  AK
+                </div>
+                <div className="w-9 h-9 rounded-full bg-amber-400 border-2 border-white flex items-center justify-center text-white text-xs font-bold">
+                  SR
+                </div>
+                <div className="w-9 h-9 rounded-full bg-teal-500 border-2 border-white flex items-center justify-center text-white text-xs font-bold">
+                  PM
+                </div>
+                <div className="w-9 h-9 rounded-full bg-gray-100 border-2 border-white flex items-center justify-center text-[#8B1A1A] text-[10px] font-bold">
+                  +12K
+                </div>
+              </div>
+
+              <div className="flex flex-col text-left">
+                <div className="flex items-center gap-1">
+                  <span className="font-bold text-[#1A1A2E] text-base leading-none">
+                    5,100+
+                  </span>
+                  <div className="flex text-amber-400 ml-1">
+                    <Star className="w-3.5 h-3.5 fill-amber-400" />
+                    <Star className="w-3.5 h-3.5 fill-amber-400" />
+                    <Star className="w-3.5 h-3.5 fill-amber-400" />
+                    <Star className="w-3.5 h-3.5 fill-amber-400" />
+                    <Star className="w-3.5 h-3.5 fill-amber-400" />
+                  </div>
+                </div>
+                <span className="text-xs text-gray-500 font-medium">
+                  google reviews
+                </span>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Key Metrics Strip */}
+          <motion.div
+            variants={itemVariants}
+            className="grid grid-cols-2 md:grid-cols-4 gap-6 pt-10 border-t border-rose-100/80 bg-white/40 backdrop-blur-sm rounded-2xl p-6 shadow-sm"
+          >
+            <div className="text-center">
+              <h3 className="text-3xl font-bold text-[#8B1A1A] font-playfair">12,000+</h3>
+              <p className="text-[#6B7280] text-sm font-medium mt-1">Authors Published</p>
+            </div>
+            <div className="text-center">
+              <h3 className="text-3xl font-bold text-[#8B1A1A] font-playfair">25,000+</h3>
+              <p className="text-[#6B7280] text-sm font-medium mt-1">Books Released</p>
+            </div>
+            <div className="text-center">
+              <h3 className="text-3xl font-bold text-[#8B1A1A] font-playfair">150+</h3>
+              <p className="text-[#6B7280] text-sm font-medium mt-1">Countries Reached</p>
+            </div>
+            <div className="text-center">
+              <h3 className="text-3xl font-bold text-[#8B1A1A] font-playfair">100%</h3>
+              <p className="text-[#6B7280] text-sm font-medium mt-1">Royalty Earned</p>
+            </div>
+          </motion.div>
+        </motion.div>
+      </div>
+    </section>
+  );
+}

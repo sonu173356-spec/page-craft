@@ -1,0 +1,31 @@
+import { Router } from 'express';
+import bookRoutes from './bookRoutes';
+import authRoutes from './authRoutes';
+import authorRoutes from './authorRoutes';
+import orderRoutes from './orderRoutes';
+import blogRoutes from './blogRoutes';
+import reviewRoutes from './reviewRoutes';
+import dashboardRoutes from './dashboardRoutes';
+import newsletterRoutes from './newsletterRoutes';
+import contactRoutes from './contactRoutes';
+import couponRoutes from './couponRoutes';
+import planRoutes from './planRoutes';
+import faqRoutes from './faqRoutes';
+import careerRoutes from './careerRoutes';
+
+const router = Router();
+router.use('/books', bookRoutes);
+router.use('/auth', authRoutes);
+router.use('/authors', authorRoutes);
+router.use('/orders', orderRoutes);
+router.use('/blogs', blogRoutes);
+router.use('/reviews', reviewRoutes);
+router.use('/dashboards', dashboardRoutes);
+router.use('/newsletters', newsletterRoutes);
+router.use('/contacts', contactRoutes);
+router.use('/coupons', couponRoutes);
+router.use('/plans', planRoutes);
+router.use('/faqs', faqRoutes);
+router.use('/careers', careerRoutes);
+
+export default router;
