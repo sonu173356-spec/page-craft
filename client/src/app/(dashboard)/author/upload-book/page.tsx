@@ -9,6 +9,11 @@ import Link from 'next/link';
 
 export default function UploadBookPage() {
   const [step, setStep] = useState(1);
+  const [title, setTitle] = useState('');
+  const [category, setCategory] = useState('Fiction');
+  const [language, setLanguage] = useState('English');
+  const [description, setDescription] = useState('');
+  const [price, setPrice] = useState('399');
   const [uploadedFiles, setUploadedFiles] = useState<Record<string, UploadedFileInfo>>({});
   const [isPublishedSuccess, setIsPublishedSuccess] = useState(false);
 
@@ -17,8 +22,33 @@ export default function UploadBookPage() {
   };
 
   const handleFinalPublish = () => {
+    const bookTitle = title.trim() || 'My New Masterpiece';
+    const bookPrice = `₹${price}`;
+    const coverImage = uploadedFiles.frontCover?.url || 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?q=80&w=300&auto=format&fit=crop';
+    
+    const newBook = {
+      id: Date.now(),
+      title: bookTitle,
+      category,
+      language,
+      status: 'Under Review',
+      sales: 0,
+      price: bookPrice,
+      date: new Date().toISOString().split('T')[0],
+      image: coverImage,
+      storageProvider: uploadedFiles.frontCover?.storageProvider || 'Google Drive / Supabase',
+    };
+
+    try {
+      const existingStr = localStorage.getItem('pagecraft_user_books');
+      const existingBooks = existingStr ? JSON.parse(existingStr) : [];
+      localStorage.setItem('pagecraft_user_books', JSON.stringify([newBook, ...existingBooks]));
+    } catch (err) {
+      console.warn('LocalStorage error:', err);
+    }
+
     setIsPublishedSuccess(true);
-    toast.success('🎉 Book published live and sent to Admin Review Desk!');
+    toast.success(`🎉 "${bookTitle}" submitted to Admin Review Desk & added to My Books!`);
   };
 
   return (
@@ -58,7 +88,7 @@ export default function UploadBookPage() {
 
           <div className="space-y-2">
             <h2 className="text-3xl font-bold font-playfair text-[#1A1A2E]">Congratulations! 🎉</h2>
-            <p className="text-sm font-semibold text-green-700">Your book has been submitted to the Admin Publishing Desk!</p>
+            <p className="text-sm font-semibold text-green-700">Your book "{title || 'My New Masterpiece'}" is submitted & added to your catalog!</p>
             <p className="text-xs text-gray-500 max-w-md mx-auto">
               Your manuscript PDFs and cover designs are stored securely in Google Drive & Supabase. Our review team will verify your ISBN and activate bookstore sales within 24 hours.
             </p>
@@ -66,6 +96,8 @@ export default function UploadBookPage() {
 
           <div className="bg-gray-50 p-4 rounded-2xl border border-gray-200 text-left text-xs text-gray-700 space-y-1">
             <span className="font-bold text-[#8B1A1A] block">Published Record:</span>
+            <p>• Title: <span className="font-bold text-gray-900">{title || 'My New Masterpiece'}</span></p>
+            <p>• Retail Price: <span className="font-bold text-[#8B1A1A]">₹{price}</span></p>
             <p>• Status: <span className="font-bold text-amber-600">Under Review / Approved</span></p>
             <p>• Royalty Plan: <span className="font-bold text-green-600">100% Net Royalty</span></p>
             <p>• Storage: <span className="font-bold text-blue-600">Google Drive & Supabase Synced</span></p>
@@ -94,11 +126,21 @@ export default function UploadBookPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5 text-xs">
                 <div className="space-y-1.5 md:col-span-2">
                   <label className="font-bold text-gray-600 uppercase">Book Title</label>
-                  <input type="text" className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#8B1A1A]/20 outline-none text-sm" placeholder="Enter book title" />
+                  <input
+                    type="text"
+                    value={title}
+                    onChange={e => setTitle(e.target.value)}
+                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#8B1A1A]/20 outline-none text-sm"
+                    placeholder="e.g. Shadows of Eternity"
+                  />
                 </div>
                 <div className="space-y-1.5">
                   <label className="font-bold text-gray-600 uppercase">Category</label>
-                  <select className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#8B1A1A]/20 outline-none text-sm">
+                  <select
+                    value={category}
+                    onChange={e => setCategory(e.target.value)}
+                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#8B1A1A]/20 outline-none text-sm"
+                  >
                     <option>Fiction</option>
                     <option>Non-Fiction</option>
                     <option>Poetry</option>
@@ -108,7 +150,11 @@ export default function UploadBookPage() {
                 </div>
                 <div className="space-y-1.5">
                   <label className="font-bold text-gray-600 uppercase">Language</label>
-                  <select className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#8B1A1A]/20 outline-none text-sm">
+                  <select
+                    value={language}
+                    onChange={e => setLanguage(e.target.value)}
+                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#8B1A1A]/20 outline-none text-sm"
+                  >
                     <option>English</option>
                     <option>Hindi</option>
                     <option>Bengali</option>
@@ -118,7 +164,13 @@ export default function UploadBookPage() {
                 </div>
                 <div className="space-y-1.5 md:col-span-2">
                   <label className="font-bold text-gray-600 uppercase">Description</label>
-                  <textarea rows={3} className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#8B1A1A]/20 outline-none text-sm" placeholder="Write a compelling description..."></textarea>
+                  <textarea
+                    rows={3}
+                    value={description}
+                    onChange={e => setDescription(e.target.value)}
+                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#8B1A1A]/20 outline-none text-sm"
+                    placeholder="Write a compelling description..."
+                  ></textarea>
                 </div>
               </div>
             </div>
@@ -130,7 +182,12 @@ export default function UploadBookPage() {
               <div className="grid grid-cols-1 gap-5 text-xs">
                 <div className="space-y-1.5">
                   <label className="font-bold text-gray-600 uppercase">Retail Price (₹)</label>
-                  <input type="number" className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#8B1A1A]/20 outline-none text-sm" defaultValue={399} />
+                  <input
+                    type="number"
+                    value={price}
+                    onChange={e => setPrice(e.target.value)}
+                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#8B1A1A]/20 outline-none text-sm"
+                  />
                 </div>
 
                 <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-xl flex items-center justify-between text-emerald-900">
@@ -201,6 +258,8 @@ export default function UploadBookPage() {
 
               <div className="bg-blue-50 border border-blue-200 p-4 rounded-2xl max-w-md mx-auto text-left text-xs text-blue-900 space-y-1.5">
                 <span className="font-bold block text-blue-950">Attached Assets Summary:</span>
+                <p>• Title: <strong className="text-gray-900">{title || 'My New Masterpiece'}</strong></p>
+                <p>• Retail Price: <strong className="text-[#8B1A1A]">₹{price}</strong></p>
                 <p>• Front Cover: {uploadedFiles.frontCover?.name || 'front_cover.png'} ({uploadedFiles.frontCover?.storageProvider || 'Google Drive'})</p>
                 <p>• Back Cover: {uploadedFiles.backCover?.name || 'back_cover.png'} ({uploadedFiles.backCover?.storageProvider || 'Google Drive'})</p>
                 <p>• Manuscript Draft: {uploadedFiles.manuscriptPdf?.name || 'manuscript_draft.pdf'} (Database synced)</p>
@@ -220,7 +279,7 @@ export default function UploadBookPage() {
             {step === 4 ? (
               <button 
                 onClick={handleFinalPublish}
-                className="px-6 py-2.5 bg-green-600 hover:bg-green-700 text-white rounded-xl font-bold transition-colors shadow-md animate-pulse"
+                className="px-6 py-2.5 bg-green-600 hover:bg-green-700 text-white rounded-xl font-bold transition-colors shadow-md"
               >
                 Publish Book Live
               </button>
