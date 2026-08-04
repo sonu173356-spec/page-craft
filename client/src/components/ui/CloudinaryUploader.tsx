@@ -27,14 +27,14 @@ const DEFAULT_CLOUD_NAME = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || 'cbq
 export function CloudinaryUploader({ label, accept, type, onUploadComplete }: CloudinaryUploaderProps) {
   const [isUploading, setIsUploading] = useState(false);
   const [fileInfo, setFileInfo] = useState<UploadedFileInfo | null>(null);
-  const [presetWarning, setPresetWarning] = useState(false);
+  const [apiError, setApiError] = useState<string | null>(null);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
     setIsUploading(true);
-    setPresetWarning(false);
+    setApiError(null);
 
     const origSizeMb = (file.size / (1024 * 1024)).toFixed(2);
     const compSizeMb = (file.size * 0.22 / (1024 * 1024)).toFixed(2);
@@ -43,7 +43,7 @@ export function CloudinaryUploader({ label, accept, type, onUploadComplete }: Cl
       // Attempt real HTTP upload to Cloudinary API
       const formData = new FormData();
       formData.append('file', file);
-      formData.append('upload_preset', 'ml_default'); // Default unsigned preset
+      formData.append('upload_preset', 'ml_default');
 
       const res = await fetch(`https://api.cloudinary.com/v1_1/${DEFAULT_CLOUD_NAME}/auto/upload`, {
         method: 'POST',
@@ -68,11 +68,14 @@ export function CloudinaryUploader({ label, accept, type, onUploadComplete }: Cl
         setFileInfo(uploadedData);
         setIsUploading(false);
         if (onUploadComplete) onUploadComplete(uploadedData);
-        toast.success(`Successfully uploaded to Cloudinary Media Library (${DEFAULT_CLOUD_NAME})!`);
+        toast.success(`File stored live in Cloudinary Media Library (${DEFAULT_CLOUD_NAME})!`);
         return;
+      } else if (data.error?.message) {
+        setApiError(data.error.message);
       }
-    } catch (err) {
-      console.warn('Cloudinary direct API upload failed or unsigned preset required:', err);
+    } catch (err: any) {
+      console.warn('Cloudinary API upload error:', err);
+      setApiError(err.message || 'Upload error');
     }
 
     // Fallback: Local object URL + compression simulation + preset notice
@@ -90,7 +93,6 @@ export function CloudinaryUploader({ label, accept, type, onUploadComplete }: Cl
 
       setFileInfo(uploadedData);
       setIsUploading(false);
-      setPresetWarning(true);
       if (onUploadComplete) onUploadComplete(uploadedData);
       toast.success(`File ${file.name} compressed & prepared!`);
     }, 1000);
@@ -109,8 +111,8 @@ export function CloudinaryUploader({ label, accept, type, onUploadComplete }: Cl
       {isUploading ? (
         <div className="flex flex-col items-center justify-center py-4 text-center">
           <RefreshCw className="w-8 h-8 text-[#8B1A1A] animate-spin mb-2" />
-          <p className="text-xs font-bold text-[#1A1A2E]">Uploading & Compressing on Cloudinary...</p>
-          <p className="text-[11px] text-gray-400 mt-0.5">Target Cloud: {DEFAULT_CLOUD_NAME}</p>
+          <p className="text-xs font-bold text-[#1A1A2E]">Uploading to Cloudinary ({DEFAULT_CLOUD_NAME})...</p>
+          <p className="text-[11px] text-gray-400 mt-0.5">Applying q_auto, f_auto WebP/PDF compression</p>
         </div>
       ) : fileInfo ? (
         <div className="space-y-2">
@@ -141,9 +143,18 @@ export function CloudinaryUploader({ label, accept, type, onUploadComplete }: Cl
             </span>
           </div>
 
-          {presetWarning && (
-            <div className="p-2 bg-blue-50 border border-blue-200 rounded-xl text-[10px] text-blue-900 flex items-center justify-between">
-              <span>💡 To see uploads directly in your Cloudinary Media Library, turn on <strong>Unsigned Upload Preset</strong> in Cloudinary Settings.</span>
+          {!fileInfo.isRealCloudinary && (
+            <div className="p-2.5 bg-amber-50 border border-amber-200 rounded-xl text-[10px] text-amber-900 space-y-1">
+              <div className="font-bold flex items-center gap-1 text-amber-950">
+                <AlertCircle className="w-3.5 h-3.5 text-amber-600" />
+                Cloudinary Unsigned Upload Preset Needed
+              </div>
+              <p>
+                Cloudinary returned: <code className="bg-white px-1 py-0.5 rounded font-mono text-[9px] text-red-600">{apiError || 'Upload preset not found'}</code>
+              </p>
+              <p className="text-gray-600 mt-1">
+                To see files live in your Cloudinary Media Library, go to <strong>Cloudinary Settings → Upload → Add Upload Preset → Mode: Unsigned</strong>.
+              </p>
             </div>
           )}
         </div>
