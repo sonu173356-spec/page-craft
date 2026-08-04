@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Upload, CheckCircle2, FileText, Image as ImageIcon, Sparkles, RefreshCw, AlertCircle } from 'lucide-react';
+import { CheckCircle2, FileText, Image as ImageIcon, Sparkles, RefreshCw } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 
 export interface UploadedFileInfo {
@@ -11,6 +11,7 @@ export interface UploadedFileInfo {
   savedPercentage: string;
   url: string;
   type: 'frontCover' | 'backCover' | 'fullCoverPdf' | 'manuscriptPdf';
+  cloudName: string;
 }
 
 interface CloudinaryUploaderProps {
@@ -19,6 +20,8 @@ interface CloudinaryUploaderProps {
   type: 'frontCover' | 'backCover' | 'fullCoverPdf' | 'manuscriptPdf';
   onUploadComplete?: (fileInfo: UploadedFileInfo) => void;
 }
+
+const DEFAULT_CLOUD_NAME = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || 'cbqwif6x';
 
 export function CloudinaryUploader({ label, accept, type, onUploadComplete }: CloudinaryUploaderProps) {
   const [isUploading, setIsUploading] = useState(false);
@@ -30,10 +33,9 @@ export function CloudinaryUploader({ label, accept, type, onUploadComplete }: Cl
 
     setIsUploading(true);
 
-    // Simulate Cloudinary / Supabase Upload & Auto-Compression
+    // Simulate Cloudinary Upload & Auto-Compression
     setTimeout(() => {
       const origSizeMb = (file.size / (1024 * 1024)).toFixed(2);
-      // Auto compression reduces size by ~75-90% for images/PDFs using q_auto, f_auto
       const compSizeMb = (file.size * 0.18 / (1024 * 1024)).toFixed(2);
       const savedPct = '82%';
 
@@ -44,14 +46,15 @@ export function CloudinaryUploader({ label, accept, type, onUploadComplete }: Cl
         savedPercentage: savedPct,
         url: URL.createObjectURL(file),
         type,
+        cloudName: DEFAULT_CLOUD_NAME,
       };
 
       setFileInfo(uploadedData);
       setIsUploading(false);
       if (onUploadComplete) onUploadComplete(uploadedData);
 
-      toast.success(`Cloudinary Compressed & Saved ${file.name} (${savedPct} smaller!)`);
-    }, 1500);
+      toast.success(`Cloudinary (${DEFAULT_CLOUD_NAME}) Compressed & Saved ${file.name} (${savedPct} smaller!)`);
+    }, 1200);
   };
 
   return (
@@ -67,7 +70,7 @@ export function CloudinaryUploader({ label, accept, type, onUploadComplete }: Cl
       {isUploading ? (
         <div className="flex flex-col items-center justify-center py-4 text-center">
           <RefreshCw className="w-8 h-8 text-[#8B1A1A] animate-spin mb-2" />
-          <p className="text-xs font-bold text-[#1A1A2E]">Uploading to Cloudinary & Compressing...</p>
+          <p className="text-xs font-bold text-[#1A1A2E]">Uploading to Cloudinary ({DEFAULT_CLOUD_NAME})...</p>
           <p className="text-[11px] text-gray-400 mt-0.5">Applying q_auto, f_auto WebP/PDF compression</p>
         </div>
       ) : fileInfo ? (
@@ -78,7 +81,7 @@ export function CloudinaryUploader({ label, accept, type, onUploadComplete }: Cl
               <span className="font-bold text-xs text-[#1A1A2E] truncate max-w-[180px]">{fileInfo.name}</span>
             </div>
             <span className="px-2 py-0.5 bg-green-100 text-green-700 text-[10px] font-bold rounded-full">
-              Cloudinary Compressed
+              Cloudinary ({DEFAULT_CLOUD_NAME})
             </span>
           </div>
 
