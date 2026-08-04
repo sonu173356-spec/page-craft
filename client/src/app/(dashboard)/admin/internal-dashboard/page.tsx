@@ -1,5 +1,5 @@
 import InternalDashboardClient from '@/components/admin/InternalDashboardClient';
 
-export default function AdminBooksPage() {
+export default function InternalDashboardPage() {
   return <InternalDashboardClient />;
 }

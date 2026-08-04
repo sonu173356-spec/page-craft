@@ -8,7 +8,8 @@ import React from 'react';
 
 const adminNavItems = [
   { label: 'Dashboard', href: '/admin/dashboard', icon: <LayoutDashboard size={20} /> },
-  { label: 'Books', href: '/admin/books', icon: <BookOpen size={20} /> },
+  { label: 'Internal Dashboard', href: '/admin/internal-dashboard', icon: <BookOpen size={20} /> },
+  { label: 'Books Manager', href: '/admin/books', icon: <BookOpen size={20} /> },
   { label: 'Authors', href: '/admin/authors', icon: <Users size={20} /> },
   { label: 'Orders', href: '/admin/orders', icon: <ShoppingCart size={20} /> },
   { label: 'Payments', href: '/admin/payments', icon: <DollarSign size={20} /> },
