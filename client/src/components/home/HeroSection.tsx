@@ -51,51 +51,50 @@ export default function HeroSection() {
             Publish in paperback and eBook, sell globally in 150+ countries and earn 100% royalty.
           </motion.p>
 
-          {/* CTA Buttons + Reviews Badge Stack */}
+          {/* CTA Buttons + Reviews Badge Stack - Aligned & Crimson Logo Color */}
           <motion.div
             variants={itemVariants}
-            className="flex flex-col sm:flex-row justify-center items-center gap-6 mb-16"
+            className="flex flex-col sm:flex-row justify-center items-center gap-4 sm:gap-5 mb-16"
           >
-            <Link href="/publishing-plans">
-              <Button
-                size="lg"
-                className="bg-[#FF5A5F] hover:bg-[#E0484C] text-white rounded-full font-semibold px-8 py-4 text-lg shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5"
+            <Link href="/author/upload-book">
+              <button
+                className="bg-[#8B1A1A] hover:bg-[#722F37] text-white rounded-full font-bold px-8 py-3.5 text-base shadow-md hover:shadow-xl transition-all transform hover:-translate-y-0.5 flex items-center justify-center h-[52px]"
               >
                 Publish My Book
-              </Button>
+              </button>
             </Link>
 
             {/* Author Avatars Stack + Rating Badge */}
-            <div className="flex items-center gap-3 bg-white/80 backdrop-blur-md px-5 py-2.5 rounded-full shadow-sm border border-rose-100">
+            <div className="flex items-center gap-3 bg-white/90 backdrop-blur-md px-5 h-[52px] rounded-full shadow-sm border border-rose-100">
               <div className="flex -space-x-3 overflow-hidden">
-                <div className="w-9 h-9 rounded-full bg-rose-400 border-2 border-white flex items-center justify-center text-white text-xs font-bold">
+                <div className="w-8 h-8 rounded-full bg-rose-400 border-2 border-white flex items-center justify-center text-white text-[10px] font-bold">
                   AK
                 </div>
-                <div className="w-9 h-9 rounded-full bg-amber-400 border-2 border-white flex items-center justify-center text-white text-xs font-bold">
+                <div className="w-8 h-8 rounded-full bg-amber-400 border-2 border-white flex items-center justify-center text-white text-[10px] font-bold">
                   SR
                 </div>
-                <div className="w-9 h-9 rounded-full bg-teal-500 border-2 border-white flex items-center justify-center text-white text-xs font-bold">
+                <div className="w-8 h-8 rounded-full bg-teal-500 border-2 border-white flex items-center justify-center text-white text-[10px] font-bold">
                   PM
                 </div>
-                <div className="w-9 h-9 rounded-full bg-gray-100 border-2 border-white flex items-center justify-center text-[#8B1A1A] text-[10px] font-bold">
+                <div className="w-8 h-8 rounded-full bg-[#8B1A1A] text-white border-2 border-white flex items-center justify-center text-[9px] font-bold">
                   +12K
                 </div>
               </div>
 
               <div className="flex flex-col text-left">
                 <div className="flex items-center gap-1">
-                  <span className="font-bold text-[#1A1A2E] text-base leading-none">
+                  <span className="font-bold text-[#1A1A2E] text-sm leading-none">
                     5,100+
                   </span>
-                  <div className="flex text-amber-400 ml-1">
-                    <Star className="w-3.5 h-3.5 fill-amber-400" />
-                    <Star className="w-3.5 h-3.5 fill-amber-400" />
-                    <Star className="w-3.5 h-3.5 fill-amber-400" />
-                    <Star className="w-3.5 h-3.5 fill-amber-400" />
-                    <Star className="w-3.5 h-3.5 fill-amber-400" />
+                  <div className="flex text-amber-400 ml-0.5">
+                    <Star className="w-3 h-3 fill-amber-400" />
+                    <Star className="w-3 h-3 fill-amber-400" />
+                    <Star className="w-3 h-3 fill-amber-400" />
+                    <Star className="w-3 h-3 fill-amber-400" />
+                    <Star className="w-3 h-3 fill-amber-400" />
                   </div>
                 </div>
-                <span className="text-xs text-gray-500 font-medium">
+                <span className="text-[10px] text-gray-500 font-medium">
                   google reviews
                 </span>
               </div>
