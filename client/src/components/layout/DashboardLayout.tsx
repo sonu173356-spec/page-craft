@@ -61,7 +61,7 @@ export default function DashboardLayout({
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
+    <div className="min-h-screen bg-gray-50 flex dashboard-root font-sans text-sm">
       {/* Mobile Sidebar Overlay */}
       <AnimatePresence>
         {isMobileSidebarOpen && (
