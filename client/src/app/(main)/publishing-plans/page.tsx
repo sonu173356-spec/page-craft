@@ -1,9 +1,9 @@
 import React from 'react';
 import { Metadata } from 'next';
 import { SectionHeading } from '@/components/ui/SectionHeading';
-import { Button } from '@/components/ui/Button';
 import { Accordion } from '@/components/ui/Accordion';
-import { Check, X } from 'lucide-react';
+import { Check, X, ExternalLink } from 'lucide-react';
+import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: 'Publishing Plans | Page Craft',
@@ -70,7 +70,11 @@ export default function PublishingPlansPage() {
                 {plan.features.map(f => <li key={f} className="flex items-start"><Check className="h-5 w-5 text-green-500 mr-2 shrink-0" /><span>{f}</span></li>)}
                 {plan.missing.map(f => <li key={f} className="flex items-start opacity-50"><X className="h-5 w-5 text-gray-400 mr-2 shrink-0" /><span className="line-through">{f}</span></li>)}
               </ul>
-              <Button className="w-full mt-8 bg-[#8B1A1A] hover:bg-[#722F37]">Get Started</Button>
+              <Link href="/author/upload-book" target="_blank" rel="noopener noreferrer" className="w-full mt-8">
+                <button className="w-full py-3.5 bg-[#8B1A1A] hover:bg-[#722F37] text-white rounded-full font-bold text-sm transition-all shadow flex items-center justify-center gap-2">
+                  Get Started <ExternalLink className="w-4 h-4" />
+                </button>
+              </Link>
             </div>
           ))}
         </div>

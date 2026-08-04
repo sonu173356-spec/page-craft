@@ -1,8 +1,9 @@
 import React from 'react';
 import { Metadata } from 'next';
 import { SectionHeading } from '@/components/ui/SectionHeading';
-import { Button } from '@/components/ui/Button';
 import { RoyaltyCalculator } from './RoyaltyCalculator';
+import { ExternalLink } from 'lucide-react';
+import Link from 'next/link';
 
 export const metadata: Metadata = { title: 'Pricing & Add-ons | Page Craft' };
 
@@ -15,7 +16,11 @@ export default function PricingPage() {
           <div><h3 className="text-2xl font-bold mb-6">Add-on Services</h3></div>
           <RoyaltyCalculator />
         </div>
-        <div className="mt-16 text-center"><Button size="lg">Get Started Today</Button></div>
+        <div className="mt-16 text-center">
+          <Link href="/author/upload-book" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-8 py-3.5 bg-[#8B1A1A] hover:bg-[#722F37] text-white rounded-full font-bold text-base shadow-md transition-all">
+            Get Started Today <ExternalLink className="w-4 h-4" />
+          </Link>
+        </div>
       </div>
     </main>
   );

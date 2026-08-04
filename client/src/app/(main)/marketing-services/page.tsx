@@ -1,7 +1,8 @@
 import React from 'react';
 import { Metadata } from 'next';
 import { SectionHeading } from '@/components/ui/SectionHeading';
-import { Button } from '@/components/ui/Button';
+import { ExternalLink } from 'lucide-react';
+import Link from 'next/link';
 
 export const metadata: Metadata = { title: 'Marketing Services | Page Craft' };
 
@@ -15,7 +16,11 @@ export default function MarketingServicesPage() {
             <div key={s} className="bg-white p-6 rounded-xl shadow-md font-bold text-center">{s}</div>
           ))}
         </div>
-        <div className="mt-16 text-center"><Button size="lg">Explore Packages</Button></div>
+        <div className="mt-16 text-center">
+          <Link href="/author/upload-book" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-8 py-3.5 bg-[#8B1A1A] hover:bg-[#722F37] text-white rounded-full font-bold text-base shadow-md transition-all">
+            Explore Packages <ExternalLink className="w-4 h-4" />
+          </Link>
+        </div>
       </div>
     </main>
   );

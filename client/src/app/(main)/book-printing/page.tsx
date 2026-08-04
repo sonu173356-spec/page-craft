@@ -1,7 +1,8 @@
 import React from 'react';
 import { Metadata } from 'next';
 import { SectionHeading } from '@/components/ui/SectionHeading';
-import { Button } from '@/components/ui/Button';
+import Link from 'next/link';
+import { ExternalLink } from 'lucide-react';
 
 export const metadata: Metadata = { title: 'Book Printing | Page Craft' };
 
@@ -15,7 +16,11 @@ export default function BookPrintingPage() {
           <div className="bg-white p-8 rounded-2xl shadow-md text-center"><h3 className="font-playfair font-bold text-2xl">Hardcover</h3></div>
           <div className="bg-white p-8 rounded-2xl shadow-md text-center"><h3 className="font-playfair font-bold text-2xl">Print-on-Demand</h3></div>
         </div>
-        <div className="mt-16 text-center"><Button size="lg">Get Quote</Button></div>
+        <div className="mt-16 text-center">
+          <Link href="/author/upload-book" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-8 py-3.5 bg-[#8B1A1A] hover:bg-[#722F37] text-white rounded-full font-bold text-base shadow-md transition-all">
+            Get Quote <ExternalLink className="w-4 h-4" />
+          </Link>
+        </div>
       </div>
     </main>
   );
