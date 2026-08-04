@@ -1,5 +1,6 @@
 'use client';
 import DashboardLayout from '@/components/layout/DashboardLayout';
+import DashboardAuthGuard from '@/components/auth/DashboardAuthGuard';
 import { 
   LayoutDashboard, BookOpen, TrendingUp, DollarSign, 
   BarChart2, ShoppingCart, MessageSquare, Bell, Settings, PlusCircle
@@ -21,8 +22,10 @@ const authorNavItems = [
 
 export default function AuthorLayout({ children }: { children: React.ReactNode }) {
   return (
-    <DashboardLayout navItems={authorNavItems} userRole="Author">
-      {children}
-    </DashboardLayout>
+    <DashboardAuthGuard requiredRole="Author">
+      <DashboardLayout navItems={authorNavItems} userRole="Author">
+        {children}
+      </DashboardLayout>
+    </DashboardAuthGuard>
   );
 }

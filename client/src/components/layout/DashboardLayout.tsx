@@ -2,10 +2,11 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, Bell, Search, ChevronLeft, LogOut, User } from 'lucide-react';
 import { Logo } from '@/components/ui/Logo';
+import { useAuthStore } from '@/store';
 
 export interface DashboardNavItem {
   label: string;
@@ -29,6 +30,8 @@ export default function DashboardLayout({
   const [isMounted, setIsMounted] = useState(false);
   
   const pathname = usePathname();
+  const router = useRouter();
+  const { user, logout } = useAuthStore();
 
   useEffect(() => {
     setIsMounted(true);
@@ -51,6 +54,11 @@ export default function DashboardLayout({
   }, [pathname]);
 
   if (!isMounted) return null;
+
+  const handleLogout = () => {
+    logout();
+    router.push('/');
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
@@ -138,16 +146,16 @@ export default function DashboardLayout({
         </div>
 
         <div className="p-4 border-t border-gray-100 flex-shrink-0">
-          <Link
-            href="/logout"
-            className="flex items-center px-3 py-3 text-gray-600 hover:bg-red-50 hover:text-red-600 rounded-xl transition-colors group"
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center px-3 py-3 text-gray-600 hover:bg-red-50 hover:text-red-600 rounded-xl transition-colors group"
             title={!isSidebarOpen ? 'Logout' : undefined}
           >
             <LogOut className="w-5 h-5 text-gray-400 group-hover:text-red-600" />
             {(isSidebarOpen || isMobileSidebarOpen) && (
               <span className="ml-3 font-medium text-sm">Logout</span>
             )}
-          </Link>
+          </button>
         </div>
       </motion.aside>
 
@@ -181,15 +189,17 @@ export default function DashboardLayout({
             
             <div className="h-8 w-px bg-gray-200 hidden sm:block"></div>
             
-            <button className="flex items-center gap-3 hover:bg-gray-50 p-1.5 rounded-full lg:rounded-xl transition-colors">
-              <div className="w-8 h-8 rounded-full bg-[#FDFAF6] border border-[#E5D5B5] flex items-center justify-center text-[#8B1A1A]">
-                <User className="w-4 h-4" />
+            <div className="flex items-center gap-3 p-1.5 rounded-full lg:rounded-xl">
+              <div className="w-8 h-8 rounded-full bg-[#FDFAF6] border border-[#E5D5B5] flex items-center justify-center text-[#8B1A1A] font-bold text-xs">
+                {user?.name ? user.name.slice(0, 2).toUpperCase() : 'AU'}
               </div>
               <div className="hidden lg:flex flex-col text-left">
-                <span className="text-sm font-semibold text-gray-900 leading-none mb-1">John Doe</span>
-                <span className="text-xs text-gray-500 leading-none">{userRole}</span>
+                <span className="text-sm font-semibold text-gray-900 leading-none mb-1">
+                  {user?.name || 'User Account'}
+                </span>
+                <span className="text-xs text-gray-500 leading-none">{user?.role || userRole}</span>
               </div>
-            </button>
+            </div>
           </div>
         </header>
 

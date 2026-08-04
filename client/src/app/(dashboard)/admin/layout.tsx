@@ -1,5 +1,6 @@
 'use client';
 import DashboardLayout from '@/components/layout/DashboardLayout';
+import DashboardAuthGuard from '@/components/auth/DashboardAuthGuard';
 import { 
   LayoutDashboard, BookOpen, Users, ShoppingCart, DollarSign, 
   FileText, Tag, Star, MessageSquare, Mail, LifeBuoy, Settings, Shield
@@ -26,8 +27,10 @@ const adminNavItems = [
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
-    <DashboardLayout navItems={adminNavItems} userRole="Admin">
-      {children}
-    </DashboardLayout>
+    <DashboardAuthGuard requiredRole="Admin">
+      <DashboardLayout navItems={adminNavItems} userRole="Admin">
+        {children}
+      </DashboardLayout>
+    </DashboardAuthGuard>
   );
 }
