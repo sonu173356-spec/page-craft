@@ -1,20 +1,19 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import toast from 'react-hot-toast';
 import { useAuthStore } from '@/store';
-import { Button } from '@/components/ui/Button'; // Assuming standard UI components exist or using generic imports
-import { Input } from '@/components/ui/Input';
+import { Shield, Sparkles, ArrowRight, UserCheck } from 'lucide-react';
 
 const loginSchema = z.object({
   email: z.string().email('Invalid email address'),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
+  password: z.string().min(6, 'Password must be at least 6 characters'),
   rememberMe: z.boolean().optional(),
 });
 
@@ -22,37 +21,67 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 
 export default function LoginForm() {
   const router = useRouter();
-  const [role, setRole] = useState<'reader' | 'author' | 'admin'>('reader');
+  const searchParams = useSearchParams();
+  const redirectTarget = searchParams.get('redirect') || '/author/dashboard';
+  
+  const [role, setRole] = useState<'reader' | 'author' | 'admin'>('author');
   const [isLoading, setIsLoading] = useState(false);
-  const setAuth = useAuthStore((state: any) => state.setAuth); // Assuming setAuth exists
+  const setAuth = useAuthStore((state: any) => state.setAuth);
 
-  const { register, handleSubmit, formState: { errors } } = useForm<LoginFormValues>({
+  const { register, handleSubmit, setValue, formState: { errors } } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      email: '',
-      password: '',
-      rememberMe: false,
+      email: 'author@pagecraft.com',
+      password: 'password123',
+      rememberMe: true,
     },
   });
+
+  useEffect(() => {
+    if (redirectTarget.startsWith('/admin')) {
+      setRole('admin');
+      setValue('email', 'admin@pagecraft.com');
+    } else if (redirectTarget.startsWith('/author')) {
+      setRole('author');
+      setValue('email', 'author@pagecraft.com');
+    }
+  }, [redirectTarget, setValue]);
 
   const onSubmit = async (data: LoginFormValues) => {
     setIsLoading(true);
     try {
-      // Mock login
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      if (data.email === 'test@pagecraft.com' && data.password === 'password123') {
-        if (setAuth) {
-            setAuth({ user: { email: data.email, role }, token: 'mock-token' });
-        }
-        toast.success('Successfully logged in!');
-        router.push('/dashboard');
-      } else {
-        toast.error('Invalid credentials. Try test@pagecraft.com / password123');
+      await new Promise(resolve => setTimeout(resolve, 800));
+      
+      const userPayload = {
+        name: role === 'author' ? 'Ananya Roy (Author)' : role === 'admin' ? 'Page Craft Admin' : 'Reader User',
+        email: data.email,
+        role: role,
+      };
+
+      if (setAuth) {
+        setAuth({ user: userPayload, token: `token-${Date.now()}` });
       }
+
+      toast.success(`Welcome back, ${userPayload.name}! Access granted.`);
+      router.push(redirectTarget);
     } catch (error) {
-      toast.error('Login failed');
+      toast.error('Login failed. Please check credentials.');
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const fillQuickCredentials = (selectedRole: 'author' | 'admin' | 'reader') => {
+    setRole(selectedRole);
+    if (selectedRole === 'author') {
+      setValue('email', 'author@pagecraft.com');
+      setValue('password', 'password123');
+    } else if (selectedRole === 'admin') {
+      setValue('email', 'admin@pagecraft.com');
+      setValue('password', 'admin123');
+    } else {
+      setValue('email', 'reader@pagecraft.com');
+      setValue('password', 'reader123');
     }
   };
 
@@ -60,56 +89,64 @@ export default function LoginForm() {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      className="w-full max-w-md mx-auto p-6 bg-white rounded-lg shadow-xl border border-gray-100"
+      transition={{ duration: 0.4 }}
+      className="w-full max-w-md mx-auto p-8 bg-white rounded-3xl shadow-2xl border border-gray-100 my-12"
     >
-      <div className="text-center mb-8">
-        <h1 className="text-3xl font-playfair font-bold text-primary mb-2">Welcome Back</h1>
-        <p className="text-muted text-sm font-inter">Sign in to your account to continue</p>
+      <div className="text-center mb-6">
+        <div className="w-12 h-12 bg-red-100 text-[#8B1A1A] rounded-full flex items-center justify-center mx-auto mb-3">
+          <Shield className="w-6 h-6" />
+        </div>
+        <h1 className="text-3xl font-playfair font-bold text-[#1A1A2E] mb-1">Author Portal Login</h1>
+        <p className="text-gray-500 text-xs font-inter">Sign in with your registered account credentials to access your dashboard</p>
       </div>
 
-      <div className="flex justify-between mb-6 border-b border-gray-200">
-        {(['reader', 'author', 'admin'] as const).map((r) => (
+      {/* Role Selection Tabs */}
+      <div className="flex justify-around mb-6 border-b border-gray-100 pb-2 text-xs font-bold">
+        {(['author', 'admin', 'reader'] as const).map((r) => (
           <button
             key={r}
             type="button"
-            className={`pb-2 px-4 text-sm font-medium capitalize ${role === r ? 'border-b-2 border-primary text-primary' : 'text-muted hover:text-gray-700'}`}
-            onClick={() => setRole(r)}
+            className={`pb-2 px-3 capitalize transition-all ${
+              role === r
+                ? 'border-b-2 border-[#8B1A1A] text-[#8B1A1A]'
+                : 'text-gray-400 hover:text-gray-600'
+            }`}
+            onClick={() => fillQuickCredentials(r)}
           >
-            {r}
+            {r === 'author' ? '✍️ Author' : r === 'admin' ? '🛠️ Admin' : '📖 Reader'}
           </button>
         ))}
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 text-xs">
         <div>
-          <label className="block text-sm font-medium text-dark mb-1">Email</label>
+          <label className="block font-bold text-gray-700 mb-1">Email Address</label>
           <input
             {...register('email')}
             type="email"
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary outline-none"
-            placeholder="you@example.com"
+            className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#8B1A1A]/20 focus:border-[#8B1A1A] outline-none transition-all"
+            placeholder="author@pagecraft.com"
           />
-          {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>}
+          {errors.email && <p className="text-red-500 text-[10px] mt-1">{errors.email.message}</p>}
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-dark mb-1">Password</label>
+          <label className="block font-bold text-gray-700 mb-1">Password</label>
           <input
             {...register('password')}
             type="password"
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary outline-none"
+            className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#8B1A1A]/20 focus:border-[#8B1A1A] outline-none transition-all"
             placeholder="••••••••"
           />
-          {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>}
+          {errors.password && <p className="text-red-500 text-[10px] mt-1">{errors.password.message}</p>}
         </div>
 
-        <div className="flex items-center justify-between text-sm">
-          <label className="flex items-center text-muted">
-            <input type="checkbox" {...register('rememberMe')} className="mr-2 text-primary focus:ring-primary border-gray-300 rounded" />
+        <div className="flex items-center justify-between">
+          <label className="flex items-center text-gray-500 font-medium cursor-pointer">
+            <input type="checkbox" {...register('rememberMe')} className="mr-2 text-[#8B1A1A] focus:ring-[#8B1A1A] border-gray-300 rounded" />
             Remember me
           </label>
-          <Link href="/forgot-password" className="text-accent hover:text-primary transition-colors">
+          <Link href="/forgot-password" className="text-[#C5A55A] hover:text-[#8B1A1A] font-semibold transition-colors">
             Forgot Password?
           </Link>
         </div>
@@ -117,36 +154,26 @@ export default function LoginForm() {
         <button
           type="submit"
           disabled={isLoading}
-          className="w-full py-2 px-4 bg-primary text-white rounded-md hover:bg-maroon transition-colors disabled:opacity-50 flex items-center justify-center font-medium"
+          className="w-full py-3.5 bg-[#8B1A1A] hover:bg-[#722F37] text-white rounded-xl font-bold shadow-md transition-all disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer text-sm"
         >
-          {isLoading ? 'Signing in...' : 'Sign In'}
+          {isLoading ? 'Authenticating...' : 'Login & Access Dashboard'}
+          <ArrowRight className="w-4 h-4" />
         </button>
       </form>
 
-      <div className="mt-6">
-        <div className="relative">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-gray-200"></div>
-          </div>
-          <div className="relative flex justify-center text-sm">
-            <span className="px-2 bg-white text-muted">Or continue with</span>
-          </div>
+      {/* Demo Credentials Helper Box */}
+      <div className="mt-6 p-4 bg-[#FDFAF6] border border-rose-100 rounded-2xl text-[11px] text-gray-600 space-y-1">
+        <div className="flex items-center gap-1 font-bold text-[#8B1A1A]">
+          <UserCheck className="w-4 h-4" /> Preset Author Login Credentials:
         </div>
-
-        <div className="mt-6 grid grid-cols-2 gap-3">
-          <button type="button" className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-dark hover:bg-gray-50">
-            Google
-          </button>
-          <button type="button" className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-dark hover:bg-gray-50">
-            Facebook
-          </button>
-        </div>
+        <p>• Email: <strong className="text-gray-900">author@pagecraft.com</strong></p>
+        <p>• Password: <strong className="text-gray-900">password123</strong></p>
       </div>
 
-      <p className="mt-8 text-center text-sm text-muted">
-        Don't have an account?{' '}
-        <Link href="/register" className="font-medium text-accent hover:text-primary">
-          Register
+      <p className="mt-6 text-center text-xs text-gray-500">
+        Don't have an author account yet?{' '}
+        <Link href="/register" className="font-bold text-[#8B1A1A] hover:underline">
+          Register Here
         </Link>
       </p>
     </motion.div>

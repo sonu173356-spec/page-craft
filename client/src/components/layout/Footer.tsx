@@ -114,7 +114,7 @@ export default function Footer() {
                 {FOOTER_LINKS.dashboards?.map((link) => (
                   <li key={link.label}>
                     <Link
-                      href={link.href}
+                      href={`/login?redirect=${encodeURIComponent(link.href)}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-gray-300 hover:text-[#C5A55A] transition-colors text-sm flex items-center gap-1.5 font-medium"

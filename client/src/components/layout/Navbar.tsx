@@ -8,7 +8,7 @@ import { Menu, X, ChevronDown, BookOpen, PenTool, Globe, Printer, BookType, Spar
 import { Logo } from '@/components/ui/Logo';
 import { NAV_ITEMS, NavItem } from '@/lib/constants';
 
-// A mapping for dynamic icons if needed in the mega menu
+// A mapping for dynamic icons in the mega menu
 const iconMap: Record<string, React.ReactNode> = {
   'Publishing Plans': <BookOpen className="w-5 h-5" />,
   'Publishing Process': <CheckCircle2 className="w-5 h-5" />,
@@ -100,7 +100,7 @@ export default function Navbar() {
                   onMouseLeave={handleMouseLeave}
                 >
                   <Link
-                    href={item.href}
+                    href={item.isDashboard ? `/login?redirect=${encodeURIComponent(item.href)}` : item.href}
                     target={item.isDashboard ? '_blank' : undefined}
                     rel={item.isDashboard ? 'noopener noreferrer' : undefined}
                     className={`flex items-center text-sm font-medium transition-colors ${
@@ -126,32 +126,37 @@ export default function Navbar() {
                           transition={{ duration: 0.2 }}
                           className="absolute top-full left-1/2 -translate-x-1/2 pt-6 w-screen max-w-xl"
                         >
-                          <div className="bg-white rounded-xl shadow-xl ring-1 ring-black/5 overflow-hidden">
+                          <div className="bg-white rounded-xl shadow-xl ring-1 ring-black/5 overflow-hidden border border-gray-100">
                             <div className="p-6 grid grid-cols-2 gap-6">
-                              {item.children?.map((child) => (
-                                <Link
-                                  key={child.label}
-                                  href={child.href}
-                                  target={child.isDashboard || child.href.startsWith('/author') || child.href.startsWith('/admin') ? '_blank' : undefined}
-                                  rel={child.isDashboard || child.href.startsWith('/author') || child.href.startsWith('/admin') ? 'noopener noreferrer' : undefined}
-                                  className="flex items-start gap-4 p-3 rounded-lg hover:bg-[#FDFAF6] transition-colors group/item"
-                                >
-                                  <div className="flex-shrink-0 mt-1 text-[#C5A55A] group-hover/item:text-[#8B1A1A] transition-colors">
-                                    {iconMap[child.label] || <BookOpen className="w-5 h-5" />}
-                                  </div>
-                                  <div>
-                                    <h4 className="text-sm font-semibold text-gray-900 mb-1 group-hover/item:text-[#8B1A1A] transition-colors flex items-center gap-1">
-                                      {child.label}
-                                      {(child.isDashboard || child.href.startsWith('/author') || child.href.startsWith('/admin')) && (
-                                        <ExternalLink className="w-3 h-3 text-gray-400" />
-                                      )}
-                                    </h4>
-                                    <p className="text-xs text-gray-500 leading-snug">
-                                      {child.description}
-                                    </p>
-                                  </div>
-                                </Link>
-                              ))}
+                              {item.children?.map((child) => {
+                                const isDashboardTarget = child.isDashboard || child.href.startsWith('/author') || child.href.startsWith('/admin');
+                                const targetUrl = isDashboardTarget ? `/login?redirect=${encodeURIComponent(child.href)}` : child.href;
+
+                                return (
+                                  <Link
+                                    key={child.label}
+                                    href={targetUrl}
+                                    target={isDashboardTarget ? '_blank' : undefined}
+                                    rel={isDashboardTarget ? 'noopener noreferrer' : undefined}
+                                    className="flex items-start gap-4 p-3 rounded-lg hover:bg-[#FDFAF6] transition-colors group/item"
+                                  >
+                                    <div className="flex-shrink-0 mt-1 text-[#C5A55A] group-hover/item:text-[#8B1A1A] transition-colors">
+                                      {iconMap[child.label] || <BookOpen className="w-5 h-5" />}
+                                    </div>
+                                    <div>
+                                      <h4 className="text-sm font-semibold text-gray-900 mb-1 group-hover/item:text-[#8B1A1A] transition-colors flex items-center gap-1">
+                                        {child.label}
+                                        {isDashboardTarget && (
+                                          <ExternalLink className="w-3 h-3 text-gray-400" />
+                                        )}
+                                      </h4>
+                                      <p className="text-xs text-gray-500 leading-snug">
+                                        {child.description}
+                                      </p>
+                                    </div>
+                                  </Link>
+                                );
+                              })}
                             </div>
                           </div>
                         </motion.div>
@@ -166,7 +171,7 @@ export default function Navbar() {
           {/* CTA & Mobile Toggle */}
           <div className="flex items-center gap-4">
             <Link
-              href="/author/upload-book"
+              href="/login?redirect=/author/upload-book"
               target="_blank"
               rel="noopener noreferrer"
               className="hidden md:inline-flex items-center justify-center px-6 py-2.5 text-sm font-semibold text-white bg-[#8B1A1A] rounded-full hover:bg-[#722F37] transition-colors shadow-md hover:shadow-lg gap-1.5"
@@ -208,7 +213,7 @@ export default function Navbar() {
               ))}
               <div className="pt-6 border-t border-gray-100">
                 <Link
-                  href="/author/upload-book"
+                  href="/login?redirect=/author/upload-book"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center justify-center w-full px-6 py-3 text-base font-semibold text-white bg-[#8B1A1A] rounded-full hover:bg-[#722F37] transition-colors gap-2"
@@ -242,7 +247,7 @@ function MobileNavItem({
   if (!hasChildren) {
     return (
       <Link
-        href={item.href}
+        href={item.isDashboard ? `/login?redirect=${encodeURIComponent(item.href)}` : item.href}
         target={item.isDashboard ? '_blank' : undefined}
         rel={item.isDashboard ? 'noopener noreferrer' : undefined}
         className={`block px-4 py-2 text-base font-medium rounded-lg transition-colors ${
@@ -278,19 +283,24 @@ function MobileNavItem({
             className="overflow-hidden"
           >
             <div className="px-4 py-2 space-y-2 pl-8 border-l-2 border-[#FDFAF6] ml-4">
-              {item.children?.map((child) => (
-                <Link
-                  key={child.label}
-                  href={child.href}
-                  target={child.isDashboard || child.href.startsWith('/author') || child.href.startsWith('/admin') ? '_blank' : undefined}
-                  rel={child.isDashboard || child.href.startsWith('/author') || child.href.startsWith('/admin') ? 'noopener noreferrer' : undefined}
-                  className={`block py-2 text-sm transition-colors ${
-                    pathname === child.href ? 'text-[#8B1A1A] font-medium' : 'text-gray-600 hover:text-[#8B1A1A]'
-                  }`}
-                >
-                  {child.label}
-                </Link>
-              ))}
+              {item.children?.map((child) => {
+                const isDashboardTarget = child.isDashboard || child.href.startsWith('/author') || child.href.startsWith('/admin');
+                const targetUrl = isDashboardTarget ? `/login?redirect=${encodeURIComponent(child.href)}` : child.href;
+
+                return (
+                  <Link
+                    key={child.label}
+                    href={targetUrl}
+                    target={isDashboardTarget ? '_blank' : undefined}
+                    rel={isDashboardTarget ? 'noopener noreferrer' : undefined}
+                    className={`block py-2 text-sm transition-colors ${
+                      pathname === child.href ? 'text-[#8B1A1A] font-medium' : 'text-gray-600 hover:text-[#8B1A1A]'
+                    }`}
+                  >
+                    {child.label}
+                  </Link>
+                );
+              })}
             </div>
           </motion.div>
         )}
