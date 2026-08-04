@@ -1,5 +1,5 @@
 import OrderRequestsClient from '@/components/admin/OrderRequestsClient';
 
-export default function AdminOrdersPage() {
+export default function OrderRequestsPage() {
   return <OrderRequestsClient />;
 }
