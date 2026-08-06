@@ -1,4 +1,5 @@
 'use client';
+import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Check } from 'lucide-react';
 import { SectionHeading, Button } from '@/components/ui';
@@ -85,12 +86,14 @@ export default function PublishingPackages() {
                 ))}
               </ul>
               
-              <Button 
-                className={`w-full ${pkg.isPopular ? 'bg-[#8B1A1A] hover:bg-[#722F37] text-white' : 'bg-gray-100 text-[#1A1A2E] hover:bg-gray-200'} `}
-                size="lg"
-              >
-                Get Started
-              </Button>
+              <Link href="/publishing-plans" className="block w-full">
+                <Button 
+                  className={`w-full ${pkg.isPopular ? 'bg-[#8B1A1A] hover:bg-[#722F37] text-white' : 'bg-gray-100 text-[#1A1A2E] hover:bg-gray-200'} `}
+                  size="lg"
+                >
+                  Get Started
+                </Button>
+              </Link>
             </motion.div>
           ))}
         </div>

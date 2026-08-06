@@ -198,38 +198,50 @@ export default function MarketingServicesClient() {
       {/* 💳 Marketing Package Payment Modal */}
       <AnimatePresence>
         {selectedPkg && (
-          <div className="fixed inset-0 z-50 bg-black/65 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="fixed inset-0 z-50 bg-black/65 backdrop-blur-md flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl overflow-hidden relative space-y-5 border border-gray-100"
+              className="bg-white rounded-3xl max-w-2xl w-full p-6 sm:p-8 md:p-10 shadow-2xl relative space-y-6 border border-gray-100 my-auto max-h-[90vh] overflow-y-auto"
             >
               <button
                 onClick={() => setSelectedPkg(null)}
-                className="absolute top-4 right-4 p-2 bg-gray-100 hover:bg-gray-200 rounded-full text-gray-600 transition-colors"
+                className="absolute top-5 right-5 p-2.5 bg-gray-100 hover:bg-gray-200 rounded-full text-gray-600 transition-colors shadow-sm cursor-pointer z-10"
               >
-                <X size={18} />
+                <X size={20} />
               </button>
 
               {paymentSuccess ? (
                 /* Payment Success View */
-                <div className="text-center py-6 space-y-5">
-                  <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto shadow-inner">
-                    <Sparkles className="w-8 h-8 animate-bounce" />
+                <div className="text-center py-6 space-y-6">
+                  <div className="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto shadow-inner">
+                    <Sparkles className="w-10 h-10 animate-bounce" />
                   </div>
 
-                  <div className="space-y-1">
-                    <h3 className="text-2xl font-bold font-playfair text-[#1A1A2E]">Marketing Booked! 🚀</h3>
-                    <p className="text-xs text-gray-500">Transaction ID: <strong className="text-gray-900 font-mono">{txnId}</strong></p>
+                  <div className="space-y-2">
+                    <h3 className="text-2xl sm:text-3xl font-bold font-playfair text-[#1A1A2E]">Marketing Booked! 🚀</h3>
+                    <p className="text-sm text-gray-500">Transaction ID: <strong className="text-gray-900 font-mono text-base">{txnId}</strong></p>
                   </div>
 
-                  <div className="bg-emerald-50 border border-emerald-200 p-4 rounded-2xl text-left text-xs text-emerald-950 space-y-1.5">
-                    <span className="font-bold block text-emerald-900">Order Summary:</span>
-                    <p>• Marketing Package: <strong>{selectedPkg.name}</strong></p>
-                    <p>• Book Title: <strong>{bookTitle || 'My Published Book'}</strong></p>
-                    <p>• Amount Paid: <strong className="text-[#8B1A1A]">{selectedPkg.price}</strong></p>
-                    <p>• Author Name: <strong>{authorName || 'Published Author'}</strong></p>
+                  <div className="bg-emerald-50 border border-emerald-200 p-5 sm:p-6 rounded-2xl text-left text-sm text-emerald-950 space-y-2.5">
+                    <span className="font-bold block text-emerald-900 text-base border-b border-emerald-200/60 pb-2">Order Summary</span>
+                    <p className="flex justify-between">
+                      <span className="text-gray-600">Marketing Package:</span>
+                      <strong className="text-gray-900">{selectedPkg.name}</strong>
+                    </p>
+                    <p className="flex justify-between">
+                      <span className="text-gray-600">Book Title:</span>
+                      <strong className="text-gray-900">{bookTitle || 'My Published Book'}</strong>
+                    </p>
+                    <p className="flex justify-between">
+                      <span className="text-gray-600">Amount Paid:</span>
+                      <strong className="text-[#8B1A1A] font-bold text-base">{selectedPkg.price}</strong>
+                    </p>
+                    <p className="flex justify-between">
+                      <span className="text-gray-600">Author Name:</span>
+                      <strong className="text-gray-900">{authorName || 'Published Author'}</strong>
+                    </p>
                   </div>
 
                   <div className="pt-2">
@@ -237,148 +249,150 @@ export default function MarketingServicesClient() {
                       href="/author/dashboard"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="w-full py-3.5 bg-[#8B1A1A] hover:bg-[#722F37] text-white font-bold rounded-xl text-xs shadow-md transition-all flex items-center justify-center gap-2"
+                      className="w-full py-4 bg-[#8B1A1A] hover:bg-[#722F37] text-white font-bold rounded-2xl text-sm sm:text-base shadow-lg transition-all flex items-center justify-center gap-2.5"
                     >
-                      Track Campaign in Author Portal <ArrowRight className="w-4 h-4" />
+                      Track Campaign in Author Portal <ArrowRight className="w-5 h-5" />
                     </a>
                   </div>
                 </div>
               ) : (
                 /* Payment Modal Form */
-                <div className="space-y-4">
-                  <div className="border-b pb-3">
-                    <span className="px-2.5 py-0.5 bg-red-100 text-[#8B1A1A] text-[10px] font-bold rounded-full">Secure Checkout</span>
-                    <h3 className="text-xl font-bold font-playfair text-[#1A1A2E] mt-1">
+                <div className="space-y-6">
+                  <div className="border-b pb-4">
+                    <span className="px-3 py-1 bg-red-100 text-[#8B1A1A] text-xs font-bold rounded-full inline-block mb-2">Secure Checkout</span>
+                    <h3 className="text-2xl sm:text-3xl font-bold font-playfair text-[#1A1A2E]">
                       {selectedPkg.name}
                     </h3>
-                    <p className="text-xs text-gray-500">Total Payable: <strong className="text-[#8B1A1A] text-sm">{selectedPkg.price}</strong></p>
+                    <p className="text-sm text-gray-500 mt-1">
+                      Total Payable: <strong className="text-[#8B1A1A] text-lg font-bold ml-1">{selectedPkg.price}</strong>
+                    </p>
                   </div>
 
-                  <form onSubmit={handleProcessPayment} className="space-y-3.5 text-xs">
+                  <form onSubmit={handleProcessPayment} className="space-y-5">
                     {/* Inputs */}
-                    <div className="grid grid-cols-2 gap-3">
-                      <div className="space-y-1">
-                        <label className="font-bold text-gray-600">Author Full Name</label>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="space-y-1.5">
+                        <label className="block text-xs sm:text-sm font-bold text-gray-700">Author Full Name</label>
                         <input
                           type="text"
                           required
                           value={authorName}
                           onChange={e => setAuthorName(e.target.value)}
                           placeholder="e.g. Ananya Roy"
-                          className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-[#8B1A1A]/20"
+                          className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#8B1A1A]/20 focus:border-[#8B1A1A] transition-all"
                         />
                       </div>
-                      <div className="space-y-1">
-                        <label className="font-bold text-gray-600">Book Title</label>
+                      <div className="space-y-1.5">
+                        <label className="block text-xs sm:text-sm font-bold text-gray-700">Book Title</label>
                         <input
                           type="text"
                           required
                           value={bookTitle}
                           onChange={e => setBookTitle(e.target.value)}
                           placeholder="e.g. Shadows of Destiny"
-                          className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-[#8B1A1A]/20"
+                          className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#8B1A1A]/20 focus:border-[#8B1A1A] transition-all"
                         />
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-3">
-                      <div className="space-y-1">
-                        <label className="font-bold text-gray-600">Mobile Number</label>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="space-y-1.5">
+                        <label className="block text-xs sm:text-sm font-bold text-gray-700">Mobile Number</label>
                         <input
                           type="tel"
                           required
                           value={authorPhone}
                           onChange={e => setAuthorPhone(e.target.value)}
                           placeholder="+91 9876543210"
-                          className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-[#8B1A1A]/20"
+                          className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#8B1A1A]/20 focus:border-[#8B1A1A] transition-all"
                         />
                       </div>
-                      <div className="space-y-1">
-                        <label className="font-bold text-gray-600">Email Address</label>
+                      <div className="space-y-1.5">
+                        <label className="block text-xs sm:text-sm font-bold text-gray-700">Email Address</label>
                         <input
                           type="email"
                           required
                           value={authorEmail}
                           onChange={e => setAuthorEmail(e.target.value)}
                           placeholder="author@example.com"
-                          className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-[#8B1A1A]/20"
+                          className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#8B1A1A]/20 focus:border-[#8B1A1A] transition-all"
                         />
                       </div>
                     </div>
 
                     {/* Payment Tabs */}
-                    <div className="space-y-2 pt-1">
-                      <label className="font-bold text-gray-700 block">Select Payment Method:</label>
-                      <div className="grid grid-cols-4 gap-2 text-[10px] font-bold text-center">
+                    <div className="space-y-2.5 pt-1">
+                      <label className="block text-xs sm:text-sm font-bold text-gray-800">Select Payment Method:</label>
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs font-bold text-center">
                         <button
                           type="button"
                           onClick={() => setPaymentTab('upi')}
-                          className={`py-2 px-1 rounded-xl border flex flex-col items-center gap-1 transition-all ${
-                            paymentTab === 'upi' ? 'border-[#8B1A1A] bg-red-50 text-[#8B1A1A]' : 'border-gray-200 bg-gray-50 text-gray-600'
+                          className={`py-3 px-2 rounded-2xl border flex flex-col items-center gap-1.5 transition-all cursor-pointer ${
+                            paymentTab === 'upi' ? 'border-[#8B1A1A] bg-red-50/80 text-[#8B1A1A] ring-2 ring-[#8B1A1A]/20 shadow-sm' : 'border-gray-200 bg-gray-50 text-gray-600 hover:bg-gray-100'
                           }`}
                         >
-                          <QrCode className="w-4 h-4" /> UPI / QR
+                          <QrCode className="w-5 h-5" /> UPI / QR
                         </button>
                         <button
                           type="button"
                           onClick={() => setPaymentTab('card')}
-                          className={`py-2 px-1 rounded-xl border flex flex-col items-center gap-1 transition-all ${
-                            paymentTab === 'card' ? 'border-[#8B1A1A] bg-red-50 text-[#8B1A1A]' : 'border-gray-200 bg-gray-50 text-gray-600'
+                          className={`py-3 px-2 rounded-2xl border flex flex-col items-center gap-1.5 transition-all cursor-pointer ${
+                            paymentTab === 'card' ? 'border-[#8B1A1A] bg-red-50/80 text-[#8B1A1A] ring-2 ring-[#8B1A1A]/20 shadow-sm' : 'border-gray-200 bg-gray-50 text-gray-600 hover:bg-gray-100'
                           }`}
                         >
-                          <CreditCard className="w-4 h-4" /> Card
+                          <CreditCard className="w-5 h-5" /> Card
                         </button>
                         <button
                           type="button"
                           onClick={() => setPaymentTab('netbanking')}
-                          className={`py-2 px-1 rounded-xl border flex flex-col items-center gap-1 transition-all ${
-                            paymentTab === 'netbanking' ? 'border-[#8B1A1A] bg-red-50 text-[#8B1A1A]' : 'border-gray-200 bg-gray-50 text-gray-600'
+                          className={`py-3 px-2 rounded-2xl border flex flex-col items-center gap-1.5 transition-all cursor-pointer ${
+                            paymentTab === 'netbanking' ? 'border-[#8B1A1A] bg-red-50/80 text-[#8B1A1A] ring-2 ring-[#8B1A1A]/20 shadow-sm' : 'border-gray-200 bg-gray-50 text-gray-600 hover:bg-gray-100'
                           }`}
                         >
-                          <Building className="w-4 h-4" /> NetBanking
+                          <Building className="w-5 h-5" /> NetBanking
                         </button>
                         <button
                           type="button"
                           onClick={() => setPaymentTab('emi')}
-                          className={`py-2 px-1 rounded-xl border flex flex-col items-center gap-1 transition-all ${
-                            paymentTab === 'emi' ? 'border-[#8B1A1A] bg-red-50 text-[#8B1A1A]' : 'border-gray-200 bg-gray-50 text-gray-600'
+                          className={`py-3 px-2 rounded-2xl border flex flex-col items-center gap-1.5 transition-all cursor-pointer ${
+                            paymentTab === 'emi' ? 'border-[#8B1A1A] bg-red-50/80 text-[#8B1A1A] ring-2 ring-[#8B1A1A]/20 shadow-sm' : 'border-gray-200 bg-gray-50 text-gray-600 hover:bg-gray-100'
                           }`}
                         >
-                          <Clock className="w-4 h-4" /> EMI
+                          <Clock className="w-5 h-5" /> EMI
                         </button>
                       </div>
                     </div>
 
                     {/* Tab Panels */}
                     {paymentTab === 'upi' && (
-                      <div className="p-3 bg-gray-50 border border-gray-200 rounded-xl space-y-2 text-center">
-                        <p className="text-[11px] text-gray-600 font-medium">Scan QR Code using GPay, PhonePe, Paytm, or BHIM:</p>
-                        <div className="w-28 h-28 bg-white border border-gray-300 mx-auto rounded-lg flex items-center justify-center p-2">
-                          <img src="https://api.qrserver.com/v1/create-qr-code/?size=110x110&data=upi://pay?pa=pagecraft@upi" alt="UPI QR Code" className="w-full h-full object-contain" />
+                      <div className="p-4 bg-gray-50 border border-gray-200 rounded-2xl space-y-3 text-center">
+                        <p className="text-xs sm:text-sm text-gray-600 font-medium">Scan QR Code using GPay, PhonePe, Paytm, or BHIM:</p>
+                        <div className="w-36 h-36 bg-white border border-gray-300 mx-auto rounded-xl flex items-center justify-center p-2.5 shadow-sm">
+                          <img src="https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=upi://pay?pa=pagecraft@upi" alt="UPI QR Code" className="w-full h-full object-contain" />
                         </div>
                         <input
                           type="text"
                           placeholder="Or enter VPA ID (e.g. author@paytm)"
                           value={upiId}
                           onChange={e => setUpiId(e.target.value)}
-                          className="w-full px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-xs"
+                          className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#8B1A1A]/20"
                         />
                       </div>
                     )}
 
                     {paymentTab === 'card' && (
-                      <div className="p-3 bg-gray-50 border border-gray-200 rounded-xl space-y-2">
-                        <input type="text" placeholder="Card Number (4532 •••• •••• 8892)" className="w-full px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-xs" required />
-                        <div className="grid grid-cols-2 gap-2">
-                          <input type="text" placeholder="MM/YY" className="px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-xs" required />
-                          <input type="password" maxLength={3} placeholder="CVV" className="px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-xs" required />
+                      <div className="p-4 bg-gray-50 border border-gray-200 rounded-2xl space-y-3">
+                        <input type="text" placeholder="Card Number (4532 •••• •••• 8892)" className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#8B1A1A]/20" required />
+                        <div className="grid grid-cols-2 gap-3">
+                          <input type="text" placeholder="MM/YY" className="px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#8B1A1A]/20" required />
+                          <input type="password" maxLength={3} placeholder="CVV" className="px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#8B1A1A]/20" required />
                         </div>
                       </div>
                     )}
 
                     {paymentTab === 'netbanking' && (
-                      <div className="p-3 bg-gray-50 border border-gray-200 rounded-xl space-y-2">
-                        <select className="w-full px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-xs font-medium">
+                      <div className="p-4 bg-gray-50 border border-gray-200 rounded-2xl space-y-3">
+                        <select className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm font-medium outline-none focus:ring-2 focus:ring-[#8B1A1A]/20">
                           <option>HDFC Bank</option>
                           <option>State Bank of India (SBI)</option>
                           <option>ICICI Bank</option>
@@ -389,9 +403,15 @@ export default function MarketingServicesClient() {
                     )}
 
                     {paymentTab === 'emi' && (
-                      <div className="p-3 bg-gray-50 border border-gray-200 rounded-xl space-y-1 text-gray-700 text-[11px]">
-                        <p>• 3 Months No-Cost EMI: <strong>₹{(selectedPkg.amount / 3).toFixed(0)}/mo</strong></p>
-                        <p>• 6 Months Easy EMI: <strong>₹{(selectedPkg.amount / 6).toFixed(0)}/mo</strong></p>
+                      <div className="p-4 bg-[#8B1A1A]/5 border border-[#8B1A1A]/15 rounded-2xl space-y-2 text-gray-800 text-xs sm:text-sm">
+                        <p className="flex justify-between items-center">
+                          <span>• 3 Months No-Cost EMI:</span>
+                          <strong className="text-[#8B1A1A] font-bold text-base">₹{(selectedPkg.amount / 3).toFixed(0)}/mo</strong>
+                        </p>
+                        <p className="flex justify-between items-center">
+                          <span>• 6 Months Easy EMI:</span>
+                          <strong className="text-[#8B1A1A] font-bold text-base">₹{(selectedPkg.amount / 6).toFixed(0)}/mo</strong>
+                        </p>
                       </div>
                     )}
 
@@ -399,7 +419,7 @@ export default function MarketingServicesClient() {
                       <button
                         type="submit"
                         disabled={isProcessing}
-                        className="w-full py-3 bg-[#8B1A1A] hover:bg-[#722F37] text-white font-bold rounded-xl text-xs shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
+                        className="w-full py-4 bg-[#8B1A1A] hover:bg-[#722F37] text-white font-bold rounded-2xl text-sm sm:text-base shadow-lg shadow-[#8B1A1A]/20 transition-all flex items-center justify-center gap-2 cursor-pointer"
                       >
                         {isProcessing ? 'Verifying Campaign Payment...' : `Pay ${selectedPkg.price} & Launch Campaign`}
                       </button>
