@@ -31,7 +31,18 @@ export default function AuthorBooksPage() {
       const storedStr = localStorage.getItem('pagecraft_user_books');
       if (storedStr) {
         const customBooks = JSON.parse(storedStr);
-        setBooksList([...customBooks, ...initialBooks]);
+        const fallbackCover = 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?q=80&w=300&auto=format&fit=crop';
+        
+        // Clean up expired blob: URLs from previous browser sessions
+        const sanitized = customBooks.map((b: any) => {
+          if (!b.image || typeof b.image !== 'string' || b.image.startsWith('blob:')) {
+            return { ...b, image: fallbackCover };
+          }
+          return b;
+        });
+
+        localStorage.setItem('pagecraft_user_books', JSON.stringify(sanitized));
+        setBooksList([...sanitized, ...initialBooks]);
       }
     } catch (err) {
       console.warn('LocalStorage load error:', err);
@@ -123,7 +134,14 @@ export default function AuthorBooksPage() {
         {filteredBooks.map(book => (
           <div key={book.id} className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden group hover:shadow-md transition-all">
             <div className="h-48 bg-gray-100 relative overflow-hidden flex justify-center items-center">
-              <img src={book.image} alt={book.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+              <img 
+                src={book.image} 
+                alt={book.title} 
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?q=80&w=300&auto=format&fit=crop';
+                }}
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+              />
               <div className="absolute top-3 right-3">
                 <span className={`px-3 py-1 rounded-full text-xs font-bold shadow-sm ${
                   book.status === 'Published' ? 'bg-green-100 text-green-700' : book.status === 'Under Review' ? 'bg-amber-100 text-amber-800' : 'bg-gray-100 text-gray-700'

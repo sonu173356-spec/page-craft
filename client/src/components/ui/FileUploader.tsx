@@ -47,16 +47,50 @@ export function FileUploader({ label, accept, type, onUploadComplete }: FileUplo
     if (file.type.startsWith('image/')) {
       const reader = new FileReader();
       reader.onload = (event) => {
-        finishUpload(event.target?.result as string || URL.createObjectURL(file));
-      };
-      reader.onerror = () => {
-        finishUpload(URL.createObjectURL(file));
+        const rawResult = event.target?.result as string;
+        if (!rawResult) {
+          finishUpload('https://images.unsplash.com/photo-1544947950-fa07a98d237f?q=80&w=300&auto=format&fit=crop');
+          return;
+        }
+
+        const img = new Image();
+        img.onload = () => {
+          try {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            const maxDim = 500;
+            let width = img.width;
+            let height = img.height;
+
+            if (width > height) {
+              if (width > maxDim) {
+                height *= maxDim / width;
+                width = maxDim;
+              }
+            } else {
+              if (height > maxDim) {
+                width *= maxDim / height;
+                height = maxDim;
+              }
+            }
+
+            canvas.width = width;
+            canvas.height = height;
+            ctx?.drawImage(img, 0, 0, width, height);
+            const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.85);
+            finishUpload(compressedDataUrl);
+          } catch (err) {
+            finishUpload(rawResult);
+          }
+        };
+        img.onerror = () => finishUpload(rawResult);
+        img.src = rawResult;
       };
       reader.readAsDataURL(file);
     } else {
       setTimeout(() => {
-        finishUpload(URL.createObjectURL(file));
-      }, 600);
+        finishUpload('https://images.unsplash.com/photo-1544947950-fa07a98d237f?q=80&w=300&auto=format&fit=crop');
+      }, 500);
     }
   };
 
