@@ -2,731 +2,399 @@
 
 import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  LayoutDashboard, BookOpen, ShoppingBag, Users, DollarSign, Megaphone, 
-  Settings, Search, Filter, RefreshCw, CheckCircle2, Clock, AlertCircle, 
-  Plus, Edit3, Trash2, Eye, ExternalLink, ShieldCheck, Sparkles, Save, X, 
-  ArrowUpRight, ArrowDownRight, TrendingUp, Check, ChevronRight, FileText, 
-  Printer, Truck, UserCheck, HardDrive, CreditCard, Layers, Globe, FolderPlus,
-  Download, ShieldAlert, Key, UserPlus, Lock, Database, FileSpreadsheet
+  LayoutGrid, User, Table, BookOpen, LogOut, ChevronDown, 
+  Search, Edit, MessageCircle, SlidersHorizontal, Check, 
+  FileSpreadsheet
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 
-export interface AuthorBook {
-  id: string;
-  title: string;
-  subtitle?: string;
-  authorName: string;
-  category: string;
-  format: 'Paperback' | 'Hardcover' | 'eBook';
-  price: number;
-  royaltyRate: number;
-  status: 'Published' | 'Under Review' | 'Draft';
-  isbn: string;
-  publishedDate: string;
-  coverImage: string;
-  salesCount: number;
-  description: string;
-  driveFolderUrl?: string;
-}
-
-const INITIAL_BOOKS: AuthorBook[] = [
-  {
-    id: 'pc-101',
-    title: 'The Silent Echo',
-    subtitle: 'A Psychological Suspense Thriller',
-    authorName: 'Eleanor Vance',
-    category: 'Fiction',
-    format: 'Paperback',
-    price: 399,
-    royaltyRate: 100,
-    status: 'Published',
-    isbn: '978-93-89021-12-4',
-    publishedDate: '2024-01-15',
-    coverImage: 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?q=80&w=400&auto=format&fit=crop',
-    salesCount: 1245,
-    description: 'A gripping psychological thriller that will keep you on the edge of your seat until the final breathtaking page.',
-    driveFolderUrl: 'https://drive.google.com/drive/folders/pagecraft-echo-101',
-  },
-  {
-    id: 'pc-102',
-    title: 'Midnight Dreams',
-    subtitle: 'Poetry of Love & Loss',
-    authorName: 'Sarah Jenkins',
-    category: 'Poetry',
-    format: 'Hardcover',
-    price: 299,
-    royaltyRate: 100,
-    status: 'Under Review',
-    isbn: '978-93-89021-45-2',
-    publishedDate: '2024-02-10',
-    coverImage: 'https://images.unsplash.com/photo-1512820790803-83ca734da794?q=80&w=400&auto=format&fit=crop',
-    salesCount: 420,
-    description: 'A soulful collection of contemporary verses exploring modern love, heartbreak, and healing.',
-    driveFolderUrl: 'https://drive.google.com/drive/folders/pagecraft-dreams-102',
-  },
-  {
-    id: 'pc-103',
-    title: 'Startup Unlocked',
-    subtitle: 'From 0 to $1M ARR in 12 Months',
-    authorName: 'Marcus Sterling',
-    category: 'Business',
-    format: 'eBook',
-    price: 499,
-    royaltyRate: 100,
-    status: 'Published',
-    isbn: '978-93-89021-99-5',
-    publishedDate: '2023-11-20',
-    coverImage: 'https://images.unsplash.com/photo-1589829085413-56de8ae18c73?q=80&w=400&auto=format&fit=crop',
-    salesCount: 3100,
-    description: 'The ultimate zero-fluff playbook for founders and bootstrappers building venture-scalable software businesses.',
-    driveFolderUrl: 'https://drive.google.com/drive/folders/pagecraft-startup-103',
-  },
+// 1. ALL USERS / AUTHORS DATA
+const AUTHORS_LIST = [
+  { name: 'Ana', userType: 'Author / 1 books limit', date: 'Jun 5, 2024', email: 'ana.alcaza@zeroqode.com' },
+  { name: 'test ana', userType: 'Author / 10 books limit', date: 'Jun 6, 2024', email: 'alcazaana@gmail.com' },
+  { name: 'aliek', userType: 'Author / 10 books limit', date: 'Jun 6, 2024', email: 'alexeigro@gmail.com' },
+  { name: 'Afaam Q.', userType: 'Author / 1 books limit', date: 'Jun 11, 2024', email: 'alexeigro++tr@gmail.com' },
+  { name: 'Afaam Q.', userType: 'Author / 1 books limit', date: 'Jun 11, 2024', email: 'alexeigro++455@gmail.com' },
+  { name: 'Alik', userType: 'Author / 1 books limit', date: 'Jun 11, 2024', email: 'alexeigro++rrr@gmail.com' },
 ];
 
-function DashboardContent() {
+// 2. VIEWS (SUPER ADMIN 19642) DATA
+const VIEWS_SUB_MENUS = [
+  'Review',
+  'BBP India - Published',
+  'BBP Intl - In Review',
+  'BBP Intl - Published',
+  'GD+21+CR Ind - Review',
+  'GD+21+CR Ind - Published',
+  'GD+21+CR Intl - Review',
+  'GD+21+CR Intl - Published',
+  'GED Ind - In Review',
+  'GED Ind - Published',
+  'GED Intl - In Review',
+  'GED Intl - Published',
+  '21 EDA Intl - In Review',
+  'Free Intl - In Review',
+];
+
+const VIEWS_BOOKS_DATA = [
+  { title: 'Eta Hae', email: 'wathoreshubhra263@gmail.com', author: 'Shubhra Wathore', address: 'Shri purnima...', country: 'India', cover: 'bg-orange-100' },
+  { title: 'Red string', email: 'suyasha.gosavi29@gmail.com', author: 'Suyasha Gosavi', address: 'flat no. 104...', country: 'India', cover: 'bg-red-100' },
+  { title: 'Paper Luna', email: 'sugandhagupta23@hotmail.com', author: 'Sugandha Gupta', address: 'India', country: 'India', cover: 'bg-pink-200' },
+  { title: "Say 'Yes' to Life", email: 'pratikmiss@gmail.com', author: 'Pratiksha Bhatt', address: '605', country: 'India', cover: 'bg-gray-100' },
+  { title: 'Whispers of Enchantment', email: 'divyashriade@gmail.com', author: 'Divyashri...', address: 'Tukai Darshan...', country: 'India', cover: 'bg-amber-100' },
+  { title: 'Conversations With The...', email: 'namratasingh.ns@gmail.com', author: 'NAMRATA SINGH', address: 'Flat No. 32, Tower...', country: 'India', cover: 'bg-blue-100' },
+  { title: 'Ink', email: 'aasthasharma2214@gmail.com', author: 'Aastha Sharma', address: 'Gulmohar colony...', country: 'India', cover: 'bg-stone-100' },
+];
+
+// 3. AUTHOR COPIES ORDERS DATA
+const AUTHOR_COPIES_DATA = [
+  { id: 'BLP12136B', email: 'hashmijazan@gmail.com', name: 'Nilofer', title: 'Nilu aur...', isbn: '9789376420629', count: 24, address: 'Civil lines...', status: 'Paid', amount: 'INR 2203.2', phone: '9844668122' },
+  { id: 'BLP12134B', email: 'pba472@aol.com', name: 'Gram P Paul', title: 'Reflections...', isbn: '9789376420056', count: 24, address: '73 Ideal...', status: 'Paid', amount: 'USD 164.16', phone: '5702040411', isHighlight: true },
+  { id: 'BLP12132B', email: 'ritikgautam072@gmail.com', name: 'Ritik Gautam', title: 'Still We Walk', isbn: '9789375100393', count: 24, address: 'Tiwari...', status: 'Paid', amount: 'INR 2592', phone: '9140378733' },
+  { id: 'BLP12130B', email: 'ashmiahuwalia@gmail.com', name: 'Ashmi Ahluwalia', title: 'Entangled', isbn: '9789376423187', count: 24, address: 'B95 Sector...', status: 'Paid', amount: 'INR 2462.4', phone: '9198736299' },
+  { id: 'BLP12128B', email: 'naziafarooq409@gmail.com', name: 'Nazia Farooq', title: 'What if we...', isbn: '9789376429530', count: 24, address: 'Srinagar...', status: 'Paid', amount: 'INR 3787.2', phone: '7006697844' },
+  { id: 'BLP12126B', email: 'saileeb@gmail.com', name: 'Sailee Brahme', title: 'Jazbaaton...', isbn: '9789372138931', count: 28, address: '21 Para...', status: 'Paid', amount: 'INR 2658.4', phone: '9960257355' },
+  { id: 'BLP12125B', email: 'mathur.1992@gmail.com', name: 'Prakhar Mohan Mathur', title: 'Ek Adhoori...', isbn: '9789376426430', count: 24, address: 'Flat 703...', status: 'Paid', amount: 'INR 2404.8', phone: '9873056911' },
+  { id: 'BLP12123B', email: 'manali.amruta@gmail.com', name: 'Anish Gokhale', title: 'Bard of India', isbn: '9789375435747', count: 24, address: 'D1202...', status: 'Paid', amount: 'INR 2318.4', phone: '9096895477' },
+  { id: 'BLP12121B', email: 'healthhackerz@gmail.com', name: 'Mridula K R', title: 'From The...', isbn: '9789376429868', count: 24, address: 'R4-A/G, G...', status: 'Paid', amount: 'INR 2620.8', phone: '9480429288' },
+];
+
+// 4. ADD-ONS DATA
+const ADD_ONS_DATA = [
+  { email: 'sreekumar.namboodiri@gmail.com', name: 'Sreekumar Maranghat Sambhu', title: 'The Grammar of...', isbn: '9789375272533', phone: '8129969019', country: 'India', date: '14/03/26' },
+  { email: 'sasdmalik@gmail.com', name: 'Saras Malik', title: 'Gratitude', isbn: '9789375279853', phone: '9818124327', country: 'India', date: '13/03/26' },
+  { email: 'siddharthnahar@hotmail.com', name: 'Siddharth Nahar', title: 'Love Written in the...', isbn: '9789375275527', phone: '9783322747', country: 'India', date: '12/03/26' },
+  { email: 'joanna.ann.thomas@gmail.com', name: 'Ivana Rohan Mathews', title: 'Whispers Beneath...', isbn: '9789375272830', phone: '9820238115', country: 'India', date: '12/03/26' },
+  { email: 'reetbarki@gmail.com', name: 'ऋतु बर्की', title: 'बुने हुए ख्वाब', isbn: '9789369534982', phone: '7988788106', country: 'India', date: '11/03/26' },
+  { email: 'amalavs744@gmail.com', name: 'Amala V S', title: 'THYSELF', isbn: '9789375107491', phone: '8590324223', country: 'India', date: '11/03/26' },
+  { email: 'himani.hemu.bisht@gmail.com', name: 'Dr. Himani Bisht', title: 'Echoes Of A Living...', isbn: '9789373143606', phone: '9711173709', country: 'India', date: '10/03/26' },
+  { email: 'amagrande.amanda@gmail.com', name: 'Earra Stonewood', title: '"Radical"...', isbn: '9781807158071', phone: '7754324086', country: 'United States', date: '09/03/26' },
+  { email: 'drvs390@gmail.com', name: 'VAISHNAVI SHARMA', title: 'हर कोना कुछ कहता है', isbn: '9781807158835', phone: '9810605474', country: 'India', date: '09/03/26' },
+];
+
+function BookLeafDashboard() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  // Active Menu Tab state synchronized with ?menu=
-  const menuFromUrl = searchParams.get('menu') || 'Dashboard';
-  const [activeMenu, setActiveMenu] = useState(menuFromUrl);
+  const menuParam = searchParams.get('menu') || 'Dashboard';
+  const [activeTab, setActiveTab] = useState(menuParam);
+  const [selectedViewsSubMenu, setSelectedViewsSubMenu] = useState('GD+21+CR Intl - Review');
+  const [activeAddOnSubTab, setActiveAddOnSubTab] = useState('Copyright');
+
+  // Search filters
+  const [authorSearchName, setAuthorSearchName] = useState('');
+  const [authorSearchEmail, setAuthorSearchEmail] = useState('');
+  const [viewsSearch, setViewsSearch] = useState('');
+  const [copiesSearch, setCopiesSearch] = useState('');
 
   useEffect(() => {
-    if (menuFromUrl) {
-      setActiveMenu(menuFromUrl);
+    if (menuParam) {
+      setActiveTab(menuParam);
     }
-  }, [menuFromUrl]);
+  }, [menuParam]);
 
-  const handleMenuChange = (menuName: string) => {
-    setActiveMenu(menuName);
-    router.push(`/admin/internal-dashboard?menu=${encodeURIComponent(menuName)}`);
+  const handleTabChange = (tab: string) => {
+    setActiveTab(tab);
+    router.push(`/admin/internal-dashboard?menu=${encodeURIComponent(tab)}`);
   };
 
-  // Auth state
-  const [userRole, setUserRole] = useState<'SUPER_ADMIN' | 'ADMIN' | 'MANAGER' | 'EDITOR' | 'FINANCE' | 'SUPPORT' | 'EMPLOYEE'>('SUPER_ADMIN');
-  const [userEmail, setUserEmail] = useState('admin@thepagecraft.com');
-
-  // State Data
-  const [books, setBooks] = useState<AuthorBook[]>(INITIAL_BOOKS);
-  const [activityLogs, setActivityLogs] = useState<any[]>([]);
-  const [teamMembers, setTeamMembers] = useState<any[]>([]);
-  const [backupsList, setBackupsList] = useState<any[]>([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState('All');
-  const [isSyncing, setIsSyncing] = useState(false);
-
-  // Modals state
-  const [editingBook, setEditingBook] = useState<AuthorBook | null>(null);
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [isDriveModalOpen, setIsDriveModalOpen] = useState(false);
-  const [isTeamModalOpen, setIsTeamModalOpen] = useState(false);
-  const [isLogsModalOpen, setIsLogsModalOpen] = useState(false);
-  const [selectedDriveBook, setSelectedDriveBook] = useState<AuthorBook | null>(null);
-  const [driveStructure, setDriveStructure] = useState<any | null>(null);
-
-  // Form states
-  const [formState, setFormState] = useState<Partial<AuthorBook>>({});
-  const [newTeamState, setNewTeamState] = useState({ name: '', email: '', password: '', role: 'EDITOR', phone: '' });
-
-  // Fetch live API data on mount
-  useEffect(() => {
-    fetch('/api/auth/me')
-      .then(res => res.json())
-      .then(data => {
-        if (data.user) {
-          setUserRole(data.user.role || 'SUPER_ADMIN');
-          setUserEmail(data.user.email || 'admin@thepagecraft.com');
-        }
-      })
-      .catch(() => {});
-
-    fetch('/api/activity-logs')
-      .then(res => res.json())
-      .then(data => {
-        if (data.logs) setActivityLogs(data.logs);
-      })
-      .catch(() => {});
-
-    fetch('/api/team')
-      .then(res => res.json())
-      .then(data => {
-        if (data.members) setTeamMembers(data.members);
-      })
-      .catch(() => {});
-
-    fetch('/api/backup')
-      .then(res => res.json())
-      .then(data => {
-        if (data.backups) setBackupsList(data.backups);
-      })
-      .catch(() => {});
-  }, []);
-
-  const handleSyncWithMainWebsite = () => {
-    setIsSyncing(true);
-    setTimeout(() => {
-      setIsSyncing(false);
-      toast.success('Main Website Bookstore API synced successfully! All live changes deployed.');
-    }, 1200);
-  };
-
-  const handleOpenGoogleDrive = async (book: AuthorBook) => {
-    setSelectedDriveBook(book);
-    setIsDriveModalOpen(true);
-    setDriveStructure(null);
-
-    try {
-      const res = await fetch('/api/gdrive', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ bookTitle: book.title }),
-      });
-      const data = await res.json();
-      if (data.driveFolder) {
-        setDriveStructure(data.driveFolder);
-      }
-    } catch (err) {
-      toast.error('Could not load Drive folders');
-    }
-  };
-
-  const handleCreateTeamMember = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (userRole !== 'SUPER_ADMIN') {
-      toast.error('Permission Denied. Only Super Admin can create team members.');
-      return;
-    }
-
-    try {
-      const res = await fetch('/api/team', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newTeamState),
-      });
-      const data = await res.json();
-      if (data.error) {
-        toast.error(data.error);
-        return;
-      }
-
-      toast.success(`Created team user "${newTeamState.name}" with role ${newTeamState.role}!`);
-      setIsTeamModalOpen(false);
-      setNewTeamState({ name: '', email: '', password: '', role: 'EDITOR', phone: '' });
-
-      // Refresh team
-      fetch('/api/team').then(r => r.json()).then(d => d.members && setTeamMembers(d.members));
-    } catch (err) {
-      toast.error('Error creating team member');
-    }
-  };
-
-  const handleTriggerBackup = async () => {
-    try {
-      const res = await fetch('/api/backup', { method: 'POST' });
-      const data = await res.json();
-      if (data.backup) {
-        toast.success(`🎉 Manual Database Backup "${data.backup.backupName}" generated!`);
-        fetch('/api/backup').then(r => r.json()).then(d => d.backups && setBackupsList(d.backups));
-      }
-    } catch (err) {
-      toast.error('Error generating backup');
-    }
-  };
-
-  const handleExportCsv = () => {
-    window.open('/api/analytics?format=csv', '_blank');
-    toast.success('Downloading Sales & Revenue Analytics CSV...');
-  };
-
-  const handleOpenEdit = (book: AuthorBook) => {
-    setEditingBook(book);
-    setFormState(book);
-  };
-
-  const handleSaveEdit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!editingBook) return;
-
-    setBooks(prev => prev.map(b => (b.id === editingBook.id ? { ...b, ...formState } as AuthorBook : b)));
-    toast.success(`Successfully updated "${formState.title}" and synced with main website!`);
-    setEditingBook(null);
-  };
-
-  const handleCreateNew = (e: React.FormEvent) => {
-    e.preventDefault();
-    const newBook: AuthorBook = {
-      id: `pc-${Date.now().toString().slice(-4)}`,
-      title: formState.title || 'Untitled Book',
-      subtitle: formState.subtitle || '',
-      authorName: formState.authorName || 'Author Name',
-      category: formState.category || 'Fiction',
-      format: (formState.format as any) || 'Paperback',
-      price: Number(formState.price) || 399,
-      royaltyRate: 100,
-      status: (formState.status as any) || 'Published',
-      isbn: formState.isbn || `978-93-${Math.floor(100000 + Math.random() * 900000)}`,
-      publishedDate: new Date().toISOString().split('T')[0],
-      coverImage: formState.coverImage || 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?q=80&w=400&auto=format&fit=crop',
-      salesCount: 0,
-      description: formState.description || 'No description provided.',
-    };
-
-    setBooks([newBook, ...books]);
-    toast.success(`Created new author book "${newBook.title}" and published live!`);
-    setIsCreateModalOpen(false);
-    setFormState({});
-  };
-
-  const handleDelete = (id: string, title: string) => {
-    if (confirm(`Are you sure you want to remove "${title}" from the main website?`)) {
-      setBooks(prev => prev.filter(b => b.id !== id));
-      toast.success(`Removed "${title}" from platform.`);
-    }
-  };
-
-  const filteredBooks = books.filter(b => {
-    const matchesSearch = b.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                          b.authorName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          b.isbn.includes(searchTerm);
-    const matchesStatus = statusFilter === 'All' || b.status === statusFilter;
-    return matchesSearch && matchesStatus;
-  });
-
-  const sidebarMenuItems = [
-    { name: 'Dashboard', icon: LayoutDashboard, badge: undefined },
-    { name: 'Books', icon: BookOpen, badge: books.length },
-    { name: 'Orders', icon: ShoppingBag, badge: '4' },
-    { name: 'Authors', icon: Users, badge: '980' },
-    { name: 'Royalties', icon: DollarSign, badge: '100%' },
-    { name: 'Marketing', icon: Megaphone, badge: 'Active' },
-    { name: 'Settings', icon: Settings, badge: undefined },
+  const navItems = [
+    { name: 'Dashboard', icon: LayoutGrid },
+    { name: 'All Users', icon: User },
+    { name: 'Views', icon: Table },
+    { name: 'Author Copies', icon: BookOpen },
+    { name: 'Add-Ons', icon: LayoutGrid },
   ];
 
   return (
-    <div className="min-h-screen bg-[#F8F9FC] flex flex-col lg:flex-row font-sans text-gray-800">
-      {/* 🔴 Left Sidebar Navigation */}
-      <aside className="w-full lg:w-64 bg-[#1A1A2E] text-white shrink-0 flex flex-col justify-between border-r border-gray-800 shadow-xl">
+    <div className="min-h-screen bg-[#FAF8F5] flex flex-col md:flex-row font-sans text-gray-800 antialiased relative selection:bg-[#FF4D6D] selection:text-white">
+      {/* 🔴 Exact Left Sidebar */}
+      <aside className="w-full md:w-56 bg-[#FBF9F7] border-r border-[#EFE8E2] shrink-0 flex flex-col justify-between p-4 min-h-screen">
         <div>
-          {/* Brand Header */}
-          <div className="p-6 border-b border-gray-800/80 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 bg-[#8B1A1A] rounded-xl flex items-center justify-center font-bold text-white shadow-md">
-                PC
-              </div>
-              <div>
-                <h2 className="font-playfair font-bold text-lg text-white leading-tight">Page Craft</h2>
-                <p className="text-[10px] text-[#C5A55A] font-bold uppercase tracking-wider">Internal Operations</p>
-              </div>
+          {/* Exact Brand Header */}
+          <div className="flex items-center gap-3 px-2 py-4 mb-6">
+            <div className="w-8 h-8 bg-[#FF4D6D] rounded flex items-center justify-center text-white font-bold text-lg shadow-sm">
+              /
+            </div>
+            <div>
+              <h1 className="font-serif font-bold text-base text-gray-900 leading-tight">
+                BookLeaf
+              </h1>
+              <h2 className="font-serif font-bold text-sm text-gray-800 leading-tight">
+                Publishing
+              </h2>
+              <p className="text-[9px] text-gray-500 font-medium tracking-tight">
+                India | USA | UK
+              </p>
             </div>
           </div>
 
-          {/* User Role Badge */}
-          <div className="p-4 bg-white/5 border-b border-gray-800 flex items-center justify-between text-xs">
-            <div className="flex items-center gap-2">
-              <ShieldCheck className="w-4 h-4 text-[#C5A55A]" />
-              <span className="font-bold text-gray-200">{userEmail.split('@')[0]}</span>
-            </div>
-            <span className="px-2 py-0.5 bg-[#8B1A1A] text-white text-[10px] font-bold rounded-full">
-              {userRole}
-            </span>
-          </div>
-
-          {/* Navigation Links */}
-          <nav className="p-4 space-y-1.5">
-            <div className="px-3 py-2 text-[10px] font-bold text-gray-400 uppercase tracking-widest">
-              Ops Navigation
-            </div>
-            {sidebarMenuItems.map((item) => {
+          {/* Nav Items */}
+          <nav className="space-y-1">
+            {navItems.map((item) => {
               const Icon = item.icon;
-              const isActive = activeMenu === item.name;
+              const isActive = activeTab === item.name;
               return (
                 <button
                   key={item.name}
-                  onClick={() => handleMenuChange(item.name)}
-                  className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                  onClick={() => handleTabChange(item.name)}
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all text-left cursor-pointer ${
                     isActive
-                      ? 'bg-[#8B1A1A] text-white shadow-lg shadow-[#8B1A1A]/30 font-bold'
-                      : 'text-gray-400 hover:text-white hover:bg-white/5'
+                      ? 'bg-[#EFE5E0] text-gray-900 font-bold shadow-xs'
+                      : 'text-gray-700 hover:bg-[#F5EBE6] hover:text-gray-900'
                   }`}
                 >
-                  <div className="flex items-center gap-3">
-                    <Icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-gray-400'}`} />
-                    <span>{item.name}</span>
-                  </div>
-                  {item.badge && (
-                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                      isActive ? 'bg-white/20 text-white' : 'bg-gray-800 text-gray-300'
-                    }`}>
-                      {item.badge}
-                    </span>
-                  )}
+                  <Icon className="w-4 h-4 text-gray-600 shrink-0" />
+                  <span>{item.name}</span>
                 </button>
               );
             })}
           </nav>
         </div>
 
-        {/* Server & API Status Footer */}
-        <div className="p-4 m-4 bg-white/5 rounded-2xl border border-white/10 space-y-2">
-          <div className="flex items-center justify-between text-xs">
-            <span className="text-gray-400">Database Engine:</span>
-            <span className="text-green-400 font-bold text-[11px] flex items-center gap-1">
-              <Database className="w-3 h-3" /> Prisma PostgreSQL
-            </span>
-          </div>
-          <p className="text-[11px] text-gray-400">JWT Auth & RBAC Active</p>
+        {/* Exact Logout Button at bottom */}
+        <div className="pt-6">
+          <button
+            onClick={() => {
+              toast.success('Logged out successfully');
+              router.push('/login');
+            }}
+            className="w-full border border-[#FF4D6D] text-[#FF4D6D] hover:bg-[#FF4D6D]/10 rounded-xl py-2.5 px-4 flex items-center justify-center gap-2 text-sm font-bold transition-colors cursor-pointer"
+          >
+            <LogOut className="w-4 h-4" />
+            <span>Logout</span>
+          </button>
         </div>
       </aside>
 
-      {/* 🟢 Main Operations Body */}
-      <main className="flex-1 p-4 sm:p-6 lg:p-8 space-y-8 overflow-y-auto">
-        {/* Top Operational Action Bar */}
-        <div className="bg-white p-4 sm:p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <div>
-            <div className="flex items-center gap-2 text-xs font-semibold text-gray-400">
-              <span>Internal Control Panel</span>
-              <ChevronRight className="w-3.5 h-3.5" />
-              <span className="text-[#8B1A1A] font-bold">{activeMenu} Menu</span>
-            </div>
-            <h1 className="text-2xl sm:text-3xl font-bold font-playfair text-[#1A1A2E] mt-1">
-              Internal Control Panel — {activeMenu}
-            </h1>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-2.5">
-            <button
-              onClick={() => setIsLogsModalOpen(true)}
-              className="flex items-center gap-1.5 px-3.5 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs rounded-xl transition-all cursor-pointer"
-            >
-              <FileText className="w-4 h-4 text-[#8B1A1A]" />
-              Activity Logs
-            </button>
-
-            <button
-              onClick={() => setIsTeamModalOpen(true)}
-              className="flex items-center gap-1.5 px-3.5 py-2.5 bg-blue-50 hover:bg-blue-100 text-blue-900 font-bold text-xs rounded-xl transition-all cursor-pointer border border-blue-200"
-            >
-              <UserPlus className="w-4 h-4 text-blue-700" />
-              Team Management
-            </button>
-
-            <button
-              onClick={handleSyncWithMainWebsite}
-              disabled={isSyncing}
-              className="flex items-center gap-1.5 px-3.5 py-2.5 bg-[#C5A55A] hover:bg-[#b09148] text-[#1A1A2E] font-bold text-xs rounded-xl transition-all shadow-sm cursor-pointer"
-            >
-              <RefreshCw className={`w-4 h-4 ${isSyncing ? 'animate-spin' : ''}`} />
-              {isSyncing ? 'Syncing...' : 'Sync Site API'}
-            </button>
-
-            <button
-              onClick={() => {
-                setFormState({ category: 'Fiction', format: 'Paperback', price: 399, status: 'Published' });
-                setIsCreateModalOpen(true);
-              }}
-              className="flex items-center gap-1.5 px-4 py-2.5 bg-[#8B1A1A] hover:bg-[#722F37] text-white font-bold text-xs rounded-xl transition-all shadow-md cursor-pointer"
-            >
-              <Plus className="w-4 h-4" />
-              Add Author Book
-            </button>
-          </div>
-        </div>
-
-        {/* 🌟 1. MENU: DASHBOARD VIEW */}
-        {activeMenu === 'Dashboard' && (
-          <div className="space-y-8">
-            {/* KPI Cards Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-              <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex items-center justify-between">
-                <div>
-                  <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Total Manuscripts</p>
-                  <h3 className="text-2xl font-bold text-[#1A1A2E] font-playfair mt-1">1,482</h3>
-                  <span className="text-[11px] font-bold text-green-600 flex items-center gap-0.5 mt-1">
-                    <TrendingUp className="w-3 h-3" /> +14% this month
-                  </span>
-                </div>
-                <div className="p-3 bg-red-50 text-[#8B1A1A] rounded-2xl"><BookOpen className="w-6 h-6" /></div>
-              </div>
-
-              <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex items-center justify-between">
-                <div>
-                  <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Live Store Books</p>
-                  <h3 className="text-2xl font-bold text-green-600 font-playfair mt-1">{books.length + 1285}</h3>
-                  <span className="text-[11px] font-bold text-gray-500 mt-1">100% Royalty Active</span>
-                </div>
-                <div className="p-3 bg-green-50 text-green-600 rounded-2xl"><Globe className="w-6 h-6" /></div>
-              </div>
-
-              <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex items-center justify-between">
-                <div>
-                  <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Pending Ops Desk</p>
-                  <h3 className="text-2xl font-bold text-amber-500 font-playfair mt-1">48</h3>
-                  <span className="text-[11px] font-bold text-amber-600 mt-1">Requires Approval</span>
-                </div>
-                <div className="p-3 bg-amber-50 text-amber-500 rounded-2xl"><Clock className="w-6 h-6" /></div>
-              </div>
-
-              <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex items-center justify-between">
-                <div>
-                  <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Royalty Disbursed</p>
-                  <h3 className="text-2xl font-bold text-[#C5A55A] font-playfair mt-1">₹24,85,000</h3>
-                  <span className="text-[11px] font-bold text-green-600 mt-1">100% Net Royalty Payout</span>
-                </div>
-                <div className="p-3 bg-yellow-50 text-[#C5A55A] rounded-2xl"><ShieldCheck className="w-6 h-6" /></div>
-              </div>
+      {/* 🟢 Exact Main Content Area */}
+      <main className="flex-1 p-6 md:p-8 overflow-x-auto">
+        {/* ========================================================================= */}
+        {/* 1. SCREEN 1: DASHBOARD VIEW                                               */}
+        {/* ========================================================================= */}
+        {activeTab === 'Dashboard' && (
+          <div className="space-y-6">
+            {/* Top Date Filter */}
+            <div className="flex justify-end items-center gap-3 mb-8">
+              <span className="text-xs font-semibold text-gray-600">Filter by Date</span>
+              <input
+                type="text"
+                placeholder="Air Date/Time Picker"
+                readOnly
+                className="bg-white border border-[#E2D9D2] rounded-md px-3 py-1.5 text-xs text-gray-400 w-56 focus:outline-none shadow-xs"
+              />
             </div>
 
-            {/* Quick Action System Bar */}
-            <div className="bg-gradient-to-r from-[#1A1A2E] to-[#2B2B45] text-white p-6 rounded-2xl shadow-xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-              <div className="space-y-1">
-                <span className="px-2.5 py-0.5 bg-[#C5A55A] text-[#1A1A2E] text-[10px] font-bold rounded-full uppercase">Operations Quick Tools</span>
-                <h3 className="text-xl font-bold font-playfair">Database & Google Drive Integration Suite</h3>
-                <p className="text-xs text-gray-300">Automated Google Drive folder generation, manual backups, and CSV sales exports.</p>
+            {/* 8 Metric KPI Cards Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {/* Row 1 */}
+              <div className="bg-white p-6 rounded-xl shadow-xs border border-[#F0ECE9]">
+                <p className="text-xs font-medium text-gray-700 mb-2">Total Books</p>
+                <h3 className="text-3xl font-bold text-[#FF4D6D]">19642</h3>
               </div>
 
-              <div className="flex flex-wrap gap-2.5">
-                <button
-                  onClick={handleExportCsv}
-                  className="flex items-center gap-1.5 px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs rounded-xl shadow-sm cursor-pointer"
-                >
-                  <FileSpreadsheet className="w-4 h-4" /> Export Sales CSV
-                </button>
-
-                <button
-                  onClick={handleTriggerBackup}
-                  className="flex items-center gap-1.5 px-4 py-2 bg-blue-700 hover:bg-blue-800 text-white font-bold text-xs rounded-xl shadow-sm cursor-pointer"
-                >
-                  <Database className="w-4 h-4" /> Backup System
-                </button>
-              </div>
-            </div>
-
-            {/* Live Publishing Pipeline & Workflow */}
-            <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-4">
-              <div className="flex justify-between items-center border-b pb-3">
-                <h3 className="font-bold font-playfair text-lg text-[#1A1A2E] flex items-center gap-2">
-                  <Layers className="w-5 h-5 text-[#8B1A1A]" /> Live Manuscript Operational Pipeline
-                </h3>
-                <span className="text-xs font-semibold text-gray-400">Automated Workflow Desk</span>
+              <div className="bg-white p-6 rounded-xl shadow-xs border border-[#F0ECE9]">
+                <p className="text-xs font-medium text-gray-700 mb-2">Books in Draft</p>
+                <h3 className="text-3xl font-bold text-[#FF4D6D]">6892</h3>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-5 gap-3 text-center text-xs font-bold">
-                <div className="p-4 bg-red-50 border border-red-100 rounded-xl space-y-1">
-                  <span className="text-[10px] text-red-600 block uppercase">Stage 1</span>
-                  <p className="text-[#8B1A1A]">Manuscript Received</p>
-                  <span className="text-[11px] text-gray-500 font-normal">18 Books</span>
-                </div>
-                <div className="p-4 bg-amber-50 border border-amber-100 rounded-xl space-y-1">
-                  <span className="text-[10px] text-amber-600 block uppercase">Stage 2</span>
-                  <p className="text-amber-800">Formatting & Editing</p>
-                  <span className="text-[11px] text-gray-500 font-normal">14 Books</span>
-                </div>
-                <div className="p-4 bg-blue-50 border border-blue-100 rounded-xl space-y-1">
-                  <span className="text-[10px] text-blue-600 block uppercase">Stage 3</span>
-                  <p className="text-blue-800">Cover Art Approval</p>
-                  <span className="text-[11px] text-gray-500 font-normal">9 Books</span>
-                </div>
-                <div className="p-4 bg-purple-50 border border-purple-100 rounded-xl space-y-1">
-                  <span className="text-[10px] text-purple-600 block uppercase">Stage 4</span>
-                  <p className="text-purple-800">ISBN Allocation</p>
-                  <span className="text-[11px] text-gray-500 font-normal">7 Books</span>
-                </div>
-                <div className="p-4 bg-emerald-50 border border-emerald-100 rounded-xl space-y-1">
-                  <span className="text-[10px] text-emerald-600 block uppercase">Stage 5</span>
-                  <p className="text-emerald-800">Published & Live</p>
-                  <span className="text-[11px] text-gray-500 font-normal">1,290 Live</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Activity Logs & Quick Table */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {/* Activity Log */}
-              <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-4 lg:col-span-1">
-                <div className="flex justify-between items-center border-b pb-3">
-                  <h3 className="font-bold font-playfair text-lg text-[#1A1A2E] flex items-center gap-2">
-                    <Sparkles className="w-5 h-5 text-[#C5A55A]" /> Activity Log Stream
-                  </h3>
-                  <button onClick={() => setIsLogsModalOpen(true)} className="text-[11px] font-bold text-[#8B1A1A]">View All</button>
-                </div>
-                <div className="space-y-4 text-xs">
-                  {activityLogs.slice(0, 4).map(log => (
-                    <div key={log.id} className="flex gap-3 items-start border-b border-gray-50 pb-2">
-                      <div className="w-2.5 h-2.5 rounded-full bg-blue-500 mt-1 shrink-0"></div>
-                      <div>
-                        <p className="font-bold text-gray-800">{log.action}</p>
-                        <p className="text-gray-500 text-[11px] line-clamp-1">{log.details}</p>
-                        <span className="text-[10px] text-gray-400">{log.userEmail}</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+              <div className="bg-white p-6 rounded-xl shadow-xs border border-[#F0ECE9]">
+                <p className="text-xs font-medium text-gray-700 mb-2">Books In Review</p>
+                <h3 className="text-3xl font-bold text-[#FF4D6D]">136</h3>
               </div>
 
-              {/* Books Quick Review Table */}
-              <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-4 lg:col-span-2">
-                <div className="flex justify-between items-center border-b pb-3">
-                  <h3 className="font-bold font-playfair text-lg text-[#1A1A2E]">Manuscripts & Drive Asset Status</h3>
-                  <button onClick={() => handleMenuChange('Books')} className="text-xs font-bold text-[#8B1A1A] hover:underline">View All Books →</button>
-                </div>
+              <div className="bg-white p-6 rounded-xl shadow-xs border border-[#F0ECE9]">
+                <p className="text-xs font-medium text-gray-700 mb-2">Books Published</p>
+                <h3 className="text-3xl font-bold text-[#FF4D6D]">12286</h3>
+              </div>
 
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left text-xs">
-                    <thead>
-                      <tr className="border-b text-gray-400 font-bold uppercase">
-                        <th className="py-2">Book Title</th>
-                        <th className="py-2">Author</th>
-                        <th className="py-2">Drive Folders</th>
-                        <th className="py-2 text-right">Action</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y font-medium text-gray-700">
-                      {books.map(b => (
-                        <tr key={b.id}>
-                          <td className="py-3 font-bold text-[#1A1A2E]">{b.title}</td>
-                          <td className="py-3">{b.authorName}</td>
-                          <td className="py-3">
-                            <button
-                              onClick={() => handleOpenGoogleDrive(b)}
-                              className="px-2.5 py-1 bg-blue-50 text-blue-700 font-bold rounded-lg flex items-center gap-1 hover:bg-blue-100 cursor-pointer"
-                            >
-                              <HardDrive className="w-3 h-3" /> Drive Inspector
-                            </button>
-                          </td>
-                          <td className="py-3 text-right">
-                            <button onClick={() => handleOpenEdit(b)} className="px-2.5 py-1 bg-gray-100 hover:bg-gray-200 rounded-lg text-gray-800 font-bold cursor-pointer">Edit</button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+              {/* Row 2 */}
+              <div className="bg-white p-6 rounded-xl shadow-xs border border-[#F0ECE9]">
+                <p className="text-xs font-medium text-gray-700 mb-2">Bestseller Breakthrough</p>
+                <h3 className="text-3xl font-bold text-[#FF4D6D]">2719</h3>
+              </div>
+
+              <div className="bg-white p-6 rounded-xl shadow-xs border border-[#F0ECE9]">
+                <p className="text-xs font-medium text-gray-700 mb-2">Global Distribution</p>
+                <h3 className="text-3xl font-bold text-[#FF4D6D]">1588</h3>
+              </div>
+
+              <div className="bg-white p-6 rounded-xl shadow-xs border border-[#F0ECE9]">
+                <p className="text-xs font-medium text-gray-700 mb-2">Emily Award</p>
+                <h3 className="text-3xl font-bold text-[#FF4D6D]">499</h3>
+              </div>
+
+              <div className="bg-white p-6 rounded-xl shadow-xs border border-[#F0ECE9]">
+                <p className="text-xs font-medium text-gray-700 mb-2">Global+Emily+Copyright</p>
+                <h3 className="text-3xl font-bold text-[#FF4D6D]">527</h3>
               </div>
             </div>
           </div>
         )}
 
-        {/* 📚 2. MENU: BOOKS VIEW */}
-        {activeMenu === 'Books' && (
+        {/* ========================================================================= */}
+        {/* 2. SCREEN 2: ALL USERS / AUTHORS VIEW                                     */}
+        {/* ========================================================================= */}
+        {activeTab === 'All Users' && (
           <div className="space-y-6">
-            {/* Filter & Search Bar */}
-            <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm flex flex-col md:flex-row gap-4 justify-between items-center">
-              <div className="relative w-full md:w-96">
-                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
-                <input
-                  type="text"
-                  placeholder="Search by title, author name, or ISBN..."
-                  value={searchTerm}
-                  onChange={e => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#8B1A1A]/20 text-xs sm:text-sm"
-                />
-              </div>
-
-              <div className="flex items-center gap-2 w-full md:w-auto">
-                <span className="text-xs font-semibold text-gray-400 uppercase">Status:</span>
-                {['All', 'Published', 'Under Review', 'Draft'].map(status => (
-                  <button
-                    key={status}
-                    onClick={() => setStatusFilter(status)}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
-                      statusFilter === status
-                        ? 'bg-[#8B1A1A] text-white'
-                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                    }`}
-                  >
-                    {status}
-                  </button>
-                ))}
-              </div>
+            <div className="flex justify-between items-center">
+              <h2 className="text-2xl font-bold text-gray-900 font-sans">Authors</h2>
+              <button
+                onClick={() => {
+                  window.open('/api/analytics?format=csv', '_blank');
+                  toast.success('Downloading Authors CSV...');
+                }}
+                className="border border-[#FF4D6D] text-[#FF4D6D] hover:bg-[#FF4D6D]/10 rounded-xl px-5 py-2 text-sm font-bold transition-colors cursor-pointer"
+              >
+                Download CSV
+              </button>
             </div>
 
-            {/* Author Books Table */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-              <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse">
+            {/* Search Filters */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl">
+              <input
+                type="text"
+                placeholder="Search by Name"
+                value={authorSearchName}
+                onChange={e => setAuthorSearchName(e.target.value)}
+                className="w-full bg-white border border-[#E2D9D2] rounded-md px-3.5 py-2 text-xs text-gray-800 placeholder-gray-400 focus:outline-none"
+              />
+              <input
+                type="text"
+                placeholder="Search by Email"
+                value={authorSearchEmail}
+                onChange={e => setAuthorSearchEmail(e.target.value)}
+                className="w-full bg-white border border-[#E2D9D2] rounded-md px-3.5 py-2 text-xs text-gray-800 placeholder-gray-400 focus:outline-none"
+              />
+            </div>
+
+            {/* Authors Table */}
+            <div className="bg-white rounded-xl shadow-xs border border-[#EFE8E2] overflow-hidden">
+              <table className="w-full text-left text-xs border-collapse">
+                <thead>
+                  <tr className="bg-[#EFE5E0] text-gray-700 font-semibold border-b border-[#E2D9D2]">
+                    <th className="py-3.5 px-5">Full Name</th>
+                    <th className="py-3.5 px-5">User Type</th>
+                    <th className="py-3.5 px-5">Creation Date</th>
+                    <th className="py-3.5 px-5">Email Address</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[#F0ECE9] text-gray-800">
+                  {AUTHORS_LIST.filter(a => 
+                    a.name.toLowerCase().includes(authorSearchName.toLowerCase()) &&
+                    a.email.toLowerCase().includes(authorSearchEmail.toLowerCase())
+                  ).map((author, idx) => (
+                    <tr key={idx} className="hover:bg-[#FAF8F5] transition-colors">
+                      <td className="py-4 px-5 font-medium">{author.name}</td>
+                      <td className="py-4 px-5 text-gray-600">{author.userType}</td>
+                      <td className="py-4 px-5 text-gray-600">{author.date}</td>
+                      <td className="py-4 px-5 text-gray-800 font-mono">{author.email}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {/* ========================================================================= */}
+        {/* 3. SCREEN 3: VIEWS VIEW                                                   */}
+        {/* ========================================================================= */}
+        {activeTab === 'Views' && (
+          <div className="flex flex-col lg:flex-row gap-6 items-start">
+            {/* Views Sub-Sidebar */}
+            <div className="w-full lg:w-56 shrink-0 bg-white border border-[#EFE8E2] rounded-xl p-2 space-y-0.5 max-h-[80vh] overflow-y-auto">
+              {VIEWS_SUB_MENUS.map((menu) => {
+                const isSelected = selectedViewsSubMenu === menu;
+                return (
+                  <button
+                    key={menu}
+                    onClick={() => setSelectedViewsSubMenu(menu)}
+                    className={`w-full text-left px-3 py-2 rounded-lg text-xs font-medium transition-colors cursor-pointer truncate ${
+                      isSelected
+                        ? 'bg-[#EFE5E0] text-[#FF4D6D] font-bold'
+                        : 'text-gray-700 hover:bg-[#FAF8F5]'
+                    }`}
+                  >
+                    {menu}
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Views Main Content */}
+            <div className="flex-1 w-full space-y-4">
+              <h2 className="text-xl font-bold text-gray-900 font-sans">Super Admin (19642)</h2>
+
+              {/* Search and Action Bar */}
+              <div className="flex flex-col sm:flex-row gap-3 items-center justify-between">
+                <input
+                  type="text"
+                  placeholder="Search by title, author name, ISBN, email"
+                  value={viewsSearch}
+                  onChange={e => setViewsSearch(e.target.value)}
+                  className="w-full sm:max-w-md bg-white border border-[#E2D9D2] rounded-md px-3.5 py-2 text-xs text-gray-800 placeholder-gray-400 focus:outline-none"
+                />
+
+                <div className="flex items-center gap-2.5 w-full sm:w-auto justify-end">
+                  <button
+                    onClick={() => toast.success('Filters applied')}
+                    className="border border-[#FF4D6D] text-[#FF4D6D] hover:bg-[#FF4D6D]/10 rounded-lg px-4 py-1.5 text-xs font-bold transition-colors cursor-pointer"
+                  >
+                    Filters
+                  </button>
+                  <button
+                    onClick={() => {
+                      window.open('/api/analytics?format=csv', '_blank');
+                      toast.success('Exporting Super Admin CSV...');
+                    }}
+                    className="bg-[#FF4D6D] hover:bg-[#e03d5c] text-white rounded-lg px-4 py-1.5 text-xs font-bold transition-colors shadow-xs cursor-pointer"
+                  >
+                    Export CSV
+                  </button>
+                </div>
+              </div>
+
+              {/* Views Table */}
+              <div className="bg-white rounded-xl shadow-xs border border-[#EFE8E2] overflow-x-auto">
+                <table className="w-full text-left text-xs border-collapse min-w-[700px]">
                   <thead>
-                    <tr className="bg-gray-50/80 border-b border-gray-100 text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                      <th className="py-4 px-6">Book Details</th>
-                      <th className="py-4 px-6">Author</th>
-                      <th className="py-4 px-6">Price / Format</th>
-                      <th className="py-4 px-6">Google Drive</th>
-                      <th className="py-4 px-6">Status</th>
-                      <th className="py-4 px-6 text-right">Actions</th>
+                    <tr className="bg-[#EFE5E0] text-gray-700 font-semibold border-b border-[#E2D9D2]">
+                      <th className="py-3 px-3 w-8 text-center"></th>
+                      <th className="py-3 px-3 w-8 text-center"></th>
+                      <th className="py-3 px-4">Cover / Title</th>
+                      <th className="py-3 px-4">Email</th>
+                      <th className="py-3 px-4">Author's Name</th>
+                      <th className="py-3 px-4">Address</th>
+                      <th className="py-3 px-4">Country</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-100 text-sm">
-                    {filteredBooks.map(book => (
-                      <tr key={book.id} className="hover:bg-gray-50/50 transition-colors group">
-                        <td className="py-4 px-6">
-                          <div className="flex items-center gap-4">
-                            <div className="w-12 h-16 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0 shadow-sm relative border border-gray-200">
-                              <img src={book.coverImage} alt={book.title} className="w-full h-full object-cover" />
-                            </div>
-                            <div>
-                              <h4 className="font-bold text-[#1A1A2E] font-playfair text-base group-hover:text-[#8B1A1A] transition-colors">
-                                {book.title}
-                              </h4>
-                              {book.subtitle && <p className="text-xs text-gray-400 line-clamp-1">{book.subtitle}</p>}
-                              <span className="inline-block mt-1 text-[11px] font-semibold bg-gray-100 text-gray-600 px-2 py-0.5 rounded">
-                                {book.category}
-                              </span>
-                            </div>
-                          </div>
+                  <tbody className="divide-y divide-[#F0ECE9] text-gray-800">
+                    {VIEWS_BOOKS_DATA.filter(b => 
+                      b.title.toLowerCase().includes(viewsSearch.toLowerCase()) ||
+                      b.author.toLowerCase().includes(viewsSearch.toLowerCase()) ||
+                      b.email.toLowerCase().includes(viewsSearch.toLowerCase())
+                    ).map((row, idx) => (
+                      <tr key={idx} className="hover:bg-[#FAF8F5] transition-colors">
+                        <td className="py-3 px-3 text-center">
+                          <input type="checkbox" className="rounded border-gray-300 text-[#FF4D6D] focus:ring-0 cursor-pointer" />
                         </td>
-
-                        <td className="py-4 px-6 font-medium text-[#1A1A2E]">
-                          {book.authorName}
-                        </td>
-
-                        <td className="py-4 px-6">
-                          <div className="font-bold text-[#8B1A1A]">₹{book.price}</div>
-                          <div className="text-xs text-gray-400">{book.format} • 100% Royalty</div>
-                        </td>
-
-                        <td className="py-4 px-6">
-                          <button
-                            onClick={() => handleOpenGoogleDrive(book)}
-                            className="px-3 py-1.5 bg-blue-50 text-blue-800 rounded-xl font-bold text-xs flex items-center gap-1.5 hover:bg-blue-100 cursor-pointer border border-blue-200"
-                          >
-                            <HardDrive className="w-3.5 h-3.5" />
-                            Drive Folders
+                        <td className="py-3 px-3 text-center">
+                          <button onClick={() => toast.success(`Edit ${row.title}`)} className="text-red-400 hover:text-red-600 cursor-pointer">
+                            <Edit className="w-3.5 h-3.5" />
                           </button>
                         </td>
-
-                        <td className="py-4 px-6">
-                          <span
-                            className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                              book.status === 'Published'
-                                ? 'bg-green-100 text-green-700'
-                                : book.status === 'Under Review'
-                                ? 'bg-amber-100 text-amber-700'
-                                : 'bg-gray-100 text-gray-600'
-                            }`}
-                          >
-                            {book.status}
-                          </span>
-                        </td>
-
-                        <td className="py-4 px-6 text-right">
-                          <div className="flex items-center justify-end gap-2">
-                            <button
-                              onClick={() => handleOpenEdit(book)}
-                              className="p-2 text-gray-500 hover:text-[#8B1A1A] hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
-                              title="Edit Book Details"
-                            >
-                              <Edit3 className="w-4 h-4" />
-                            </button>
-                            <button
-                              onClick={() => handleDelete(book.id, book.title)}
-                              className="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
-                              title="Remove Book"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
+                        <td className="py-3 px-4">
+                          <div className="flex items-center gap-2.5">
+                            <div className={`w-6 h-8 ${row.cover} rounded shrink-0 border border-gray-200 shadow-2xs`}></div>
+                            <span className="font-medium text-gray-900">{row.title}</span>
                           </div>
                         </td>
+                        <td className="py-3 px-4 font-mono text-gray-600 text-[11px]">{row.email}</td>
+                        <td className="py-3 px-4 font-medium">{row.author}</td>
+                        <td className="py-3 px-4 text-gray-500 text-[11px] truncate max-w-[150px]">{row.address}</td>
+                        <td className="py-3 px-4 text-gray-700">{row.country}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -736,245 +404,159 @@ function DashboardContent() {
           </div>
         )}
 
-        {/* ⚙️ 7. MENU: SETTINGS VIEW & BACKUPS */}
-        {activeMenu === 'Settings' && (
+        {/* ========================================================================= */}
+        {/* 4. SCREEN 4: AUTHOR COPIES VIEW                                           */}
+        {/* ========================================================================= */}
+        {activeTab === 'Author Copies' && (
           <div className="space-y-6">
-            <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-4 text-xs">
-              <h3 className="text-xl font-bold font-playfair text-[#1A1A2E] border-b pb-3">Internal Operations Settings & Database Backups</h3>
-              <div className="space-y-3 max-w-md">
-                <div>
-                  <label className="font-bold text-gray-700 block mb-1">Prisma PostgreSQL Database URL</label>
-                  <input type="text" readOnly value="postgresql://user:pass@localhost:5432/pagecraft_db" className="w-full px-3 py-2 bg-gray-100 border rounded-xl text-xs font-mono" />
-                </div>
-                <div>
-                  <label className="font-bold text-gray-700 block mb-1">Google Drive Integration Status</label>
-                  <span className="px-3 py-1 bg-green-100 text-green-700 font-bold rounded-full inline-block">Active (Hierarchical Automated Generator)</span>
-                </div>
+            {/* Filter Bar */}
+            <div className="flex flex-wrap items-center gap-3">
+              <input
+                type="text"
+                placeholder="Search by title, author name, ISBN, e"
+                value={copiesSearch}
+                onChange={e => setCopiesSearch(e.target.value)}
+                className="bg-white border border-[#E2D9D2] rounded-md px-3.5 py-1.5 text-xs text-gray-800 placeholder-gray-400 w-64 focus:outline-none"
+              />
+
+              <div className="flex items-center gap-1.5">
+                <span className="text-xs font-semibold text-gray-700">Filter by Status</span>
+                <select className="bg-white border border-[#E2D9D2] rounded-md px-2.5 py-1.5 text-xs text-gray-500 focus:outline-none">
+                  <option>Choose an option...</option>
+                  <option>Paid</option>
+                  <option>Pending</option>
+                </select>
               </div>
 
-              <div className="pt-4 border-t space-y-3">
-                <h4 className="font-bold text-sm text-[#1A1A2E]">Backup System Logs</h4>
-                <div className="space-y-2">
-                  {backupsList.map(bk => (
-                    <div key={bk.id} className="p-3 bg-gray-50 border rounded-xl flex items-center justify-between">
-                      <div>
-                        <p className="font-bold text-gray-900">{bk.backupName}</p>
-                        <p className="text-[11px] text-gray-400">{bk.createdBy} • {bk.size}</p>
-                      </div>
-                      <span className="px-2.5 py-0.5 bg-green-100 text-green-700 font-bold rounded-full text-[10px]">{bk.status}</span>
-                    </div>
-                  ))}
-                </div>
+              <div className="flex items-center gap-1.5">
+                <span className="text-xs font-semibold text-gray-700">Filter by Nationality</span>
+                <select className="bg-white border border-[#E2D9D2] rounded-md px-2.5 py-1.5 text-xs text-gray-500 focus:outline-none">
+                  <option>Choose an option...</option>
+                  <option>India</option>
+                  <option>International</option>
+                </select>
               </div>
+
+              <div className="flex items-center gap-1.5">
+                <span className="text-xs font-semibold text-gray-700">Filter by Exclude Status</span>
+                <select className="bg-white border border-[#E2D9D2] rounded-md px-2.5 py-1.5 text-xs text-gray-500 focus:outline-none">
+                  <option>Choose an option...</option>
+                  <option>None</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Author Copies Table */}
+            <div className="bg-white rounded-xl shadow-xs border border-[#EFE8E2] overflow-x-auto">
+              <table className="w-full text-left text-xs border-collapse min-w-[900px]">
+                <thead>
+                  <tr className="bg-[#EFE5E0] text-gray-700 font-semibold border-b border-[#E2D9D2]">
+                    <th className="py-3 px-4">Order ID</th>
+                    <th className="py-3 px-4">Email</th>
+                    <th className="py-3 px-4">Name</th>
+                    <th className="py-3 px-4">Title</th>
+                    <th className="py-3 px-4">ISBN</th>
+                    <th className="py-3 px-4">Copy Count</th>
+                    <th className="py-3 px-4">Ship Address</th>
+                    <th className="py-3 px-4">Pay Status</th>
+                    <th className="py-3 px-4">Amount</th>
+                    <th className="py-3 px-4">Phone</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[#F0ECE9] text-gray-800">
+                  {AUTHOR_COPIES_DATA.filter(o => 
+                    o.title.toLowerCase().includes(copiesSearch.toLowerCase()) ||
+                    o.name.toLowerCase().includes(copiesSearch.toLowerCase()) ||
+                    o.email.toLowerCase().includes(copiesSearch.toLowerCase()) ||
+                    o.id.toLowerCase().includes(copiesSearch.toLowerCase())
+                  ).map((order) => (
+                    <tr key={order.id} className={`transition-colors ${order.isHighlight ? 'bg-[#FFF5F5] hover:bg-[#FFEEEE]' : 'hover:bg-[#FAF8F5]'}`}>
+                      <td className="py-3.5 px-4 font-mono font-medium">{order.id}</td>
+                      <td className="py-3.5 px-4 font-mono text-gray-600 text-[11px]">{order.email}</td>
+                      <td className="py-3.5 px-4 font-medium">{order.name}</td>
+                      <td className="py-3.5 px-4 text-gray-800 font-medium">{order.title}</td>
+                      <td className="py-3.5 px-4 font-mono text-gray-500">{order.isbn}</td>
+                      <td className="py-3.5 px-4">{order.count}</td>
+                      <td className="py-3.5 px-4 text-gray-500 text-[11px] truncate max-w-[100px]">{order.address}</td>
+                      <td className="py-3.5 px-4 text-gray-700">{order.status}</td>
+                      <td className="py-3.5 px-4 font-medium text-gray-900">{order.amount}</td>
+                      <td className="py-3.5 px-4 font-mono text-gray-600">{order.phone}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </div>
         )}
 
-        {/* 📁 Modal: Google Drive Hierarchical Inspector */}
-        <AnimatePresence>
-          {isDriveModalOpen && selectedDriveBook && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-              <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="bg-white w-full max-w-2xl rounded-3xl shadow-2xl overflow-hidden border border-gray-100 flex flex-col max-h-[90vh]">
-                <div className="p-5 bg-[#1A1A2E] text-white flex justify-between items-center">
-                  <div className="flex items-center gap-2">
-                    <HardDrive className="w-5 h-5 text-[#C5A55A]" />
-                    <h3 className="font-bold font-playfair text-lg">Google Drive Manager — {selectedDriveBook.title}</h3>
-                  </div>
-                  <button onClick={() => setIsDriveModalOpen(false)} className="text-gray-400 hover:text-white cursor-pointer"><X size={18} /></button>
-                </div>
-
-                <div className="p-6 space-y-5 overflow-y-auto text-xs">
-                  <div className="bg-blue-50 border border-blue-200 p-4 rounded-2xl space-y-1 text-blue-900">
-                    <span className="font-bold block text-blue-950">Drive Hierarchical Structure:</span>
-                    <p className="font-mono">The Page Craft / Books / {selectedDriveBook.title}</p>
-                    <p className="text-[11px] text-blue-700">All assets are synced with Google Cloud & Supabase Storage</p>
-                  </div>
-
-                  {driveStructure ? (
-                    <div className="space-y-3">
-                      <div className="flex justify-between items-center bg-gray-50 p-3 rounded-xl border">
-                        <span className="font-bold text-gray-800">Main Book Folder URL:</span>
-                        <a href={driveStructure.folderUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 font-bold flex items-center gap-1 hover:underline">
-                          Open in Google Drive <ExternalLink className="w-3.5 h-3.5" />
-                        </a>
-                      </div>
-
-                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
-                        {driveStructure.subfolders.map((sf: any) => (
-                          <div key={sf.name} className="p-3 bg-white border border-gray-200 rounded-xl hover:border-blue-500 transition-colors space-y-1">
-                            <span className="font-bold text-gray-900 block truncate">{sf.name}</span>
-                            <span className="text-[10px] text-gray-400 block">Synced Folder</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="py-8 text-center text-gray-400">Generating Google Drive Folder Hierarchy...</div>
-                  )}
-                </div>
-              </motion.div>
+        {/* ========================================================================= */}
+        {/* 5. SCREEN 5: ADD-ONS VIEW                                                 */}
+        {/* ========================================================================= */}
+        {activeTab === 'Add-Ons' && (
+          <div className="space-y-6">
+            {/* Top Sub Tabs */}
+            <div className="flex items-center gap-6 pb-2">
+              {['Copyright', 'Award', 'Global Distribution', 'PR Package'].map((subTab) => {
+                const isSelected = activeAddOnSubTab === subTab;
+                return (
+                  <button
+                    key={subTab}
+                    onClick={() => setActiveAddOnSubTab(subTab)}
+                    className={`text-xs font-semibold px-4 py-2 rounded-xl transition-all cursor-pointer ${
+                      isSelected
+                        ? 'bg-[#FF4D6D] text-white font-bold shadow-xs'
+                        : 'text-gray-700 hover:text-gray-900'
+                    }`}
+                  >
+                    {subTab}
+                  </button>
+                );
+              })}
             </div>
-          )}
-        </AnimatePresence>
 
-        {/* 👥 Modal: Team User Management (Super Admin) */}
-        <AnimatePresence>
-          {isTeamModalOpen && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-              <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="bg-white w-full max-w-2xl rounded-3xl shadow-2xl overflow-hidden border border-gray-100 flex flex-col max-h-[90vh]">
-                <div className="p-5 bg-blue-900 text-white flex justify-between items-center">
-                  <div className="flex items-center gap-2">
-                    <UserPlus className="w-5 h-5 text-[#C5A55A]" />
-                    <h3 className="font-bold font-playfair text-lg">Team User Management & Permissions</h3>
-                  </div>
-                  <button onClick={() => setIsTeamModalOpen(false)} className="text-gray-400 hover:text-white cursor-pointer"><X size={18} /></button>
-                </div>
-
-                <div className="p-6 space-y-6 overflow-y-auto text-xs">
-                  {userRole === 'SUPER_ADMIN' ? (
-                    <form onSubmit={handleCreateTeamMember} className="bg-gray-50 p-4 rounded-2xl border border-gray-200 space-y-3">
-                      <h4 className="font-bold text-gray-800 text-sm">Add New Team Member (Super Admin Exclusive)</h4>
-                      <div className="grid grid-cols-2 gap-3">
-                        <input type="text" placeholder="Full Name" required value={newTeamState.name} onChange={e => setNewTeamState({ ...newTeamState, name: e.target.value })} className="px-3 py-2 bg-white border rounded-xl" />
-                        <input type="email" placeholder="Work Email" required value={newTeamState.email} onChange={e => setNewTeamState({ ...newTeamState, email: e.target.value })} className="px-3 py-2 bg-white border rounded-xl" />
-                        <input type="password" placeholder="Password" required value={newTeamState.password} onChange={e => setNewTeamState({ ...newTeamState, password: e.target.value })} className="px-3 py-2 bg-white border rounded-xl" />
-                        <select value={newTeamState.role} onChange={e => setNewTeamState({ ...newTeamState, role: e.target.value })} className="px-3 py-2 bg-white border rounded-xl font-bold">
-                          <option value="ADMIN">ADMIN</option>
-                          <option value="MANAGER">MANAGER</option>
-                          <option value="EDITOR">EDITOR</option>
-                          <option value="FINANCE">FINANCE</option>
-                          <option value="SUPPORT">SUPPORT</option>
-                          <option value="EMPLOYEE">EMPLOYEE</option>
-                        </select>
-                      </div>
-                      <div className="flex justify-end pt-1">
-                        <button type="submit" className="px-4 py-2 bg-blue-700 text-white font-bold rounded-xl">Create Member</button>
-                      </div>
-                    </form>
-                  ) : (
-                    <div className="p-4 bg-amber-50 border border-amber-200 rounded-xl text-amber-900">
-                      🔒 Only <strong>Super Admin</strong> has permission to invite or add new team users.
-                    </div>
-                  )}
-
-                  <div className="space-y-2">
-                    <h4 className="font-bold text-gray-800 text-sm">Active Team Directory</h4>
-                    <div className="divide-y border rounded-xl bg-white">
-                      {teamMembers.map(tm => (
-                        <div key={tm.id} className="p-3 flex justify-between items-center">
-                          <div>
-                            <p className="font-bold text-gray-900">{tm.name} <span className="text-[10px] text-gray-400">({tm.email})</span></p>
-                            <span className="text-[10px] font-bold text-blue-700">Role: {tm.role}</span>
-                          </div>
-                          <span className="px-2.5 py-0.5 bg-green-100 text-green-700 rounded-full font-bold text-[10px]">{tm.status}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
+            {/* Add-Ons Table */}
+            <div className="bg-white rounded-xl shadow-xs border border-[#EFE8E2] overflow-x-auto">
+              <table className="w-full text-left text-xs border-collapse min-w-[800px]">
+                <thead>
+                  <tr className="bg-[#EFE5E0] text-gray-700 font-semibold border-b border-[#E2D9D2]">
+                    <th className="py-3 px-4">Email</th>
+                    <th className="py-3 px-4">Name</th>
+                    <th className="py-3 px-4">Title</th>
+                    <th className="py-3 px-4">ISBN</th>
+                    <th className="py-3 px-4">Phone</th>
+                    <th className="py-3 px-4">Country</th>
+                    <th className="py-3 px-4">Order Date</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[#F0ECE9] text-gray-800">
+                  {ADD_ONS_DATA.map((addon, idx) => (
+                    <tr key={idx} className="hover:bg-[#FAF8F5] transition-colors">
+                      <td className="py-3.5 px-4 font-mono text-gray-700 text-[11px]">{addon.email}</td>
+                      <td className="py-3.5 px-4 font-medium">{addon.name}</td>
+                      <td className="py-3.5 px-4 text-gray-900 font-medium">{addon.title}</td>
+                      <td className="py-3.5 px-4 font-mono text-gray-500">{addon.isbn}</td>
+                      <td className="py-3.5 px-4 font-mono text-gray-700">{addon.phone}</td>
+                      <td className="py-3.5 px-4 text-gray-700">{addon.country}</td>
+                      <td className="py-3.5 px-4 text-gray-500 text-[11px]">{addon.date}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
-          )}
-        </AnimatePresence>
+          </div>
+        )}
 
-        {/* 📜 Modal: Activity Logs */}
-        <AnimatePresence>
-          {isLogsModalOpen && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-              <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="bg-white w-full max-w-3xl rounded-3xl shadow-2xl overflow-hidden border border-gray-100 flex flex-col max-h-[90vh]">
-                <div className="p-5 bg-gray-900 text-white flex justify-between items-center">
-                  <div className="flex items-center gap-2">
-                    <FileText className="w-5 h-5 text-[#C5A55A]" />
-                    <h3 className="font-bold font-playfair text-lg">System Security & Activity Logs Audit</h3>
-                  </div>
-                  <button onClick={() => setIsLogsModalOpen(false)} className="text-gray-400 hover:text-white cursor-pointer"><X size={18} /></button>
-                </div>
-
-                <div className="p-6 space-y-4 overflow-y-auto text-xs">
-                  <div className="divide-y border rounded-2xl bg-white overflow-hidden">
-                    {activityLogs.map(l => (
-                      <div key={l.id} className="p-3.5 flex justify-between items-center hover:bg-gray-50">
-                        <div>
-                          <p className="font-bold text-gray-900">{l.action}</p>
-                          <p className="text-gray-500 text-[11px]">{l.details}</p>
-                          <span className="text-[10px] text-gray-400">{l.userEmail} ({l.userRole}) • IP: {l.ipAddress || '127.0.0.1'}</span>
-                        </div>
-                        <span className="text-[10px] font-mono text-gray-400">{new Date(l.createdAt).toLocaleTimeString()}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </motion.div>
-            </div>
-          )}
-        </AnimatePresence>
-
-        {/* Edit Book Modal */}
-        <AnimatePresence>
-          {editingBook && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-              <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="bg-white w-full max-w-3xl rounded-2xl shadow-2xl overflow-hidden border border-gray-100 flex flex-col max-h-[90vh]">
-                <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-[#1A1A2E] text-white">
-                  <div className="flex items-center gap-2">
-                    <Edit3 className="w-5 h-5 text-[#C5A55A]" />
-                    <h3 className="font-playfair text-xl font-bold">Edit Author Book: {editingBook.title}</h3>
-                  </div>
-                  <button onClick={() => setEditingBook(null)} className="text-gray-400 hover:text-white cursor-pointer"><X className="w-5 h-5" /></button>
-                </div>
-
-                <form onSubmit={handleSaveEdit} className="p-6 overflow-y-auto space-y-6 flex-1 text-xs">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-1.5 md:col-span-2">
-                      <label className="text-xs font-bold uppercase text-gray-500">Book Title</label>
-                      <input type="text" value={formState.title || ''} onChange={e => setFormState({ ...formState, title: e.target.value })} className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8B1A1A]/20" required />
-                    </div>
-
-                    <div className="space-y-1.5">
-                      <label className="text-xs font-bold uppercase text-gray-500">Author Name</label>
-                      <input type="text" value={formState.authorName || ''} onChange={e => setFormState({ ...formState, authorName: e.target.value })} className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8B1A1A]/20" required />
-                    </div>
-
-                    <div className="space-y-1.5">
-                      <label className="text-xs font-bold uppercase text-gray-500">Category</label>
-                      <select value={formState.category || 'Fiction'} onChange={e => setFormState({ ...formState, category: e.target.value })} className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8B1A1A]/20">
-                        <option>Fiction</option>
-                        <option>Non-Fiction</option>
-                        <option>Poetry</option>
-                        <option>Business</option>
-                        <option>Self-Help</option>
-                        <option>Fantasy</option>
-                      </select>
-                    </div>
-
-                    <div className="space-y-1.5">
-                      <label className="text-xs font-bold uppercase text-gray-500">Price (₹)</label>
-                      <input type="number" value={formState.price || ''} onChange={e => setFormState({ ...formState, price: Number(e.target.value) })} className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8B1A1A]/20" required />
-                    </div>
-
-                    <div className="space-y-1.5">
-                      <label className="text-xs font-bold uppercase text-gray-500">Publication Status</label>
-                      <select value={formState.status || 'Published'} onChange={e => setFormState({ ...formState, status: e.target.value as any })} className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8B1A1A]/20">
-                        <option value="Published">Published (Live on Site)</option>
-                        <option value="Under Review">Under Review</option>
-                        <option value="Draft">Draft</option>
-                      </select>
-                    </div>
-
-                    <div className="space-y-1.5 md:col-span-2">
-                      <label className="text-xs font-bold uppercase text-gray-500">Cover Image URL / Path</label>
-                      <input type="text" value={formState.coverImage || ''} onChange={e => setFormState({ ...formState, coverImage: e.target.value })} placeholder="https://..." className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8B1A1A]/20" />
-                    </div>
-                  </div>
-
-                  <div className="pt-4 border-t border-gray-100 flex justify-end gap-3">
-                    <button type="button" onClick={() => setEditingBook(null)} className="px-5 py-2 rounded-lg border border-gray-200 text-gray-600 font-medium hover:bg-gray-50 cursor-pointer">Cancel</button>
-                    <button type="submit" className="flex items-center gap-2 px-6 py-2 bg-[#8B1A1A] hover:bg-[#722F37] text-white font-bold rounded-lg shadow-md cursor-pointer"><Save className="w-4 h-4" /> Save & Deploy Changes</button>
-                  </div>
-                </form>
-              </motion.div>
-            </div>
-          )}
-        </AnimatePresence>
+        {/* Floating WhatsApp Action Icon */}
+        <div className="fixed bottom-6 right-6 z-50">
+          <a
+            href="https://wa.me/919876543210"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-12 h-12 bg-[#FF4D6D] hover:bg-[#e03d5c] text-white rounded-full flex items-center justify-center shadow-lg transition-transform hover:scale-110"
+          >
+            <MessageCircle className="w-6 h-6 fill-current" />
+          </a>
+        </div>
       </main>
     </div>
   );
@@ -983,11 +565,11 @@ function DashboardContent() {
 export default function InternalDashboardClient() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen bg-[#F8F9FC] flex items-center justify-center p-8 text-[#8B1A1A] font-bold">
-        Loading BookLeaf Internal Operational Dashboard...
+      <div className="min-h-screen bg-[#FAF8F5] flex items-center justify-center p-8 text-[#FF4D6D] font-bold">
+        Loading BookLeaf Internal Dashboard...
       </div>
     }>
-      <DashboardContent />
+      <BookLeafDashboard />
     </Suspense>
   );
 }
