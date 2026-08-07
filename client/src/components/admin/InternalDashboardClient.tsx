@@ -8,7 +8,8 @@ import {
   Settings, Search, Filter, RefreshCw, CheckCircle2, Clock, AlertCircle, 
   Plus, Edit3, Trash2, Eye, ExternalLink, ShieldCheck, Sparkles, Save, X, 
   ArrowUpRight, ArrowDownRight, TrendingUp, Check, ChevronRight, FileText, 
-  Printer, Truck, UserCheck, HardDrive, CreditCard, Layers, Globe
+  Printer, Truck, UserCheck, HardDrive, CreditCard, Layers, Globe, FolderPlus,
+  Download, ShieldAlert, Key, UserPlus, Lock, Database, FileSpreadsheet
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 
@@ -27,6 +28,7 @@ export interface AuthorBook {
   coverImage: string;
   salesCount: number;
   description: string;
+  driveFolderUrl?: string;
 }
 
 const INITIAL_BOOKS: AuthorBook[] = [
@@ -45,6 +47,7 @@ const INITIAL_BOOKS: AuthorBook[] = [
     coverImage: 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?q=80&w=400&auto=format&fit=crop',
     salesCount: 1245,
     description: 'A gripping psychological thriller that will keep you on the edge of your seat until the final breathtaking page.',
+    driveFolderUrl: 'https://drive.google.com/drive/folders/pagecraft-echo-101',
   },
   {
     id: 'pc-102',
@@ -61,6 +64,7 @@ const INITIAL_BOOKS: AuthorBook[] = [
     coverImage: 'https://images.unsplash.com/photo-1512820790803-83ca734da794?q=80&w=400&auto=format&fit=crop',
     salesCount: 420,
     description: 'A soulful collection of contemporary verses exploring modern love, heartbreak, and healing.',
+    driveFolderUrl: 'https://drive.google.com/drive/folders/pagecraft-dreams-102',
   },
   {
     id: 'pc-103',
@@ -77,36 +81,8 @@ const INITIAL_BOOKS: AuthorBook[] = [
     coverImage: 'https://images.unsplash.com/photo-1589829085413-56de8ae18c73?q=80&w=400&auto=format&fit=crop',
     salesCount: 3100,
     description: 'The ultimate zero-fluff playbook for founders and bootstrappers building venture-scalable software businesses.',
+    driveFolderUrl: 'https://drive.google.com/drive/folders/pagecraft-startup-103',
   },
-  {
-    id: 'pc-104',
-    title: 'Shadows of Eldoria',
-    subtitle: 'Book I of The Ancient Realm Chronicles',
-    authorName: 'Jessica Wong',
-    category: 'Fantasy',
-    format: 'Paperback',
-    price: 449,
-    royaltyRate: 100,
-    status: 'Draft',
-    isbn: '978-93-89021-08-7',
-    publishedDate: '2024-03-01',
-    coverImage: 'https://images.unsplash.com/photo-1532012197267-da84d127e765?q=80&w=400&auto=format&fit=crop',
-    salesCount: 0,
-    description: 'An epic high-fantasy saga following a young mage destined to reunite seven broken kingdoms.',
-  },
-];
-
-const INITIAL_ORDERS = [
-  { id: 'ORD-8801', author: 'Eleanor Vance', book: 'The Silent Echo', copies: 50, type: 'Author Copies', status: 'Delivered', amount: '₹14,950', date: '2026-08-04' },
-  { id: 'ORD-8802', author: 'Sarah Jenkins', book: 'Midnight Dreams', copies: 100, type: 'Print Order', status: 'Printing', amount: '₹22,000', date: '2026-08-05' },
-  { id: 'ORD-8803', author: 'Marcus Sterling', book: 'Startup Unlocked', copies: 25, type: 'Author Copies', status: 'Shipped', amount: '₹8,725', date: '2026-08-06' },
-  { id: 'ORD-8804', author: 'Ananya Roy', book: 'Whispers of Autumn', copies: 10, type: 'Sample Copy', status: 'Pending Review', amount: '₹3,490', date: '2026-08-06' },
-];
-
-const INITIAL_ROYALTIES = [
-  { id: 'RY-401', author: 'Marcus Sterling', book: 'Startup Unlocked', totalSales: '₹15,46,900', royaltyEarned: '₹15,46,900', status: 'Paid', date: '2026-08-01' },
-  { id: 'RY-402', author: 'Eleanor Vance', book: 'The Silent Echo', totalSales: '₹4,96,755', royaltyEarned: '₹4,96,755', status: 'Processing', date: '2026-08-05' },
-  { id: 'RY-403', author: 'Sarah Jenkins', book: 'Midnight Dreams', totalSales: '₹1,25,580', royaltyEarned: '₹1,25,580', status: 'Pending', date: '2026-08-06' },
 ];
 
 function DashboardContent() {
@@ -128,10 +104,15 @@ function DashboardContent() {
     router.push(`/admin/internal-dashboard?menu=${encodeURIComponent(menuName)}`);
   };
 
+  // Auth state
+  const [userRole, setUserRole] = useState<'SUPER_ADMIN' | 'ADMIN' | 'MANAGER' | 'EDITOR' | 'FINANCE' | 'SUPPORT' | 'EMPLOYEE'>('SUPER_ADMIN');
+  const [userEmail, setUserEmail] = useState('admin@thepagecraft.com');
+
   // State Data
   const [books, setBooks] = useState<AuthorBook[]>(INITIAL_BOOKS);
-  const [orders, setOrders] = useState(INITIAL_ORDERS);
-  const [royalties, setRoyalties] = useState(INITIAL_ROYALTIES);
+  const [activityLogs, setActivityLogs] = useState<any[]>([]);
+  const [teamMembers, setTeamMembers] = useState<any[]>([]);
+  const [backupsList, setBackupsList] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
   const [isSyncing, setIsSyncing] = useState(false);
@@ -139,15 +120,49 @@ function DashboardContent() {
   // Modals state
   const [editingBook, setEditingBook] = useState<AuthorBook | null>(null);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [formState, setFormState] = useState<Partial<AuthorBook>>({});
+  const [isDriveModalOpen, setIsDriveModalOpen] = useState(false);
+  const [isTeamModalOpen, setIsTeamModalOpen] = useState(false);
+  const [isLogsModalOpen, setIsLogsModalOpen] = useState(false);
+  const [selectedDriveBook, setSelectedDriveBook] = useState<AuthorBook | null>(null);
+  const [driveStructure, setDriveStructure] = useState<any | null>(null);
 
-  const filteredBooks = books.filter(b => {
-    const matchesSearch = b.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                          b.authorName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          b.isbn.includes(searchTerm);
-    const matchesStatus = statusFilter === 'All' || b.status === statusFilter;
-    return matchesSearch && matchesStatus;
-  });
+  // Form states
+  const [formState, setFormState] = useState<Partial<AuthorBook>>({});
+  const [newTeamState, setNewTeamState] = useState({ name: '', email: '', password: '', role: 'EDITOR', phone: '' });
+
+  // Fetch live API data on mount
+  useEffect(() => {
+    fetch('/api/auth/me')
+      .then(res => res.json())
+      .then(data => {
+        if (data.user) {
+          setUserRole(data.user.role || 'SUPER_ADMIN');
+          setUserEmail(data.user.email || 'admin@thepagecraft.com');
+        }
+      })
+      .catch(() => {});
+
+    fetch('/api/activity-logs')
+      .then(res => res.json())
+      .then(data => {
+        if (data.logs) setActivityLogs(data.logs);
+      })
+      .catch(() => {});
+
+    fetch('/api/team')
+      .then(res => res.json())
+      .then(data => {
+        if (data.members) setTeamMembers(data.members);
+      })
+      .catch(() => {});
+
+    fetch('/api/backup')
+      .then(res => res.json())
+      .then(data => {
+        if (data.backups) setBackupsList(data.backups);
+      })
+      .catch(() => {});
+  }, []);
 
   const handleSyncWithMainWebsite = () => {
     setIsSyncing(true);
@@ -155,6 +170,74 @@ function DashboardContent() {
       setIsSyncing(false);
       toast.success('Main Website Bookstore API synced successfully! All live changes deployed.');
     }, 1200);
+  };
+
+  const handleOpenGoogleDrive = async (book: AuthorBook) => {
+    setSelectedDriveBook(book);
+    setIsDriveModalOpen(true);
+    setDriveStructure(null);
+
+    try {
+      const res = await fetch('/api/gdrive', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ bookTitle: book.title }),
+      });
+      const data = await res.json();
+      if (data.driveFolder) {
+        setDriveStructure(data.driveFolder);
+      }
+    } catch (err) {
+      toast.error('Could not load Drive folders');
+    }
+  };
+
+  const handleCreateTeamMember = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (userRole !== 'SUPER_ADMIN') {
+      toast.error('Permission Denied. Only Super Admin can create team members.');
+      return;
+    }
+
+    try {
+      const res = await fetch('/api/team', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newTeamState),
+      });
+      const data = await res.json();
+      if (data.error) {
+        toast.error(data.error);
+        return;
+      }
+
+      toast.success(`Created team user "${newTeamState.name}" with role ${newTeamState.role}!`);
+      setIsTeamModalOpen(false);
+      setNewTeamState({ name: '', email: '', password: '', role: 'EDITOR', phone: '' });
+
+      // Refresh team
+      fetch('/api/team').then(r => r.json()).then(d => d.members && setTeamMembers(d.members));
+    } catch (err) {
+      toast.error('Error creating team member');
+    }
+  };
+
+  const handleTriggerBackup = async () => {
+    try {
+      const res = await fetch('/api/backup', { method: 'POST' });
+      const data = await res.json();
+      if (data.backup) {
+        toast.success(`🎉 Manual Database Backup "${data.backup.backupName}" generated!`);
+        fetch('/api/backup').then(r => r.json()).then(d => d.backups && setBackupsList(d.backups));
+      }
+    } catch (err) {
+      toast.error('Error generating backup');
+    }
+  };
+
+  const handleExportCsv = () => {
+    window.open('/api/analytics?format=csv', '_blank');
+    toast.success('Downloading Sales & Revenue Analytics CSV...');
   };
 
   const handleOpenEdit = (book: AuthorBook) => {
@@ -180,7 +263,7 @@ function DashboardContent() {
       authorName: formState.authorName || 'Author Name',
       category: formState.category || 'Fiction',
       format: (formState.format as any) || 'Paperback',
-      price: Number(formState.price) || 299,
+      price: Number(formState.price) || 399,
       royaltyRate: 100,
       status: (formState.status as any) || 'Published',
       isbn: formState.isbn || `978-93-${Math.floor(100000 + Math.random() * 900000)}`,
@@ -203,10 +286,18 @@ function DashboardContent() {
     }
   };
 
+  const filteredBooks = books.filter(b => {
+    const matchesSearch = b.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                          b.authorName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          b.isbn.includes(searchTerm);
+    const matchesStatus = statusFilter === 'All' || b.status === statusFilter;
+    return matchesSearch && matchesStatus;
+  });
+
   const sidebarMenuItems = [
     { name: 'Dashboard', icon: LayoutDashboard, badge: undefined },
     { name: 'Books', icon: BookOpen, badge: books.length },
-    { name: 'Orders', icon: ShoppingBag, badge: orders.filter(o => o.status === 'Pending Review' || o.status === 'Printing').length },
+    { name: 'Orders', icon: ShoppingBag, badge: '4' },
     { name: 'Authors', icon: Users, badge: '980' },
     { name: 'Royalties', icon: DollarSign, badge: '100%' },
     { name: 'Marketing', icon: Megaphone, badge: 'Active' },
@@ -215,7 +306,7 @@ function DashboardContent() {
 
   return (
     <div className="min-h-screen bg-[#F8F9FC] flex flex-col lg:flex-row font-sans text-gray-800">
-      {/* 🔴 Left Sidebar Navigation (BookLeaf Internal Style) */}
+      {/* 🔴 Left Sidebar Navigation */}
       <aside className="w-full lg:w-64 bg-[#1A1A2E] text-white shrink-0 flex flex-col justify-between border-r border-gray-800 shadow-xl">
         <div>
           {/* Brand Header */}
@@ -229,6 +320,17 @@ function DashboardContent() {
                 <p className="text-[10px] text-[#C5A55A] font-bold uppercase tracking-wider">Internal Operations</p>
               </div>
             </div>
+          </div>
+
+          {/* User Role Badge */}
+          <div className="p-4 bg-white/5 border-b border-gray-800 flex items-center justify-between text-xs">
+            <div className="flex items-center gap-2">
+              <ShieldCheck className="w-4 h-4 text-[#C5A55A]" />
+              <span className="font-bold text-gray-200">{userEmail.split('@')[0]}</span>
+            </div>
+            <span className="px-2 py-0.5 bg-[#8B1A1A] text-white text-[10px] font-bold rounded-full">
+              {userRole}
+            </span>
           </div>
 
           {/* Navigation Links */}
@@ -269,22 +371,22 @@ function DashboardContent() {
         {/* Server & API Status Footer */}
         <div className="p-4 m-4 bg-white/5 rounded-2xl border border-white/10 space-y-2">
           <div className="flex items-center justify-between text-xs">
-            <span className="text-gray-400">System Node:</span>
+            <span className="text-gray-400">Database Engine:</span>
             <span className="text-green-400 font-bold text-[11px] flex items-center gap-1">
-              <span className="w-2 h-2 bg-green-400 rounded-full animate-ping"></span> Live API
+              <Database className="w-3 h-3" /> Prisma PostgreSQL
             </span>
           </div>
-          <p className="text-[11px] text-gray-400">BookLeaf Ops Engine v2.4 (Synced)</p>
+          <p className="text-[11px] text-gray-400">JWT Auth & RBAC Active</p>
         </div>
       </aside>
 
       {/* 🟢 Main Operations Body */}
       <main className="flex-1 p-4 sm:p-6 lg:p-8 space-y-8 overflow-y-auto">
-        {/* Top Operational Bar */}
+        {/* Top Operational Action Bar */}
         <div className="bg-white p-4 sm:p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
             <div className="flex items-center gap-2 text-xs font-semibold text-gray-400">
-              <span>Internal Operations</span>
+              <span>Internal Control Panel</span>
               <ChevronRight className="w-3.5 h-3.5" />
               <span className="text-[#8B1A1A] font-bold">{activeMenu} Menu</span>
             </div>
@@ -293,21 +395,38 @@ function DashboardContent() {
             </h1>
           </div>
 
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2.5">
+            <button
+              onClick={() => setIsLogsModalOpen(true)}
+              className="flex items-center gap-1.5 px-3.5 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs rounded-xl transition-all cursor-pointer"
+            >
+              <FileText className="w-4 h-4 text-[#8B1A1A]" />
+              Activity Logs
+            </button>
+
+            <button
+              onClick={() => setIsTeamModalOpen(true)}
+              className="flex items-center gap-1.5 px-3.5 py-2.5 bg-blue-50 hover:bg-blue-100 text-blue-900 font-bold text-xs rounded-xl transition-all cursor-pointer border border-blue-200"
+            >
+              <UserPlus className="w-4 h-4 text-blue-700" />
+              Team Management
+            </button>
+
             <button
               onClick={handleSyncWithMainWebsite}
               disabled={isSyncing}
-              className="flex items-center gap-2 px-4 py-2.5 bg-[#C5A55A] hover:bg-[#b09148] text-[#1A1A2E] font-bold text-xs rounded-xl transition-all shadow-sm cursor-pointer"
+              className="flex items-center gap-1.5 px-3.5 py-2.5 bg-[#C5A55A] hover:bg-[#b09148] text-[#1A1A2E] font-bold text-xs rounded-xl transition-all shadow-sm cursor-pointer"
             >
               <RefreshCw className={`w-4 h-4 ${isSyncing ? 'animate-spin' : ''}`} />
-              {isSyncing ? 'Syncing...' : 'Sync Main Site API'}
+              {isSyncing ? 'Syncing...' : 'Sync Site API'}
             </button>
+
             <button
               onClick={() => {
                 setFormState({ category: 'Fiction', format: 'Paperback', price: 399, status: 'Published' });
                 setIsCreateModalOpen(true);
               }}
-              className="flex items-center gap-2 px-4 py-2.5 bg-[#8B1A1A] hover:bg-[#722F37] text-white font-bold text-xs rounded-xl transition-all shadow-md cursor-pointer"
+              className="flex items-center gap-1.5 px-4 py-2.5 bg-[#8B1A1A] hover:bg-[#722F37] text-white font-bold text-xs rounded-xl transition-all shadow-md cursor-pointer"
             >
               <Plus className="w-4 h-4" />
               Add Author Book
@@ -334,7 +453,7 @@ function DashboardContent() {
               <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex items-center justify-between">
                 <div>
                   <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Live Store Books</p>
-                  <h3 className="text-2xl font-bold text-green-600 font-playfair mt-1">1,290</h3>
+                  <h3 className="text-2xl font-bold text-green-600 font-playfair mt-1">{books.length + 1285}</h3>
                   <span className="text-[11px] font-bold text-gray-500 mt-1">100% Royalty Active</span>
                 </div>
                 <div className="p-3 bg-green-50 text-green-600 rounded-2xl"><Globe className="w-6 h-6" /></div>
@@ -356,6 +475,31 @@ function DashboardContent() {
                   <span className="text-[11px] font-bold text-green-600 mt-1">100% Net Royalty Payout</span>
                 </div>
                 <div className="p-3 bg-yellow-50 text-[#C5A55A] rounded-2xl"><ShieldCheck className="w-6 h-6" /></div>
+              </div>
+            </div>
+
+            {/* Quick Action System Bar */}
+            <div className="bg-gradient-to-r from-[#1A1A2E] to-[#2B2B45] text-white p-6 rounded-2xl shadow-xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+              <div className="space-y-1">
+                <span className="px-2.5 py-0.5 bg-[#C5A55A] text-[#1A1A2E] text-[10px] font-bold rounded-full uppercase">Operations Quick Tools</span>
+                <h3 className="text-xl font-bold font-playfair">Database & Google Drive Integration Suite</h3>
+                <p className="text-xs text-gray-300">Automated Google Drive folder generation, manual backups, and CSV sales exports.</p>
+              </div>
+
+              <div className="flex flex-wrap gap-2.5">
+                <button
+                  onClick={handleExportCsv}
+                  className="flex items-center gap-1.5 px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs rounded-xl shadow-sm cursor-pointer"
+                >
+                  <FileSpreadsheet className="w-4 h-4" /> Export Sales CSV
+                </button>
+
+                <button
+                  onClick={handleTriggerBackup}
+                  className="flex items-center gap-1.5 px-4 py-2 bg-blue-700 hover:bg-blue-800 text-white font-bold text-xs rounded-xl shadow-sm cursor-pointer"
+                >
+                  <Database className="w-4 h-4" /> Backup System
+                </button>
               </div>
             </div>
 
@@ -401,41 +545,30 @@ function DashboardContent() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               {/* Activity Log */}
               <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-4 lg:col-span-1">
-                <h3 className="font-bold font-playfair text-lg text-[#1A1A2E] flex items-center gap-2 border-b pb-3">
-                  <Sparkles className="w-5 h-5 text-[#C5A55A]" /> Real-time Activity Feed
-                </h3>
+                <div className="flex justify-between items-center border-b pb-3">
+                  <h3 className="font-bold font-playfair text-lg text-[#1A1A2E] flex items-center gap-2">
+                    <Sparkles className="w-5 h-5 text-[#C5A55A]" /> Activity Log Stream
+                  </h3>
+                  <button onClick={() => setIsLogsModalOpen(true)} className="text-[11px] font-bold text-[#8B1A1A]">View All</button>
+                </div>
                 <div className="space-y-4 text-xs">
-                  <div className="flex gap-3 items-start">
-                    <div className="w-2.5 h-2.5 rounded-full bg-green-500 mt-1 shrink-0"></div>
-                    <div>
-                      <p className="font-bold text-gray-800">New Manuscript Submitted</p>
-                      <p className="text-gray-500 text-[11px]">"Shadows of Eldoria" submitted by Jessica Wong</p>
-                      <span className="text-[10px] text-gray-400">10 mins ago</span>
+                  {activityLogs.slice(0, 4).map(log => (
+                    <div key={log.id} className="flex gap-3 items-start border-b border-gray-50 pb-2">
+                      <div className="w-2.5 h-2.5 rounded-full bg-blue-500 mt-1 shrink-0"></div>
+                      <div>
+                        <p className="font-bold text-gray-800">{log.action}</p>
+                        <p className="text-gray-500 text-[11px] line-clamp-1">{log.details}</p>
+                        <span className="text-[10px] text-gray-400">{log.userEmail}</span>
+                      </div>
                     </div>
-                  </div>
-                  <div className="flex gap-3 items-start">
-                    <div className="w-2.5 h-2.5 rounded-full bg-blue-500 mt-1 shrink-0"></div>
-                    <div>
-                      <p className="font-bold text-gray-800">Royalty Payout Processed</p>
-                      <p className="text-gray-500 text-[11px]">₹15,46,900 sent to Marcus Sterling</p>
-                      <span className="text-[10px] text-gray-400">1 hour ago</span>
-                    </div>
-                  </div>
-                  <div className="flex gap-3 items-start">
-                    <div className="w-2.5 h-2.5 rounded-full bg-amber-500 mt-1 shrink-0"></div>
-                    <div>
-                      <p className="font-bold text-gray-800">Author Print Order Dispatched</p>
-                      <p className="text-gray-500 text-[11px]">Order #ORD-8801 shipped via BlueDart</p>
-                      <span className="text-[10px] text-gray-400">3 hours ago</span>
-                    </div>
-                  </div>
+                  ))}
                 </div>
               </div>
 
               {/* Books Quick Review Table */}
               <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-4 lg:col-span-2">
                 <div className="flex justify-between items-center border-b pb-3">
-                  <h3 className="font-bold font-playfair text-lg text-[#1A1A2E]">Manuscripts Awaiting Desk Action</h3>
+                  <h3 className="font-bold font-playfair text-lg text-[#1A1A2E]">Manuscripts & Drive Asset Status</h3>
                   <button onClick={() => handleMenuChange('Books')} className="text-xs font-bold text-[#8B1A1A] hover:underline">View All Books →</button>
                 </div>
 
@@ -445,7 +578,7 @@ function DashboardContent() {
                       <tr className="border-b text-gray-400 font-bold uppercase">
                         <th className="py-2">Book Title</th>
                         <th className="py-2">Author</th>
-                        <th className="py-2">Status</th>
+                        <th className="py-2">Drive Folders</th>
                         <th className="py-2 text-right">Action</th>
                       </tr>
                     </thead>
@@ -455,14 +588,15 @@ function DashboardContent() {
                           <td className="py-3 font-bold text-[#1A1A2E]">{b.title}</td>
                           <td className="py-3">{b.authorName}</td>
                           <td className="py-3">
-                            <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                              b.status === 'Published' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'
-                            }`}>
-                              {b.status}
-                            </span>
+                            <button
+                              onClick={() => handleOpenGoogleDrive(b)}
+                              className="px-2.5 py-1 bg-blue-50 text-blue-700 font-bold rounded-lg flex items-center gap-1 hover:bg-blue-100 cursor-pointer"
+                            >
+                              <HardDrive className="w-3 h-3" /> Drive Inspector
+                            </button>
                           </td>
                           <td className="py-3 text-right">
-                            <button onClick={() => handleOpenEdit(b)} className="px-2.5 py-1 bg-gray-100 hover:bg-gray-200 rounded-lg text-gray-800 font-bold">Edit</button>
+                            <button onClick={() => handleOpenEdit(b)} className="px-2.5 py-1 bg-gray-100 hover:bg-gray-200 rounded-lg text-gray-800 font-bold cursor-pointer">Edit</button>
                           </td>
                         </tr>
                       ))}
@@ -496,7 +630,7 @@ function DashboardContent() {
                   <button
                     key={status}
                     onClick={() => setStatusFilter(status)}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                    className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
                       statusFilter === status
                         ? 'bg-[#8B1A1A] text-white'
                         : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
@@ -517,8 +651,8 @@ function DashboardContent() {
                       <th className="py-4 px-6">Book Details</th>
                       <th className="py-4 px-6">Author</th>
                       <th className="py-4 px-6">Price / Format</th>
+                      <th className="py-4 px-6">Google Drive</th>
                       <th className="py-4 px-6">Status</th>
-                      <th className="py-4 px-6">ISBN</th>
                       <th className="py-4 px-6 text-right">Actions</th>
                     </tr>
                   </thead>
@@ -552,6 +686,16 @@ function DashboardContent() {
                         </td>
 
                         <td className="py-4 px-6">
+                          <button
+                            onClick={() => handleOpenGoogleDrive(book)}
+                            className="px-3 py-1.5 bg-blue-50 text-blue-800 rounded-xl font-bold text-xs flex items-center gap-1.5 hover:bg-blue-100 cursor-pointer border border-blue-200"
+                          >
+                            <HardDrive className="w-3.5 h-3.5" />
+                            Drive Folders
+                          </button>
+                        </td>
+
+                        <td className="py-4 px-6">
                           <span
                             className={`px-3 py-1 rounded-full text-xs font-semibold ${
                               book.status === 'Published'
@@ -563,10 +707,6 @@ function DashboardContent() {
                           >
                             {book.status}
                           </span>
-                        </td>
-
-                        <td className="py-4 px-6 font-mono text-xs text-gray-500">
-                          {book.isbn}
                         </td>
 
                         <td className="py-4 px-6 text-right">
@@ -596,227 +736,207 @@ function DashboardContent() {
           </div>
         )}
 
-        {/* 📦 3. MENU: ORDERS VIEW */}
-        {activeMenu === 'Orders' && (
-          <div className="space-y-6">
-            <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-4">
-              <div className="flex justify-between items-center border-b pb-3">
-                <div>
-                  <h3 className="text-xl font-bold font-playfair text-[#1A1A2E]">Author Printing & Shipping Orders</h3>
-                  <p className="text-xs text-gray-500">Track physical copies, bulk author orders, and dispatch status</p>
-                </div>
-                <button onClick={() => toast.success('New print job queued!')} className="px-4 py-2 bg-[#8B1A1A] text-white font-bold text-xs rounded-xl">
-                  + Create Print Order
-                </button>
-              </div>
-
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs border-collapse">
-                  <thead>
-                    <tr className="bg-gray-50 border-b text-gray-500 font-bold uppercase">
-                      <th className="py-3 px-4">Order ID</th>
-                      <th className="py-3 px-4">Author</th>
-                      <th className="py-3 px-4">Book Title</th>
-                      <th className="py-3 px-4">Quantity</th>
-                      <th className="py-3 px-4">Total Amount</th>
-                      <th className="py-3 px-4">Status</th>
-                      <th className="py-3 px-4 text-right">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y font-medium text-gray-700">
-                    {orders.map(o => (
-                      <tr key={o.id}>
-                        <td className="py-3 px-4 font-mono font-bold text-gray-900">{o.id}</td>
-                        <td className="py-3 px-4">{o.author}</td>
-                        <td className="py-3 px-4 font-bold text-[#1A1A2E]">{o.book}</td>
-                        <td className="py-3 px-4 font-bold">{o.copies} copies</td>
-                        <td className="py-3 px-4 text-[#8B1A1A] font-bold">{o.amount}</td>
-                        <td className="py-3 px-4">
-                          <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
-                            o.status === 'Delivered' ? 'bg-green-100 text-green-700' :
-                            o.status === 'Printing' ? 'bg-amber-100 text-amber-700' :
-                            o.status === 'Shipped' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-700'
-                          }`}>
-                            {o.status}
-                          </span>
-                        </td>
-                        <td className="py-3 px-4 text-right">
-                          <button onClick={() => toast.success(`Updated order ${o.id}`)} className="px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded-lg text-gray-800 font-bold text-[11px]">
-                            Update Status
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* 👥 4. MENU: AUTHORS VIEW */}
-        {activeMenu === 'Authors' && (
-          <div className="space-y-6">
-            <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-4">
-              <h3 className="text-xl font-bold font-playfair text-[#1A1A2E] border-b pb-3">Author Directory & Active Tier Packages</h3>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs font-bold">
-                <div className="p-4 bg-gray-50 border rounded-xl space-y-1">
-                  <span className="text-[#8B1A1A]">Eleanor Vance</span>
-                  <p className="text-gray-500 font-normal">Package: Professional (₹24,999)</p>
-                  <p className="text-emerald-700">100% Royalty Retention Active</p>
-                </div>
-                <div className="p-4 bg-gray-50 border rounded-xl space-y-1">
-                  <span className="text-[#8B1A1A]">Marcus Sterling</span>
-                  <p className="text-gray-500 font-normal">Package: Premium (₹49,999)</p>
-                  <p className="text-emerald-700">100% Royalty Retention Active</p>
-                </div>
-                <div className="p-4 bg-gray-50 border rounded-xl space-y-1">
-                  <span className="text-[#8B1A1A]">Sarah Jenkins</span>
-                  <p className="text-gray-500 font-normal">Package: Starter (₹9,999)</p>
-                  <p className="text-emerald-700">100% Royalty Retention Active</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* 💰 5. MENU: ROYALTIES VIEW */}
-        {activeMenu === 'Royalties' && (
-          <div className="space-y-6">
-            <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-4">
-              <h3 className="text-xl font-bold font-playfair text-[#1A1A2E] border-b pb-3">Monthly Royalty Disbursement Ledger</h3>
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs border-collapse">
-                  <thead>
-                    <tr className="bg-gray-50 border-b text-gray-500 font-bold uppercase">
-                      <th className="py-3 px-4">Ref ID</th>
-                      <th className="py-3 px-4">Author</th>
-                      <th className="py-3 px-4">Book Title</th>
-                      <th className="py-3 px-4">Total Sales</th>
-                      <th className="py-3 px-4">100% Net Royalty</th>
-                      <th className="py-3 px-4">Payout Status</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y font-medium text-gray-700">
-                    {royalties.map(r => (
-                      <tr key={r.id}>
-                        <td className="py-3 px-4 font-mono font-bold text-gray-900">{r.id}</td>
-                        <td className="py-3 px-4">{r.author}</td>
-                        <td className="py-3 px-4 font-bold text-[#1A1A2E]">{r.book}</td>
-                        <td className="py-3 px-4">{r.totalSales}</td>
-                        <td className="py-3 px-4 text-[#8B1A1A] font-bold">{r.royaltyEarned}</td>
-                        <td className="py-3 px-4">
-                          <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
-                            r.status === 'Paid' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'
-                          }`}>
-                            {r.status}
-                          </span>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* 🚀 6. MENU: MARKETING VIEW */}
-        {activeMenu === 'Marketing' && (
-          <div className="space-y-6">
-            <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-4">
-              <h3 className="text-xl font-bold font-playfair text-[#1A1A2E] border-b pb-3">Active Marketing Campaigns & Book Promotions</h3>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
-                <div className="p-4 bg-gray-50 border rounded-xl space-y-1">
-                  <span className="font-bold text-[#8B1A1A]">Amazon Sponsored Keyword Ads</span>
-                  <p className="text-gray-500">Status: Running (30-Day Surge)</p>
-                  <p className="text-xs text-gray-400">Targeting 50k+ Readers</p>
-                </div>
-                <div className="p-4 bg-gray-50 border rounded-xl space-y-1">
-                  <span className="font-bold text-[#8B1A1A]">15 Bookstagrammer Features</span>
-                  <p className="text-gray-500">Status: Reviews Active</p>
-                  <p className="text-xs text-gray-400">Instagram & Goodreads Push</p>
-                </div>
-                <div className="p-4 bg-gray-50 border rounded-xl space-y-1">
-                  <span className="font-bold text-[#8B1A1A]">National Digital PR Release</span>
-                  <p className="text-gray-500">Status: Published (10 Portals)</p>
-                  <p className="text-xs text-gray-400">Press Media Coverage</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* ⚙️ 7. MENU: SETTINGS VIEW */}
+        {/* ⚙️ 7. MENU: SETTINGS VIEW & BACKUPS */}
         {activeMenu === 'Settings' && (
           <div className="space-y-6">
             <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-4 text-xs">
-              <h3 className="text-xl font-bold font-playfair text-[#1A1A2E] border-b pb-3">Internal Operations Settings & Sync</h3>
+              <h3 className="text-xl font-bold font-playfair text-[#1A1A2E] border-b pb-3">Internal Operations Settings & Database Backups</h3>
               <div className="space-y-3 max-w-md">
                 <div>
-                  <label className="font-bold text-gray-700 block mb-1">Live Main Website Bookstore Endpoint</label>
-                  <input type="text" readOnly value="https://client-three-mocha-46.vercel.app/bookstore" className="w-full px-3 py-2 bg-gray-100 border rounded-xl text-xs font-mono" />
+                  <label className="font-bold text-gray-700 block mb-1">Prisma PostgreSQL Database URL</label>
+                  <input type="text" readOnly value="postgresql://user:pass@localhost:5432/pagecraft_db" className="w-full px-3 py-2 bg-gray-100 border rounded-xl text-xs font-mono" />
                 </div>
                 <div>
-                  <label className="font-bold text-gray-700 block mb-1">Database Sync Status</label>
-                  <span className="px-3 py-1 bg-green-100 text-green-700 font-bold rounded-full inline-block">PostgreSQL Schema Synced</span>
+                  <label className="font-bold text-gray-700 block mb-1">Google Drive Integration Status</label>
+                  <span className="px-3 py-1 bg-green-100 text-green-700 font-bold rounded-full inline-block">Active (Hierarchical Automated Generator)</span>
+                </div>
+              </div>
+
+              <div className="pt-4 border-t space-y-3">
+                <h4 className="font-bold text-sm text-[#1A1A2E]">Backup System Logs</h4>
+                <div className="space-y-2">
+                  {backupsList.map(bk => (
+                    <div key={bk.id} className="p-3 bg-gray-50 border rounded-xl flex items-center justify-between">
+                      <div>
+                        <p className="font-bold text-gray-900">{bk.backupName}</p>
+                        <p className="text-[11px] text-gray-400">{bk.createdBy} • {bk.size}</p>
+                      </div>
+                      <span className="px-2.5 py-0.5 bg-green-100 text-green-700 font-bold rounded-full text-[10px]">{bk.status}</span>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
           </div>
         )}
+
+        {/* 📁 Modal: Google Drive Hierarchical Inspector */}
+        <AnimatePresence>
+          {isDriveModalOpen && selectedDriveBook && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+              <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="bg-white w-full max-w-2xl rounded-3xl shadow-2xl overflow-hidden border border-gray-100 flex flex-col max-h-[90vh]">
+                <div className="p-5 bg-[#1A1A2E] text-white flex justify-between items-center">
+                  <div className="flex items-center gap-2">
+                    <HardDrive className="w-5 h-5 text-[#C5A55A]" />
+                    <h3 className="font-bold font-playfair text-lg">Google Drive Manager — {selectedDriveBook.title}</h3>
+                  </div>
+                  <button onClick={() => setIsDriveModalOpen(false)} className="text-gray-400 hover:text-white cursor-pointer"><X size={18} /></button>
+                </div>
+
+                <div className="p-6 space-y-5 overflow-y-auto text-xs">
+                  <div className="bg-blue-50 border border-blue-200 p-4 rounded-2xl space-y-1 text-blue-900">
+                    <span className="font-bold block text-blue-950">Drive Hierarchical Structure:</span>
+                    <p className="font-mono">The Page Craft / Books / {selectedDriveBook.title}</p>
+                    <p className="text-[11px] text-blue-700">All assets are synced with Google Cloud & Supabase Storage</p>
+                  </div>
+
+                  {driveStructure ? (
+                    <div className="space-y-3">
+                      <div className="flex justify-between items-center bg-gray-50 p-3 rounded-xl border">
+                        <span className="font-bold text-gray-800">Main Book Folder URL:</span>
+                        <a href={driveStructure.folderUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 font-bold flex items-center gap-1 hover:underline">
+                          Open in Google Drive <ExternalLink className="w-3.5 h-3.5" />
+                        </a>
+                      </div>
+
+                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+                        {driveStructure.subfolders.map((sf: any) => (
+                          <div key={sf.name} className="p-3 bg-white border border-gray-200 rounded-xl hover:border-blue-500 transition-colors space-y-1">
+                            <span className="font-bold text-gray-900 block truncate">{sf.name}</span>
+                            <span className="text-[10px] text-gray-400 block">Synced Folder</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="py-8 text-center text-gray-400">Generating Google Drive Folder Hierarchy...</div>
+                  )}
+                </div>
+              </motion.div>
+            </div>
+          )}
+        </AnimatePresence>
+
+        {/* 👥 Modal: Team User Management (Super Admin) */}
+        <AnimatePresence>
+          {isTeamModalOpen && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+              <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="bg-white w-full max-w-2xl rounded-3xl shadow-2xl overflow-hidden border border-gray-100 flex flex-col max-h-[90vh]">
+                <div className="p-5 bg-blue-900 text-white flex justify-between items-center">
+                  <div className="flex items-center gap-2">
+                    <UserPlus className="w-5 h-5 text-[#C5A55A]" />
+                    <h3 className="font-bold font-playfair text-lg">Team User Management & Permissions</h3>
+                  </div>
+                  <button onClick={() => setIsTeamModalOpen(false)} className="text-gray-400 hover:text-white cursor-pointer"><X size={18} /></button>
+                </div>
+
+                <div className="p-6 space-y-6 overflow-y-auto text-xs">
+                  {userRole === 'SUPER_ADMIN' ? (
+                    <form onSubmit={handleCreateTeamMember} className="bg-gray-50 p-4 rounded-2xl border border-gray-200 space-y-3">
+                      <h4 className="font-bold text-gray-800 text-sm">Add New Team Member (Super Admin Exclusive)</h4>
+                      <div className="grid grid-cols-2 gap-3">
+                        <input type="text" placeholder="Full Name" required value={newTeamState.name} onChange={e => setNewTeamState({ ...newTeamState, name: e.target.value })} className="px-3 py-2 bg-white border rounded-xl" />
+                        <input type="email" placeholder="Work Email" required value={newTeamState.email} onChange={e => setNewTeamState({ ...newTeamState, email: e.target.value })} className="px-3 py-2 bg-white border rounded-xl" />
+                        <input type="password" placeholder="Password" required value={newTeamState.password} onChange={e => setNewTeamState({ ...newTeamState, password: e.target.value })} className="px-3 py-2 bg-white border rounded-xl" />
+                        <select value={newTeamState.role} onChange={e => setNewTeamState({ ...newTeamState, role: e.target.value })} className="px-3 py-2 bg-white border rounded-xl font-bold">
+                          <option value="ADMIN">ADMIN</option>
+                          <option value="MANAGER">MANAGER</option>
+                          <option value="EDITOR">EDITOR</option>
+                          <option value="FINANCE">FINANCE</option>
+                          <option value="SUPPORT">SUPPORT</option>
+                          <option value="EMPLOYEE">EMPLOYEE</option>
+                        </select>
+                      </div>
+                      <div className="flex justify-end pt-1">
+                        <button type="submit" className="px-4 py-2 bg-blue-700 text-white font-bold rounded-xl">Create Member</button>
+                      </div>
+                    </form>
+                  ) : (
+                    <div className="p-4 bg-amber-50 border border-amber-200 rounded-xl text-amber-900">
+                      🔒 Only <strong>Super Admin</strong> has permission to invite or add new team users.
+                    </div>
+                  )}
+
+                  <div className="space-y-2">
+                    <h4 className="font-bold text-gray-800 text-sm">Active Team Directory</h4>
+                    <div className="divide-y border rounded-xl bg-white">
+                      {teamMembers.map(tm => (
+                        <div key={tm.id} className="p-3 flex justify-between items-center">
+                          <div>
+                            <p className="font-bold text-gray-900">{tm.name} <span className="text-[10px] text-gray-400">({tm.email})</span></p>
+                            <span className="text-[10px] font-bold text-blue-700">Role: {tm.role}</span>
+                          </div>
+                          <span className="px-2.5 py-0.5 bg-green-100 text-green-700 rounded-full font-bold text-[10px]">{tm.status}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+          )}
+        </AnimatePresence>
+
+        {/* 📜 Modal: Activity Logs */}
+        <AnimatePresence>
+          {isLogsModalOpen && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+              <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="bg-white w-full max-w-3xl rounded-3xl shadow-2xl overflow-hidden border border-gray-100 flex flex-col max-h-[90vh]">
+                <div className="p-5 bg-gray-900 text-white flex justify-between items-center">
+                  <div className="flex items-center gap-2">
+                    <FileText className="w-5 h-5 text-[#C5A55A]" />
+                    <h3 className="font-bold font-playfair text-lg">System Security & Activity Logs Audit</h3>
+                  </div>
+                  <button onClick={() => setIsLogsModalOpen(false)} className="text-gray-400 hover:text-white cursor-pointer"><X size={18} /></button>
+                </div>
+
+                <div className="p-6 space-y-4 overflow-y-auto text-xs">
+                  <div className="divide-y border rounded-2xl bg-white overflow-hidden">
+                    {activityLogs.map(l => (
+                      <div key={l.id} className="p-3.5 flex justify-between items-center hover:bg-gray-50">
+                        <div>
+                          <p className="font-bold text-gray-900">{l.action}</p>
+                          <p className="text-gray-500 text-[11px]">{l.details}</p>
+                          <span className="text-[10px] text-gray-400">{l.userEmail} ({l.userRole}) • IP: {l.ipAddress || '127.0.0.1'}</span>
+                        </div>
+                        <span className="text-[10px] font-mono text-gray-400">{new Date(l.createdAt).toLocaleTimeString()}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+          )}
+        </AnimatePresence>
 
         {/* Edit Book Modal */}
         <AnimatePresence>
           {editingBook && (
             <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                className="bg-white w-full max-w-3xl rounded-2xl shadow-2xl overflow-hidden border border-gray-100 flex flex-col max-h-[90vh]"
-              >
+              <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="bg-white w-full max-w-3xl rounded-2xl shadow-2xl overflow-hidden border border-gray-100 flex flex-col max-h-[90vh]">
                 <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-[#1A1A2E] text-white">
                   <div className="flex items-center gap-2">
                     <Edit3 className="w-5 h-5 text-[#C5A55A]" />
                     <h3 className="font-playfair text-xl font-bold">Edit Author Book: {editingBook.title}</h3>
                   </div>
-                  <button onClick={() => setEditingBook(null)} className="text-gray-400 hover:text-white cursor-pointer">
-                    <X className="w-5 h-5" />
-                  </button>
+                  <button onClick={() => setEditingBook(null)} className="text-gray-400 hover:text-white cursor-pointer"><X className="w-5 h-5" /></button>
                 </div>
 
                 <form onSubmit={handleSaveEdit} className="p-6 overflow-y-auto space-y-6 flex-1 text-xs">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-1.5 md:col-span-2">
                       <label className="text-xs font-bold uppercase text-gray-500">Book Title</label>
-                      <input
-                        type="text"
-                        value={formState.title || ''}
-                        onChange={e => setFormState({ ...formState, title: e.target.value })}
-                        className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8B1A1A]/20"
-                        required
-                      />
+                      <input type="text" value={formState.title || ''} onChange={e => setFormState({ ...formState, title: e.target.value })} className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8B1A1A]/20" required />
                     </div>
 
                     <div className="space-y-1.5">
                       <label className="text-xs font-bold uppercase text-gray-500">Author Name</label>
-                      <input
-                        type="text"
-                        value={formState.authorName || ''}
-                        onChange={e => setFormState({ ...formState, authorName: e.target.value })}
-                        className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8B1A1A]/20"
-                        required
-                      />
+                      <input type="text" value={formState.authorName || ''} onChange={e => setFormState({ ...formState, authorName: e.target.value })} className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8B1A1A]/20" required />
                     </div>
 
                     <div className="space-y-1.5">
                       <label className="text-xs font-bold uppercase text-gray-500">Category</label>
-                      <select
-                        value={formState.category || 'Fiction'}
-                        onChange={e => setFormState({ ...formState, category: e.target.value })}
-                        className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8B1A1A]/20"
-                      >
+                      <select value={formState.category || 'Fiction'} onChange={e => setFormState({ ...formState, category: e.target.value })} className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8B1A1A]/20">
                         <option>Fiction</option>
                         <option>Non-Fiction</option>
                         <option>Poetry</option>
@@ -828,22 +948,12 @@ function DashboardContent() {
 
                     <div className="space-y-1.5">
                       <label className="text-xs font-bold uppercase text-gray-500">Price (₹)</label>
-                      <input
-                        type="number"
-                        value={formState.price || ''}
-                        onChange={e => setFormState({ ...formState, price: Number(e.target.value) })}
-                        className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8B1A1A]/20"
-                        required
-                      />
+                      <input type="number" value={formState.price || ''} onChange={e => setFormState({ ...formState, price: Number(e.target.value) })} className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8B1A1A]/20" required />
                     </div>
 
                     <div className="space-y-1.5">
                       <label className="text-xs font-bold uppercase text-gray-500">Publication Status</label>
-                      <select
-                        value={formState.status || 'Published'}
-                        onChange={e => setFormState({ ...formState, status: e.target.value as any })}
-                        className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8B1A1A]/20"
-                      >
+                      <select value={formState.status || 'Published'} onChange={e => setFormState({ ...formState, status: e.target.value as any })} className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8B1A1A]/20">
                         <option value="Published">Published (Live on Site)</option>
                         <option value="Under Review">Under Review</option>
                         <option value="Draft">Draft</option>
@@ -852,113 +962,13 @@ function DashboardContent() {
 
                     <div className="space-y-1.5 md:col-span-2">
                       <label className="text-xs font-bold uppercase text-gray-500">Cover Image URL / Path</label>
-                      <input
-                        type="text"
-                        value={formState.coverImage || ''}
-                        onChange={e => setFormState({ ...formState, coverImage: e.target.value })}
-                        placeholder="https://..."
-                        className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8B1A1A]/20"
-                      />
-                    </div>
-
-                    <div className="space-y-1.5 md:col-span-2">
-                      <label className="text-xs font-bold uppercase text-gray-500">Description</label>
-                      <textarea
-                        rows={3}
-                        value={formState.description || ''}
-                        onChange={e => setFormState({ ...formState, description: e.target.value })}
-                        className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8B1A1A]/20"
-                      />
+                      <input type="text" value={formState.coverImage || ''} onChange={e => setFormState({ ...formState, coverImage: e.target.value })} placeholder="https://..." className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8B1A1A]/20" />
                     </div>
                   </div>
 
                   <div className="pt-4 border-t border-gray-100 flex justify-end gap-3">
-                    <button
-                      type="button"
-                      onClick={() => setEditingBook(null)}
-                      className="px-5 py-2 rounded-lg border border-gray-200 text-gray-600 font-medium hover:bg-gray-50 cursor-pointer"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      type="submit"
-                      className="flex items-center gap-2 px-6 py-2 bg-[#8B1A1A] hover:bg-[#722F37] text-white font-bold rounded-lg shadow-md cursor-pointer"
-                    >
-                      <Save className="w-4 h-4" />
-                      Save & Deploy Changes
-                    </button>
-                  </div>
-                </form>
-              </motion.div>
-            </div>
-          )}
-        </AnimatePresence>
-
-        {/* Create New Book Modal */}
-        <AnimatePresence>
-          {isCreateModalOpen && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                className="bg-white w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden border border-gray-100 flex flex-col"
-              >
-                <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-[#8B1A1A] text-white">
-                  <div className="flex items-center gap-2">
-                    <Plus className="w-5 h-5 text-[#C5A55A]" />
-                    <h3 className="font-playfair text-xl font-bold">Add New Author Book</h3>
-                  </div>
-                  <button onClick={() => setIsCreateModalOpen(false)} className="text-gray-200 hover:text-white cursor-pointer">
-                    <X className="w-5 h-5" />
-                  </button>
-                </div>
-
-                <form onSubmit={handleCreateNew} className="p-6 space-y-4 text-xs">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="col-span-2">
-                      <label className="text-xs font-bold uppercase text-gray-500">Title</label>
-                      <input
-                        type="text"
-                        placeholder="Book Title"
-                        onChange={e => setFormState({ ...formState, title: e.target.value })}
-                        className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg"
-                        required
-                      />
-                    </div>
-                    <div>
-                      <label className="text-xs font-bold uppercase text-gray-500">Author Name</label>
-                      <input
-                        type="text"
-                        placeholder="Author Name"
-                        onChange={e => setFormState({ ...formState, authorName: e.target.value })}
-                        className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg"
-                        required
-                      />
-                    </div>
-                    <div>
-                      <label className="text-xs font-bold uppercase text-gray-500">Price (₹)</label>
-                      <input
-                        type="number"
-                        placeholder="399"
-                        onChange={e => setFormState({ ...formState, price: Number(e.target.value) })}
-                        className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg"
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
-                    <button
-                      type="button"
-                      onClick={() => setIsCreateModalOpen(false)}
-                      className="px-4 py-2 border border-gray-200 text-gray-600 rounded-lg cursor-pointer"
-                    >
-                      Cancel
-                    </button>
-                    <button type="submit" className="px-6 py-2 bg-[#8B1A1A] text-white font-bold rounded-lg shadow-md cursor-pointer">
-                      Publish Book
-                    </button>
+                    <button type="button" onClick={() => setEditingBook(null)} className="px-5 py-2 rounded-lg border border-gray-200 text-gray-600 font-medium hover:bg-gray-50 cursor-pointer">Cancel</button>
+                    <button type="submit" className="flex items-center gap-2 px-6 py-2 bg-[#8B1A1A] hover:bg-[#722F37] text-white font-bold rounded-lg shadow-md cursor-pointer"><Save className="w-4 h-4" /> Save & Deploy Changes</button>
                   </div>
                 </form>
               </motion.div>

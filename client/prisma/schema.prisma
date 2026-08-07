@@ -1,0 +1,373 @@
+// Page Craft — Prisma ORM Enterprise Database Schema
+// Supporting PostgreSQL, SQLite & MySQL database providers
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  SUPER_ADMIN
+  ADMIN
+  MANAGER
+  EDITOR
+  FINANCE
+  SUPPORT
+  EMPLOYEE
+}
+
+enum UserStatus {
+  ACTIVE
+  DISABLED
+}
+
+enum BookStatus {
+  Published
+  Under_Review
+  Draft
+}
+
+enum OrderStatus {
+  Pending_Review
+  Printing
+  Shipped
+  Delivered
+  Cancelled
+}
+
+enum PaymentStatus {
+  Pending
+  Paid
+  Refunded
+}
+
+enum PayoutStatus {
+  Pending
+  Processing
+  Paid
+}
+
+enum TicketPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum TicketStatus {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+}
+
+model User {
+  id            String         @id @default(uuid())
+  name          String
+  email         String         @unique
+  passwordHash  String
+  role          Role           @default(EMPLOYEE)
+  status        UserStatus     @default(ACTIVE)
+  avatar        String?
+  phone         String?
+  isVerified    Boolean        @default(false)
+  mustResetPassword Boolean    @default(false)
+  lastLoginAt   DateTime?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  authors       Author[]
+  orders        Order[]
+  payments      Payment[]
+  invoices      Invoice[]
+  notifications Notification[]
+  supportTickets SupportTicket[]
+  activityLogs  ActivityLog[]
+
+  @@map("users")
+}
+
+model Author {
+  id             String    @id @default(uuid())
+  userId         String?
+  user           User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+  name           String
+  slug           String    @unique
+  bio            String?
+  shortBio       String?
+  avatar         String?
+  website        String?
+  twitter        String?
+  instagram      String?
+  linkedin       String?
+  booksPublished Int       @default(0)
+  isFeatured     Boolean   @default(false)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  books          Book[]
+  royalties      Royalty[]
+
+  @@map("authors")
+}
+
+model Book {
+  id             String    @id @default(uuid())
+  title          String
+  subtitle       String?
+  authorId       String?
+  author         Author?   @relation(fields: [authorId], references: [id], onDelete: SetNull)
+  authorName     String
+  category       String    @default("Fiction")
+  format         String    @default("Paperback")
+  price          Float     @default(399)
+  originalPrice  Float?
+  isbn           String    @unique
+  pages          Int?      @default(200)
+  language       String    @default("English")
+  publishDate    String?
+  rating         Float     @default(0)
+  reviewCount    Int       @default(0)
+  isBestseller   Boolean   @default(false)
+  status         BookStatus @default(Published)
+  stock          Int       @default(100)
+  description    String?
+  coverImage     String?
+  driveFolderUrl String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  orderItems     OrderItem[]
+  driveMetadata  GoogleDriveMetadata[]
+
+  @@map("books")
+}
+
+model PublishingPackage {
+  id          String   @id @default(uuid())
+  name        String
+  price       String
+  amount      Float
+  badge       String?
+  tagline     String?
+  features    String   // JSON string of features list
+  popular     Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  @@map("publishing_packages")
+}
+
+model Order {
+  id              String        @id @default(uuid())
+  orderNumber     String        @unique
+  userId          String?
+  user            User?         @relation(fields: [userId], references: [id], onDelete: SetNull)
+  authorName      String
+  bookTitle       String
+  copies          Int           @default(1)
+  totalAmount     Float
+  status          OrderStatus   @default(Pending_Review)
+  paymentStatus   PaymentStatus @default(Pending)
+  paymentMethod   String        @default("UPI")
+  shippingAddress String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  orderItems      OrderItem[]
+  payments        Payment[]
+  invoices        Invoice[]
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id        String  @id @default(uuid())
+  orderId   String
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  bookId    String?
+  book      Book?   @relation(fields: [bookId], references: [id], onDelete: SetNull)
+  title     String
+  quantity  Int     @default(1)
+  price     Float
+  format    String  @default("Paperback")
+
+  @@map("order_items")
+}
+
+model Payment {
+  id            String        @id @default(uuid())
+  transactionId String        @unique
+  orderId       String?
+  order         Order?        @relation(fields: [orderId], references: [id], onDelete: SetNull)
+  userId        String?
+  user          User?         @relation(fields: [userId], references: [id], onDelete: SetNull)
+  amount        Float
+  method        String        @default("UPI")
+  status        PaymentStatus @default(Paid)
+  receiptUrl    String?
+  createdAt     DateTime      @default(now())
+
+  @@map("payments")
+}
+
+model Invoice {
+  id            String   @id @default(uuid())
+  invoiceNumber String   @unique
+  orderId       String?
+  order         Order?   @relation(fields: [orderId], references: [id], onDelete: SetNull)
+  userId        String?
+  user          User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  amount        Float
+  pdfUrl        String?
+  status        String   @default("PAID")
+  createdAt     DateTime @default(now())
+
+  @@map("invoices")
+}
+
+model Royalty {
+  id            String       @id @default(uuid())
+  authorId      String?
+  author        Author?      @relation(fields: [authorId], references: [id], onDelete: SetNull)
+  authorName    String
+  bookTitle     String
+  totalSales    Float
+  royaltyEarned Float
+  status        PayoutStatus @default(Pending)
+  payoutDate    String?
+  createdAt     DateTime     @default(now())
+
+  @@map("royalties")
+}
+
+model Blog {
+  id          String   @id @default(uuid())
+  title       String
+  slug        String   @unique
+  excerpt     String?
+  content     String
+  coverImage  String?
+  category    String   @default("Publishing")
+  authorName  String   @default("Page Craft Team")
+  readTime    Int      @default(5)
+  isPublished Boolean  @default(true)
+  createdAt   DateTime @default(now())
+
+  @@map("blogs")
+}
+
+model Coupon {
+  id        String   @id @default(uuid())
+  code      String   @unique
+  discount  Float
+  type      String   @default("percentage")
+  maxUses   Int      @default(100)
+  usedCount Int      @default(0)
+  isActive  Boolean  @default(true)
+  expiresAt DateTime?
+  createdAt DateTime @default(now())
+
+  @@map("coupons")
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  message   String
+  type      String   @default("info")
+  isRead    Boolean  @default(false)
+  link      String?
+  createdAt DateTime @default(now())
+
+  @@map("notifications")
+}
+
+model Lead {
+  id        String   @id @default(uuid())
+  name      String
+  email     String
+  phone     String?
+  source    String   @default("Website Form")
+  status    String   @default("NEW")
+  notes     String?
+  createdAt DateTime @default(now())
+
+  @@map("leads")
+}
+
+model ContactMessage {
+  id        String   @id @default(uuid())
+  name      String
+  email     String
+  phone     String?
+  subject   String?
+  message   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@map("contact_messages")
+}
+
+model SupportTicket {
+  id           String         @id @default(uuid())
+  ticketNumber String         @unique
+  userId       String?
+  user         User?          @relation(fields: [userId], references: [id], onDelete: SetNull)
+  userName     String
+  userEmail    String
+  subject      String
+  priority     TicketPriority @default(MEDIUM)
+  status       TicketStatus   @default(OPEN)
+  category     String         @default("General")
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  @@map("support_tickets")
+}
+
+model ActivityLog {
+  id        String   @id @default(uuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  userEmail String
+  userRole  String
+  action    String
+  details   String?
+  ipAddress String?  @default("127.0.0.1")
+  userAgent String?
+  createdAt DateTime @default(now())
+
+  @@map("activity_logs")
+}
+
+model GoogleDriveMetadata {
+  id           String   @id @default(uuid())
+  bookId       String?
+  book         Book?    @relation(fields: [bookId], references: [id], onDelete: SetNull)
+  folderId     String
+  folderName   String
+  folderUrl    String
+  storageUsed  String   @default("0 MB")
+  lastSyncedAt DateTime @default(now())
+  createdAt    DateTime @default(now())
+
+  @@map("google_drive_metadata")
+}
+
+model BackupLog {
+  id          String   @id @default(uuid())
+  backupName  String
+  backupType  String   @default("AUTOMATED")
+  size        String   @default("1.2 MB")
+  status      String   @default("SUCCESS")
+  downloadUrl String?
+  createdBy   String   @default("System Routine")
+  createdAt   DateTime @default(now())
+
+  @@map("backup_logs")
+}
