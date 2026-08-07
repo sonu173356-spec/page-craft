@@ -73,11 +73,6 @@ export const NAV_ITEMS: NavItem[] = [
         description: 'Publish on your own terms',
       },
       {
-        label: 'Book Printing',
-        href: '/book-printing',
-        description: 'Premium quality print-on-demand',
-      },
-      {
         label: 'Distribution',
         href: '/distribution',
         description: 'Reach readers in 150+ countries',
@@ -91,16 +86,6 @@ export const NAV_ITEMS: NavItem[] = [
         label: 'Book Editing',
         href: '/book-editing',
         description: 'Professional editing & proofreading',
-      },
-      {
-        label: 'Book Design',
-        href: '/book-design',
-        description: 'Stunning covers & interiors',
-      },
-      {
-        label: 'ISBN Information',
-        href: '/isbn-info',
-        description: 'Everything about ISBN allocation',
       },
     ],
   },
@@ -165,9 +150,7 @@ export const FOOTER_LINKS = {
   services: [
     { label: 'Publishing Plans', href: '/publishing-plans' },
     { label: 'Self Publishing', href: '/self-publishing' },
-    { label: 'Book Printing', href: '/book-printing' },
     { label: 'Book Editing', href: '/book-editing' },
-    { label: 'Book Design', href: '/book-design' },
     { label: 'Distribution', href: '/distribution' },
     { label: 'Marketing', href: '/marketing-services' },
   ],
@@ -186,7 +169,6 @@ export const FOOTER_LINKS = {
   ],
   support: [
     { label: 'FAQs', href: '/faq' },
-    { label: 'ISBN Info', href: '/isbn-info' },
     { label: 'Pricing', href: '/pricing' },
     { label: 'Publishing Process', href: '/publishing-process' },
   ],

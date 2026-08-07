@@ -9,37 +9,25 @@ const services = [
     icon: BookOpen,
     title: 'Self-Publishing',
     description: 'Keep 100% of your rights and royalties. We guide you through the entire publishing process.',
-    href: '/services/publishing'
-  },
-  {
-    icon: Printer,
-    title: 'Book Printing',
-    description: 'High-quality Print-on-Demand (POD) and bulk offset printing with premium paper options.',
-    href: '/services/printing'
+    href: '/self-publishing'
   },
   {
     icon: Globe,
     title: 'Distribution',
     description: 'Make your book available globally across 150+ countries via major retailers like Amazon.',
-    href: '/services/distribution'
+    href: '/distribution'
   },
   {
     icon: Megaphone,
     title: 'Marketing',
     description: 'Strategic book promotion, author branding, and targeted ad campaigns to boost sales.',
-    href: '/services/marketing'
+    href: '/marketing-services'
   },
   {
     icon: Edit3,
     title: 'Editing',
     description: 'Professional developmental editing, copyediting, and proofreading for a flawless manuscript.',
-    href: '/services/editing'
-  },
-  {
-    icon: PenTool,
-    title: 'Book Design',
-    description: 'Custom, eye-catching book cover designs and elegant interior formatting layouts.',
-    href: '/services/design'
+    href: '/book-editing'
   }
 ];
 

@@ -24,13 +24,6 @@ const values = [
   { title: 'Innovation', description: 'Embracing new technologies and marketing strategies in publishing.', icon: Lightbulb },
 ];
 
-const team = [
-  { name: 'Eleanor Vance', role: 'Founder & CEO', image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80' },
-  { name: 'Marcus Sterling', role: 'Head of Editing', image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80' },
-  { name: 'Sarah Chen', role: 'Art Director', image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80' },
-  { name: 'James Wilson', role: 'Marketing Lead', image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80' },
-];
-
 const milestones = [
   { year: '2019', title: 'The Beginning', description: 'Page Craft was founded with a mission to democratize premium publishing.' },
   { year: '2021', title: 'Going Global', description: 'Expanded our distribution network to over 50 countries worldwide.' },
@@ -169,37 +162,6 @@ export default function AboutPageClient() {
                 </motion.div>
               )
             })}
-          </div>
-        </div>
-      </section>
-
-      {/* Team Section */}
-      <section className="py-24 px-4">
-        <div className="container mx-auto max-w-6xl">
-          <SectionHeading title="Meet the Team" subtitle="The people behind the pages" align="center" className="mb-16" />
-          
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {team.map((member, index) => (
-              <motion.div 
-                key={index}
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                className="group cursor-pointer"
-              >
-                <div className="relative overflow-hidden rounded-2xl mb-4 aspect-[4/5]">
-                  <img 
-                    src={member.image} 
-                    alt={member.name} 
-                    className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-110"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-charcoal/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                </div>
-                <h3 className="text-xl font-bold text-charcoal text-center">{member.name}</h3>
-                <p className="text-accent font-medium text-center">{member.role}</p>
-              </motion.div>
-            ))}
           </div>
         </div>
       </section>
