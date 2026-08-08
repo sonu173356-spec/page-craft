@@ -17,8 +17,8 @@ export default function PricingPage() {
           <RoyaltyCalculator />
         </div>
         <div className="mt-16 text-center">
-          <Link href="/author/upload-book" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-8 py-3.5 bg-[#8B1A1A] hover:bg-[#722F37] text-white rounded-full font-bold text-base shadow-md transition-all">
-            Get Started Today <ExternalLink className="w-4 h-4" />
+          <Link href="/packages?source=pricing" className="inline-flex items-center gap-2 px-8 py-3.5 bg-[#8B1A1A] hover:bg-[#722F37] text-white rounded-full font-bold text-base shadow-md transition-all">
+            Explore All Packages <ExternalLink className="w-4 h-4" />
           </Link>
         </div>
       </div>

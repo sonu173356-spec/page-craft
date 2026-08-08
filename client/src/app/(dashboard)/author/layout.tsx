@@ -3,7 +3,7 @@ import DashboardLayout from '@/components/layout/DashboardLayout';
 import DashboardAuthGuard from '@/components/auth/DashboardAuthGuard';
 import { 
   LayoutDashboard, BookOpen, TrendingUp, DollarSign, 
-  BarChart2, ShoppingCart, MessageSquare, Bell, Settings, PlusCircle
+  BarChart2, ShoppingCart, MessageSquare, Bell, Settings
 } from 'lucide-react';
 import React from 'react';
 
@@ -17,7 +17,6 @@ const authorNavItems = [
   { label: 'Messages', href: '/author/messages', icon: <MessageSquare size={20} /> },
   { label: 'Notifications', href: '/author/notifications', icon: <Bell size={20} /> },
   { label: 'Settings', href: '/author/settings', icon: <Settings size={20} /> },
-  { label: 'Upload Book', href: '/author/upload-book', icon: <PlusCircle size={20} /> },
 ];
 
 export default function AuthorLayout({ children }: { children: React.ReactNode }) {

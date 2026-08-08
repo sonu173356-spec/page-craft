@@ -108,10 +108,6 @@ export default function AuthorBooksPage() {
           <h1 className="text-3xl font-bold font-playfair text-[#1A1A2E]">My Books</h1>
           <p className="text-xs text-gray-500 mt-1">Manage, preview, edit and track your published manuscripts</p>
         </div>
-        <Link href="/author/upload-book" className="flex items-center gap-2 px-4 py-2.5 bg-[#8B1A1A] text-white rounded-xl font-bold text-xs hover:bg-red-800 transition-colors shadow-sm">
-          <Plus size={16} />
-          Upload New Book
-        </Link>
       </div>
 
       <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col sm:flex-row gap-4 justify-between items-center">

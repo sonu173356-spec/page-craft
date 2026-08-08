@@ -124,12 +124,6 @@ export const NAV_ITEMS: NavItem[] = [
         description: 'Access author book sales, royalties & tools',
       },
       {
-        label: 'Upload Book Desk',
-        href: '/author/upload-book',
-        isDashboard: true,
-        description: 'Publish manuscript PDFs & book covers',
-      },
-      {
         label: 'Content Manager',
         href: '/admin/internal-dashboard',
         isDashboard: true,
@@ -165,7 +159,6 @@ export const FOOTER_LINKS = {
     { label: 'Author Portal (Login) ↗', href: '/author/login', isDashboard: true },
     { label: 'Create Author Account ↗', href: '/author/signup', isDashboard: true },
     { label: 'Author Dashboard ↗', href: '/author/dashboard', isDashboard: true },
-    { label: 'Upload Book ↗', href: '/author/upload-book', isDashboard: true },
     { label: 'Content Manager ↗', href: '/admin/internal-dashboard', isDashboard: true },
     { label: 'Order Desk ↗', href: '/admin/orders', isDashboard: true },
   ],

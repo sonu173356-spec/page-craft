@@ -22,8 +22,8 @@ export default function SelfPublishingPage() {
           <p className="text-2xl font-playfair italic font-medium text-[#8B1A1A]">"Self-publishing gave me freedom, and Page Craft made it professional."</p>
         </div>
         <div className="mt-16 text-center">
-          <Link href="/author/upload-book" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-8 py-3.5 bg-[#8B1A1A] hover:bg-[#722F37] text-white rounded-full font-bold text-base shadow-md transition-all">
-            Start Journey <ExternalLink className="w-4 h-4" />
+          <Link href="/packages?source=self-publishing" className="inline-flex items-center gap-2 px-8 py-3.5 bg-[#8B1A1A] hover:bg-[#722F37] text-white rounded-full font-bold text-base shadow-md transition-all">
+            Choose Publishing Package <ExternalLink className="w-4 h-4" />
           </Link>
         </div>
       </div>

@@ -17,8 +17,8 @@ export default function DistributionPage() {
           ))}
         </div>
         <div className="mt-16 text-center">
-          <Link href="/author/upload-book" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-8 py-3.5 bg-[#8B1A1A] hover:bg-[#722F37] text-white rounded-full font-bold text-base shadow-md transition-all">
-            Distribute Now <ExternalLink className="w-4 h-4" />
+          <Link href="/packages?source=distribution" className="inline-flex items-center gap-2 px-8 py-3.5 bg-[#8B1A1A] hover:bg-[#722F37] text-white rounded-full font-bold text-base shadow-md transition-all">
+            Distribute Your Book <ExternalLink className="w-4 h-4" />
           </Link>
         </div>
       </div>

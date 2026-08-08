@@ -11,7 +11,6 @@ import {
   Clock,
   ShieldCheck,
   Globe,
-  UploadCloud,
   FileCheck,
   Sparkles,
   ExternalLink,
@@ -85,11 +84,11 @@ export default function AuthorDashboardPage() {
 
           <div className="flex flex-wrap items-center gap-3">
             <Link
-              href="/author/upload-book"
+              href="/author/books"
               className="px-5 py-2.5 bg-[#8B1A1A] hover:bg-[#722F37] text-white font-bold text-xs sm:text-sm rounded-xl shadow-xs transition-all flex items-center gap-2"
             >
-              <UploadCloud className="w-4 h-4" />
-              Upload Manuscript
+              <BookOpen className="w-4 h-4" />
+              View My Books
             </Link>
             <Link
               href="/author/settings"
@@ -317,10 +316,10 @@ export default function AuthorDashboardPage() {
               </h3>
             </div>
             <Link
-              href="/author/upload-book"
+              href="/author/books"
               className="text-xs font-bold text-[#8B1A1A] hover:underline"
             >
-              Upload New Title →
+              View Titles →
             </Link>
           </div>
 
