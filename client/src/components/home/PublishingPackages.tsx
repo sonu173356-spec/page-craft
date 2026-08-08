@@ -88,7 +88,7 @@ export default function PublishingPackages() {
               
               <Link href="/publishing-plans" className="block w-full">
                 <Button 
-                  className={`w-full ${pkg.isPopular ? 'bg-[#8B1A1A] hover:bg-[#722F37] text-white' : 'bg-gray-100 text-[#1A1A2E] hover:bg-gray-200'} `}
+                  className={`w-full ${pkg.isPopular ? 'bg-[#8B1A1A] hover:bg-[#722F37] text-white' : 'bg-[#F3E8D0] text-[#29251F] hover:bg-[#E8D9BE]'} transition-colors`}
                   size="lg"
                 >
                   Get Started
