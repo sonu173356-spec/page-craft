@@ -3,58 +3,77 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { SectionHeading } from '@/components/ui/SectionHeading';
-import { AnimatedCounter } from '@/components/ui/AnimatedCounter';
 import { Breadcrumb } from '@/components/ui/Breadcrumb';
-import { BookOpen, Target, Heart, Lightbulb, Users, Globe, ExternalLink, ShieldCheck, Sparkles, Award, Star, CheckCircle } from 'lucide-react';
+import { BookOpen, Target, Heart, Lightbulb, ExternalLink, Sparkles, CheckCircle, ShieldCheck, Zap, Award } from 'lucide-react';
 import Link from 'next/link';
 
 const stats = [
-  { label: 'Books Published', value: 25000, suffix: '+', icon: BookOpen },
-  { label: 'Authors Published', value: 12000, suffix: '+', icon: Users },
-  { label: 'Countries Reached', value: 150, suffix: '+', icon: Globe },
-  { label: 'Copies Sold', value: 2000000, suffix: '+', icon: Target },
+  { label: 'Royalty to Authors', value: '100%', icon: Target },
+  { label: 'Global Distribution Channels', value: '150+', icon: BookOpen },
+  { label: 'Average Publishing Turnaround', value: '30-45 Days', icon: Zap },
+  { label: 'Author Care & Support', value: '24/7', icon: Heart },
 ];
 
 const values = [
   { title: 'Quality First', description: 'We never compromise on the editing, typography, cover design, or print quality of our authors’ books.', icon: BookOpen },
   { title: '100% Royalty & Transparency', description: 'Authors retain 100% net royalties and all intellectual property rights forever. Zero hidden cuts.', icon: Target },
   { title: 'Author Centric', description: 'Your creative vision is our highest priority. We assign a personal publishing consultant to every project.', icon: Heart },
-  { title: 'Global Innovation', description: 'State-of-the-art print-on-demand technology and distribution across 150+ countries worldwide.', icon: Lightbulb },
+  { title: 'Modern Innovation', description: 'Embracing modern technology, automated portals, and global distribution for emerging writers.', icon: Lightbulb },
 ];
 
 const milestones = [
-  { year: '2019', title: 'The Inception', description: 'Page Craft was founded with a mission to make self-publishing transparent, accessible, and author-first.' },
-  { year: '2021', title: 'Global Reach', description: 'Expanded distribution across Amazon, Flipkart, Google Books, Apple Books, and 150+ international platforms.' },
-  { year: '2023', title: 'Author Portal & Tech', description: 'Launched our dedicated author dashboard, real-time sales reporting, and automated manuscript validation.' },
-  { year: '2026', title: 'India’s #1 Publishing House', description: 'Trusted by over 12,000+ published authors with 25,000+ published titles worldwide.' },
+  {
+    year: '2026',
+    stage: 'Phase 01',
+    title: 'The Beginning',
+    description: 'Founded with a simple vision: to make publishing more accessible, transparent, and author-friendly. We began building a modern publishing platform focused on helping writers bring their stories to readers.',
+  },
+  {
+    year: '2026',
+    stage: 'Phase 02',
+    title: 'Building Our Foundation',
+    description: 'We started developing our publishing ecosystem, author services, digital infrastructure, and creative workflow to create a smooth experience for emerging and independent authors.',
+  },
+  {
+    year: '2026',
+    stage: 'Phase 03',
+    title: 'Growing With Authors',
+    description: 'Our focus is on building meaningful relationships with authors, supporting their publishing journeys, and creating opportunities for new voices and stories to reach readers.',
+  },
+  {
+    year: '2026',
+    stage: 'Looking Forward',
+    title: 'Our Journey Ahead',
+    description: 'We are a growing publishing house with a long-term vision. As we grow, we aim to expand our catalogue, strengthen our author community, and bring more stories to readers across India and beyond.',
+  },
 ];
 
 const teamMembers = [
   {
     name: 'Vikramaditya Rao',
-    role: 'Founder & CEO',
-    bio: 'Former senior publishing editor with 15+ years of experience helping thousands of authors build bestselling careers.',
+    role: 'Founder & Publishing Director',
+    bio: 'Dedicated to building an accessible, transparent, and modern publishing ecosystem for independent authors.',
     initials: 'VR',
     color: 'bg-rose-700',
   },
   {
     name: 'Dr. Priya Sharma',
     role: 'Chief Editorial Officer',
-    bio: 'Renowned literary consultant and editor who oversees manuscript quality and developmental editing standards.',
+    bio: 'Overseeing manuscript assessment, developmental editing, and editorial standards for emerging writers.',
     initials: 'PS',
     color: 'bg-amber-600',
   },
   {
     name: 'Arjun Menon',
     role: 'Head of Global Distribution',
-    bio: 'Logistics and international distribution specialist managing print channels across 150+ countries and major retailers.',
+    bio: 'Managing print-on-demand networks, logistics, and digital catalog listings across major retail channels.',
     initials: 'AM',
     color: 'bg-teal-700',
   },
   {
     name: 'Aisha Khan',
-    role: 'Lead Cover & Interior Designer',
-    bio: 'Award-winning book designer crafting market-ready paperback covers and bespoke typography layouts for authors.',
+    role: 'Lead Book & Cover Designer',
+    bio: 'Crafting bespoke typography layouts, print interior formatting, and market-ready book covers.',
     initials: 'AK',
     color: 'bg-[#8B1A1A]',
   },
@@ -94,15 +113,15 @@ export default function AboutPageClient() {
               Crafting Stories, <span className="text-[#8B1A1A]">Building Legacies</span>
             </h1>
             <p className="text-lg md:text-xl text-[#4A4A5A] leading-relaxed font-inter max-w-3xl mx-auto">
-              We are India’s most trusted self-publishing house dedicated to bringing extraordinary stories to life. 
-              By combining premium editorial standards with state-of-the-art technology, we empower authors to publish globally and retain 100% royalty.
+              We are a modern self-publishing house dedicated to bringing extraordinary stories to life. 
+              By combining high editorial standards with innovative technology, we empower authors to publish professionally and retain 100% royalty.
             </p>
           </motion.div>
         </div>
       </section>
 
-      {/* Stats Section */}
-      <section className="py-16 bg-white border-y border-gray-100 shadow-sm">
+      {/* Highlights / Commitments Strip */}
+      <section className="py-14 bg-white border-y border-gray-100 shadow-sm">
         <div className="container mx-auto max-w-6xl px-4">
           <motion.div 
             variants={containerVariants}
@@ -115,13 +134,13 @@ export default function AboutPageClient() {
               const Icon = stat.icon;
               return (
                 <motion.div key={index} variants={itemVariants} className="text-center">
-                  <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-red-50 text-[#8B1A1A] mb-4 shadow-sm">
+                  <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-red-50 text-[#8B1A1A] mb-3 shadow-sm">
                     <Icon className="w-6 h-6" />
                   </div>
-                  <div className="text-4xl md:text-5xl font-playfair font-bold text-[#1A1A2E] mb-2">
-                    <AnimatedCounter value={stat.value} suffix={stat.suffix} />
+                  <div className="text-3xl md:text-4xl font-playfair font-bold text-[#1A1A2E] mb-1">
+                    {stat.value}
                   </div>
-                  <div className="text-gray-500 font-medium text-sm">{stat.label}</div>
+                  <div className="text-gray-500 font-medium text-xs md:text-sm">{stat.label}</div>
                 </motion.div>
               );
             })}
@@ -129,7 +148,7 @@ export default function AboutPageClient() {
         </div>
       </section>
 
-      {/* Our Mission & Vision */}
+      {/* Mission & Vision */}
       <section className="py-20 px-4">
         <div className="container mx-auto max-w-6xl">
           <div className="grid md:grid-cols-2 gap-10 items-center">
@@ -138,10 +157,10 @@ export default function AboutPageClient() {
                 Our Mission
               </span>
               <h2 className="text-3xl font-playfair font-bold text-[#1A1A2E]">
-                Democratizing Global Publishing
+                Democratizing Publishing for Every Writer
               </h2>
               <p className="text-gray-600 text-sm leading-relaxed">
-                To eliminate the barriers of traditional publishing by providing every writer with world-class editorial, design, printing, and global distribution services without forfeiting rights or royalties.
+                To eliminate the traditional gatekeeping of publishing by providing authors with world-class editorial, cover design, premium printing, and global distribution services without forfeiting creative rights or royalties.
               </p>
               <ul className="space-y-2 pt-2 text-xs font-semibold text-gray-700">
                 <li className="flex items-center gap-2 text-emerald-700">
@@ -161,59 +180,156 @@ export default function AboutPageClient() {
                 Our Vision
               </span>
               <h2 className="text-3xl font-playfair font-bold text-white">
-                Empowering 100,000+ Voices
+                Empowering Voices & New Stories
               </h2>
               <p className="text-gray-300 text-sm leading-relaxed">
-                We envision a literary world where every compelling story finds its audience. Through cutting-edge print-on-demand technology and author-first business models, we are building the future of independent publishing.
+                We envision a world where every compelling manuscript finds its readers. Through modern print-on-demand technology, transparent author dashboards, and personalized support, we are building the future of author-first publishing.
               </p>
               <div className="pt-2 flex items-center gap-4 text-xs font-bold text-[#C5A55A]">
-                <span>⭐ 4.9/5 Author Rating</span>
+                <span>⭐ Author-First Publishing</span>
                 <span>•</span>
-                <span>🚀 2M+ Readers Reached</span>
+                <span>🚀 Built for Growth in 2026</span>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Milestones / Journey */}
-      <section className="py-20 px-4 bg-white border-y border-gray-100">
+      {/* 🌟 Refined "Our Journey" Timeline Starting in 2026 */}
+      <section className="py-24 px-4 bg-white border-y border-gray-100">
         <div className="container mx-auto max-w-4xl">
-          <SectionHeading title="Our Journey" subtitle="How we got here" align="center" className="mb-16" />
-          
-          <div className="space-y-12">
-            {milestones.map((milestone, index) => (
-              <motion.div 
+          {/* Centered Heading */}
+          <div className="text-center max-w-2xl mx-auto mb-16 space-y-3">
+            <span className="px-3 py-1 bg-red-100 text-[#8B1A1A] font-bold text-xs rounded-full uppercase tracking-wider">
+              2026 & Beyond
+            </span>
+            <h2 className="text-4xl md:text-5xl font-playfair font-bold text-[#1A1A2E]">
+              Our Journey
+            </h2>
+            <div className="w-16 h-1 bg-[#8B1A1A] mx-auto rounded-full mt-2 mb-3" />
+            <p className="text-base text-gray-600 leading-relaxed font-inter">
+              From a new beginning to a growing home for authors and stories.
+            </p>
+          </div>
+
+          {/* Desktop Timeline (Alternating / Centered Layout) */}
+          <div className="hidden md:block relative">
+            {/* Center Continuous Vertical Line */}
+            <div className="absolute left-1/2 top-4 bottom-4 w-0.5 bg-gradient-to-b from-rose-200 via-[#8B1A1A]/30 to-rose-200 -translate-x-1/2" />
+
+            <div className="space-y-16">
+              {milestones.map((item, index) => {
+                const isEven = index % 2 === 0;
+
+                return (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: '-50px' }}
+                    transition={{ duration: 0.6, delay: index * 0.1 }}
+                    className="relative grid grid-cols-2 gap-12 items-center"
+                  >
+                    {/* Left Column */}
+                    <div className={`flex items-center ${isEven ? 'justify-end text-right pr-6' : 'justify-end pr-6'}`}>
+                      {isEven ? (
+                        <div className="space-y-1">
+                          <span className="text-xs font-bold text-[#C5A55A] uppercase tracking-widest block">
+                            {item.stage}
+                          </span>
+                          <span className="text-4xl md:text-5xl font-playfair font-bold text-[#8B1A1A]">
+                            {item.year}
+                          </span>
+                        </div>
+                      ) : (
+                        <div className="bg-[#FDFAF6] p-7 rounded-2xl shadow-sm border border-gray-100 text-left w-full hover:shadow-md transition-shadow">
+                          <span className="text-[11px] font-bold text-[#C5A55A] uppercase tracking-wider block mb-1">
+                            {item.stage}
+                          </span>
+                          <h3 className="text-xl font-playfair font-bold text-[#1A1A2E] mb-2">
+                            {item.title}
+                          </h3>
+                          <p className="text-gray-600 text-xs md:text-sm leading-relaxed font-inter">
+                            {item.description}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Central Timeline Dot */}
+                    <div className="absolute left-1/2 -translate-x-1/2 z-10">
+                      <div className="w-5 h-5 rounded-full bg-[#8B1A1A] ring-4 ring-rose-100 flex items-center justify-center shadow-md">
+                        <div className="w-1.5 h-1.5 rounded-full bg-white" />
+                      </div>
+                    </div>
+
+                    {/* Right Column */}
+                    <div className={`flex items-center ${isEven ? 'justify-start pl-6' : 'justify-start text-left pl-6'}`}>
+                      {isEven ? (
+                        <div className="bg-[#FDFAF6] p-7 rounded-2xl shadow-sm border border-gray-100 text-left w-full hover:shadow-md transition-shadow">
+                          <span className="text-[11px] font-bold text-[#C5A55A] uppercase tracking-wider block mb-1">
+                            {item.stage}
+                          </span>
+                          <h3 className="text-xl font-playfair font-bold text-[#1A1A2E] mb-2">
+                            {item.title}
+                          </h3>
+                          <p className="text-gray-600 text-xs md:text-sm leading-relaxed font-inter">
+                            {item.description}
+                          </p>
+                        </div>
+                      ) : (
+                        <div className="space-y-1">
+                          <span className="text-xs font-bold text-[#C5A55A] uppercase tracking-widest block">
+                            {item.stage}
+                          </span>
+                          <span className="text-4xl md:text-5xl font-playfair font-bold text-[#8B1A1A]">
+                            {item.year}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Mobile / Tablet Single Column Timeline */}
+          <div className="md:hidden relative pl-8 border-l-2 border-rose-200 ml-4 space-y-10">
+            {milestones.map((item, index) => (
+              <motion.div
                 key={index}
-                initial={{ opacity: 0, x: index % 2 === 0 ? -40 : 40 }}
+                initial={{ opacity: 0, x: 20 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.6 }}
-                className={`flex flex-col md:flex-row gap-6 items-center ${index % 2 === 0 ? '' : 'md:flex-row-reverse'}`}
+                transition={{ duration: 0.5 }}
+                className="relative"
               >
-                <div className="md:w-1/2 flex justify-center md:justify-end md:px-8">
-                  {index % 2 === 0 ? (
-                    <div className="text-4xl font-playfair font-bold text-[#C5A55A]">{milestone.year}</div>
-                  ) : (
-                    <div className="text-left bg-[#FDFAF6] p-6 rounded-2xl shadow-sm border border-gray-100 w-full">
-                      <h3 className="text-xl font-bold text-[#1A1A2E] mb-1 font-playfair">{milestone.title}</h3>
-                      <p className="text-gray-600 text-sm leading-relaxed">{milestone.description}</p>
-                    </div>
-                  )}
+                {/* Timeline Dot on line */}
+                <div className="absolute -left-[41px] top-1.5 w-4 h-4 rounded-full bg-[#8B1A1A] ring-4 ring-rose-100" />
+                
+                <div className="mb-2 flex items-baseline gap-2">
+                  <span className="text-2xl font-playfair font-bold text-[#8B1A1A]">{item.year}</span>
+                  <span className="text-[11px] font-bold text-[#C5A55A] uppercase tracking-wider">• {item.stage}</span>
                 </div>
-                <div className="hidden md:flex w-4 h-4 rounded-full bg-[#8B1A1A] ring-4 ring-rose-100 relative z-10 shrink-0" />
-                <div className="md:w-1/2 flex justify-center md:justify-start md:px-8">
-                  {index % 2 !== 0 ? (
-                    <div className="text-4xl font-playfair font-bold text-[#C5A55A]">{milestone.year}</div>
-                  ) : (
-                    <div className="text-left bg-[#FDFAF6] p-6 rounded-2xl shadow-sm border border-gray-100 w-full">
-                      <h3 className="text-xl font-bold text-[#1A1A2E] mb-1 font-playfair">{milestone.title}</h3>
-                      <p className="text-gray-600 text-sm leading-relaxed">{milestone.description}</p>
-                    </div>
-                  )}
+
+                <div className="bg-[#FDFAF6] p-5 rounded-2xl shadow-sm border border-gray-100">
+                  <h3 className="text-lg font-playfair font-bold text-[#1A1A2E] mb-1.5">
+                    {item.title}
+                  </h3>
+                  <p className="text-gray-600 text-xs leading-relaxed font-inter">
+                    {item.description}
+                  </p>
                 </div>
               </motion.div>
             ))}
+          </div>
+
+          {/* Bottom Emotional Takeaway */}
+          <div className="mt-16 text-center">
+            <p className="text-sm font-playfair italic text-[#8B1A1A] font-semibold">
+              “2026 is where our story begins — and this is only the beginning.”
+            </p>
           </div>
         </div>
       </section>
@@ -275,7 +391,7 @@ export default function AboutPageClient() {
           </div>
           <h2 className="text-4xl font-playfair font-bold text-[#1A1A2E]">Ready to share your story?</h2>
           <p className="text-base text-gray-600 max-w-xl mx-auto leading-relaxed">
-            Join over 12,000+ published authors worldwide. Publish your book in paperback & eBook and earn 100% royalty with Page Craft.
+            Begin your author journey with Page Craft. Publish your book in paperback & eBook and earn 100% royalty.
           </p>
           <div className="pt-2">
             <Link
