@@ -5,13 +5,14 @@ import { NextRequest, NextResponse } from 'next/server';
 const JWT_SECRET = process.env.JWT_SECRET || 'pagecraft_jwt_super_secret_key_2026_change_in_prod';
 const COOKIE_NAME = 'pagecraft_token';
 
-export type UserRole = 'SUPER_ADMIN' | 'ADMIN' | 'MANAGER' | 'EDITOR' | 'FINANCE' | 'SUPPORT' | 'EMPLOYEE';
+export type UserRole = 'SUPER_ADMIN' | 'ADMIN' | 'MANAGER' | 'EDITOR' | 'FINANCE' | 'SUPPORT' | 'EMPLOYEE' | 'AUTHOR' | 'CUSTOMER';
 
 export interface JwtPayload {
   userId: string;
   email: string;
   role: UserRole;
   name: string;
+  authorId?: string;
 }
 
 export async function hashPassword(password: string): Promise<string> {
@@ -84,7 +85,9 @@ export const ROLE_HIERARCHY: Record<UserRole, number> = {
   FINANCE: 50,
   EDITOR: 40,
   SUPPORT: 30,
+  AUTHOR: 20,
   EMPLOYEE: 10,
+  CUSTOMER: 5,
 };
 
 export function hasRolePermission(userRole: UserRole, requiredRole: UserRole): boolean {

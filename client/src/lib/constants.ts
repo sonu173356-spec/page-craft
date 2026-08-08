@@ -162,7 +162,9 @@ export const FOOTER_LINKS = {
     { label: 'Testimonials', href: '/testimonials' },
   ],
   dashboards: [
-    { label: 'Author Portal ↗', href: '/author/dashboard', isDashboard: true },
+    { label: 'Author Portal (Login) ↗', href: '/author/login', isDashboard: true },
+    { label: 'Create Author Account ↗', href: '/author/signup', isDashboard: true },
+    { label: 'Author Dashboard ↗', href: '/author/dashboard', isDashboard: true },
     { label: 'Upload Book ↗', href: '/author/upload-book', isDashboard: true },
     { label: 'Content Manager ↗', href: '/admin/internal-dashboard', isDashboard: true },
     { label: 'Order Desk ↗', href: '/admin/orders', isDashboard: true },

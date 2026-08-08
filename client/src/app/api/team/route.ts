@@ -87,7 +87,7 @@ export async function POST(req: NextRequest) {
             name,
             email: String(email).trim().toLowerCase(),
             passwordHash: hashedPassword,
-            role: role as UserRole,
+            role: role as any,
             status: 'ACTIVE',
             phone: phone || '',
           },

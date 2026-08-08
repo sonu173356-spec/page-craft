@@ -1,0 +1,169 @@
+'use client';
+
+import React, { useState } from 'react';
+import Link from 'next/link';
+import { motion } from 'framer-motion';
+import { Mail, ArrowRight, ArrowLeft, CheckCircle2, AlertCircle, KeyRound } from 'lucide-react';
+import { Logo } from '@/components/ui/Logo';
+import { toast } from 'react-hot-toast';
+
+export default function AuthorForgotPasswordClient() {
+  const [email, setEmail] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
+  const [demoToken, setDemoToken] = useState<string | null>(null);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email) {
+      setErrorMsg('Please enter your email address.');
+      return;
+    }
+
+    setIsLoading(true);
+    setErrorMsg('');
+
+    try {
+      const res = await fetch('/api/auth/forgot-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || 'Failed to process request.');
+      }
+
+      setSubmitted(true);
+      if (data.demoToken) {
+        setDemoToken(data.demoToken);
+      }
+      toast.success('Password reset instructions generated.');
+    } catch (err: any) {
+      setErrorMsg(err.message || 'An unexpected error occurred.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-[#FBF8F2] flex flex-col justify-center py-12 sm:px-6 lg:px-8 text-[#171717]">
+      <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
+        <Link href="/" className="inline-block mb-4">
+          <Logo size="lg" />
+        </Link>
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#F7F1E8] border border-[#E5DED3] text-[#8B1A1A] text-xs font-bold uppercase tracking-widest mb-2">
+          <KeyRound className="w-3.5 h-3.5" />
+          Security Desk
+        </div>
+        <h1 className="text-3xl font-playfair font-bold text-[#171717]">
+          Reset Your Password
+        </h1>
+        <p className="mt-2 text-sm text-[#666666] max-w-sm mx-auto">
+          Enter your registered author email address to receive secure reset instructions.
+        </p>
+      </div>
+
+      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md px-4">
+        <motion.div
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          className="bg-white py-8 px-6 sm:px-10 rounded-3xl border border-[#E5DED3] shadow-2xs space-y-6"
+        >
+          {errorMsg && (
+            <div className="p-3.5 bg-red-50 border border-red-200 text-red-700 text-xs rounded-xl flex items-start gap-2.5">
+              <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
+              <span>{errorMsg}</span>
+            </div>
+          )}
+
+          {submitted ? (
+            <div className="space-y-4 text-center">
+              <div className="w-14 h-14 rounded-full bg-green-50 border border-green-200 flex items-center justify-center mx-auto text-green-600">
+                <CheckCircle2 className="w-7 h-7" />
+              </div>
+
+              <h2 className="font-playfair text-xl font-bold text-[#171717]">
+                Instructions Sent
+              </h2>
+
+              <p className="text-xs sm:text-sm text-[#666666] leading-relaxed">
+                If an account exists for <strong>{email}</strong>, you will receive password reset instructions.
+              </p>
+
+              {demoToken && (
+                <div className="p-4 bg-[#F7F1E8] border border-[#E5DED3] rounded-2xl text-left text-xs space-y-2">
+                  <p className="font-bold text-[#8B1A1A]">One-Time Reset Token Link (Ready):</p>
+                  <Link
+                    href={`/author/reset-password?token=${demoToken}&email=${encodeURIComponent(email)}`}
+                    className="inline-flex items-center gap-1 text-[#8B1A1A] font-semibold underline break-all"
+                  >
+                    Click here to set your new password now →
+                  </Link>
+                </div>
+              )}
+
+              <div className="pt-4 border-t border-[#E5DED3]">
+                <Link
+                  href="/author/login"
+                  className="inline-flex items-center gap-1.5 text-xs font-bold text-[#8B1A1A] hover:underline"
+                >
+                  <ArrowLeft className="w-3.5 h-3.5" />
+                  Return to Author Login
+                </Link>
+              </div>
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-[#666666] mb-1.5">
+                  Email Address
+                </label>
+                <div className="relative">
+                  <Mail className="w-4 h-4 text-[#888888] absolute left-3.5 top-1/2 -translate-y-1/2" />
+                  <input
+                    type="email"
+                    required
+                    placeholder="e.g. eleanor@pagecraft.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full pl-10 pr-4 py-3 bg-[#FBF8F2] border border-[#E5DED3] rounded-xl text-sm text-[#171717] placeholder:text-[#999999] focus:outline-none focus:ring-2 focus:ring-[#8B1A1A] focus:bg-white transition-all"
+                  />
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="w-full py-3.5 bg-[#8B1A1A] hover:bg-[#722F37] text-white font-bold text-sm rounded-xl shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-70 active:scale-98"
+              >
+                {isLoading ? (
+                  <span>Generating reset link...</span>
+                ) : (
+                  <>
+                    <span>Send Reset Link</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </>
+                )}
+              </button>
+
+              <div className="pt-4 border-t border-[#E5DED3] text-center">
+                <Link
+                  href="/author/login"
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#666666] hover:text-[#8B1A1A] transition-colors"
+                >
+                  <ArrowLeft className="w-3.5 h-3.5" />
+                  Back to Author Login
+                </Link>
+              </div>
+            </form>
+          )}
+        </motion.div>
+      </div>
+    </div>
+  );
+}

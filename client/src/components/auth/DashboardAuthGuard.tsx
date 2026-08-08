@@ -97,6 +97,44 @@ export default function DashboardAuthGuard({ children, requiredRole }: Dashboard
     return <>{children}</>;
   }
 
+  // If unauthorized on an author route, provide clean redirect link to /author/login
+  if (reqRole === 'author') {
+    return (
+      <div className="min-h-screen bg-[#FBF8F2] flex items-center justify-center p-4 text-[#171717]">
+        <div className="max-w-md w-full bg-white p-8 sm:p-10 rounded-3xl border border-[#E5DED3] text-center shadow-2xs space-y-5">
+          <div className="w-14 h-14 rounded-full bg-[#F7F1E8] border border-[#E5DED3] flex items-center justify-center mx-auto text-[#8B1A1A]">
+            <Lock className="w-6 h-6" />
+          </div>
+
+          <h2 className="font-playfair text-2xl font-bold text-[#171717]">
+            Protected Author Dashboard
+          </h2>
+
+          <p className="text-xs sm:text-sm text-[#666666] leading-relaxed">
+            Please log in to your verified Author Portal account to access your published book royalties, orders, and sales reports.
+          </p>
+
+          <div className="pt-2 space-y-2.5">
+            <Link
+              href="/author/login"
+              className="w-full py-3 bg-[#8B1A1A] hover:bg-[#722F37] text-white font-bold text-xs sm:text-sm rounded-xl shadow-xs transition-all flex items-center justify-center gap-2"
+            >
+              <span>Go to Author Login</span>
+              <ArrowLeft className="w-4 h-4 rotate-180" />
+            </Link>
+
+            <Link
+              href="/author/signup"
+              className="w-full py-2.5 bg-[#F7F1E8] border border-[#E5DED3] text-[#171717] font-semibold text-xs rounded-xl hover:bg-white transition-all flex items-center justify-center"
+            >
+              Create Author Account
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#1A1A2E] via-[#2D2D44] to-[#12121F] flex items-center justify-center p-4">
       <motion.div
