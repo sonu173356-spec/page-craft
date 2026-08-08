@@ -48,7 +48,7 @@ export default function HeroSection() {
             className="text-lg md:text-xl text-[#4A4A5A] mb-10 max-w-3xl mx-auto font-inter leading-relaxed"
           >
             Realise your dream of becoming a published author with Page Craft, India’s most trusted Self-Publishing Platform.
-            Publish in paperback and eBook, sell globally in 150+ countries and earn 100% royalty.
+            Publish in paperback and eBook, sell across India and earn 100% royalty.
           </motion.p>
 
           {/* CTA Buttons + Reviews Badge Stack - Aligned & Crimson Logo Color */}
@@ -78,7 +78,7 @@ export default function HeroSection() {
                   PM
                 </div>
                 <div className="w-8 h-8 rounded-full bg-[#8B1A1A] text-white border-2 border-white flex items-center justify-center text-[9px] font-bold">
-                  +12K
+                  +100
                 </div>
               </div>
 
@@ -108,16 +108,16 @@ export default function HeroSection() {
             className="grid grid-cols-2 md:grid-cols-4 gap-6 pt-10 border-t border-rose-100/80 bg-white/40 backdrop-blur-sm rounded-2xl p-6 shadow-sm"
           >
             <div className="text-center">
-              <h3 className="text-3xl font-bold text-[#8B1A1A] font-playfair">12,000+</h3>
+              <h3 className="text-3xl font-bold text-[#8B1A1A] font-playfair">100+</h3>
               <p className="text-[#6B7280] text-sm font-medium mt-1">Authors Published</p>
             </div>
             <div className="text-center">
-              <h3 className="text-3xl font-bold text-[#8B1A1A] font-playfair">25,000+</h3>
+              <h3 className="text-3xl font-bold text-[#8B1A1A] font-playfair">50+</h3>
               <p className="text-[#6B7280] text-sm font-medium mt-1">Books Released</p>
             </div>
             <div className="text-center">
-              <h3 className="text-3xl font-bold text-[#8B1A1A] font-playfair">150+</h3>
-              <p className="text-[#6B7280] text-sm font-medium mt-1">Countries Reached</p>
+              <h3 className="text-3xl font-bold text-[#8B1A1A] font-playfair">Pan India</h3>
+              <p className="text-[#6B7280] text-sm font-medium mt-1">Distribution Reach</p>
             </div>
             <div className="text-center">
               <h3 className="text-3xl font-bold text-[#8B1A1A] font-playfair">100%</h3>

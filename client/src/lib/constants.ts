@@ -181,10 +181,10 @@ export const FOOTER_LINKS = {
 } as const;
 
 export const STATS = [
-  { value: '12K+', label: 'Authors Published' },
-  { value: '25K+', label: 'Books Published' },
-  { value: '2M+', label: 'Copies Sold' },
-  { value: '150+', label: 'Countries Reached' },
+  { value: '100+', label: 'Authors Published' },
+  { value: '50+', label: 'Books Released' },
+  { value: '10K+', label: 'Copies Printed' },
+  { value: 'Pan-India', label: 'Distribution Reach' },
 ] as const;
 
 export const BOOK_CATEGORIES = [

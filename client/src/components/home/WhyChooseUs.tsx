@@ -32,20 +32,20 @@ export default function WhyChooseUs() {
             
             <div className="grid grid-cols-2 gap-8">
               <div>
-                <div className="text-4xl font-bold text-white mb-2"><AnimatedCounter end={12000} suffix="+" /></div>
+                <div className="text-4xl font-bold text-white mb-2"><AnimatedCounter end={100} suffix="+" /></div>
                 <p className="text-[#C5A55A] font-medium">Authors Published</p>
               </div>
               <div>
-                <div className="text-4xl font-bold text-white mb-2"><AnimatedCounter end={25000} suffix="+" /></div>
+                <div className="text-4xl font-bold text-white mb-2"><AnimatedCounter end={50} suffix="+" /></div>
                 <p className="text-[#C5A55A] font-medium">Books Released</p>
               </div>
               <div>
-                <div className="text-4xl font-bold text-white mb-2"><AnimatedCounter end={2000000} suffix="+" /></div>
-                <p className="text-[#C5A55A] font-medium">Copies Sold</p>
+                <div className="text-4xl font-bold text-white mb-2"><AnimatedCounter end={10000} suffix="+" /></div>
+                <p className="text-[#C5A55A] font-medium">Copies Printed</p>
               </div>
               <div>
-                <div className="text-4xl font-bold text-white mb-2"><AnimatedCounter end={150} suffix="+" /></div>
-                <p className="text-[#C5A55A] font-medium">Countries Reached</p>
+                <div className="text-4xl font-bold text-white mb-2 font-playfair">Pan India</div>
+                <p className="text-[#C5A55A] font-medium">Distribution Reach</p>
               </div>
             </div>
           </motion.div>
