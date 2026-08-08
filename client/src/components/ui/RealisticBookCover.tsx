@@ -96,7 +96,7 @@ export default function RealisticBookCover({
                 className="text-[8px] sm:text-[9px] font-bold tracking-[0.2em] uppercase opacity-85 truncate"
                 style={{ color: accentColor }}
               >
-                {genre.split('/')[0] || genre}
+                {String(Array.isArray(genre) ? genre[0] : genre || 'Fiction').split('/')[0]}
               </span>
               <span className="text-[7px] tracking-widest uppercase opacity-60">
                 Page Craft

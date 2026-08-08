@@ -132,7 +132,7 @@ export default function LatestBooks() {
                       {book.price}
                     </span>
                     <span className="text-[10px] text-gray-400 font-medium">
-                      {book.format.split('•')[0] || 'Paperback'}
+                      {String(Array.isArray(book.format) ? book.format[0] : book.format || 'Paperback').split('•')[0]}
                     </span>
                   </div>
 
