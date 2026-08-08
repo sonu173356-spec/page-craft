@@ -56,7 +56,7 @@ export default function HeroSection() {
             variants={itemVariants}
             className="flex flex-col sm:flex-row justify-center items-center gap-4 sm:gap-5 mb-16"
           >
-            <Link href="/author/upload-book" target="_blank" rel="noopener noreferrer">
+            <Link href="/packages?source=publish">
               <button
                 className="bg-[#8B1A1A] hover:bg-[#722F37] text-white rounded-full font-bold px-8 py-3.5 text-base shadow-md hover:shadow-xl transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-2 h-[52px] cursor-pointer"
               >

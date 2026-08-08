@@ -25,9 +25,9 @@ export default function CTASection() {
           <p className="text-lg md:text-xl text-gray-700 mb-10 font-normal leading-relaxed">
             Join successful authors who trust Page Craft to bring their stories to readers across India. Start your publishing journey today.
           </p>
-          <Link href="/author/upload-book" target="_blank" rel="noopener noreferrer">
+          <Link href="/packages?source=publish">
             <Button size="lg" className="bg-[#8B1A1A] hover:bg-[#722F37] text-white font-bold text-lg px-10 py-6 rounded-full shadow-md hover:shadow-xl transition-all cursor-pointer">
-              Start Publishing Today
+              Publish My Book
             </Button>
           </Link>
         </motion.div>

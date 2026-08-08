@@ -169,9 +169,7 @@ export default function Navbar() {
           {/* CTA & Mobile Toggle */}
           <div className="flex items-center gap-4">
             <Link
-              href="/login?redirect=/author/upload-book"
-              target="_blank"
-              rel="noopener noreferrer"
+              href="/packages?source=publish"
               className="hidden md:inline-flex items-center justify-center px-6 py-2.5 text-sm font-semibold text-white bg-[#8B1A1A] rounded-full hover:bg-[#722F37] transition-colors shadow-md hover:shadow-lg gap-1.5"
             >
               Get Published
@@ -211,9 +209,7 @@ export default function Navbar() {
               ))}
               <div className="pt-6 border-t border-gray-100">
                 <Link
-                  href="/login?redirect=/author/upload-book"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  href="/packages?source=publish"
                   className="flex items-center justify-center w-full px-6 py-3 text-base font-semibold text-white bg-[#8B1A1A] rounded-full hover:bg-[#722F37] transition-colors gap-2"
                 >
                   Get Published ↗

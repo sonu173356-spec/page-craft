@@ -69,12 +69,12 @@ export const NAV_ITEMS: NavItem[] = [
       },
       {
         label: 'Self Publishing',
-        href: '/self-publishing',
+        href: '/packages?source=self-publishing',
         description: 'Publish on your own terms',
       },
       {
         label: 'Distribution',
-        href: '/distribution',
+        href: '/packages?source=distribution',
         description: 'Reach readers in 150+ countries',
       },
       {

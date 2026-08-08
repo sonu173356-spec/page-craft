@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { Metadata } from 'next';
 import PublishingPlansClient from '@/components/plans/PublishingPlansClient';
 
@@ -8,5 +8,9 @@ export const metadata: Metadata = {
 };
 
 export default function PublishingPlansPage() {
-  return <PublishingPlansClient />;
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-[#FBF8F2] flex items-center justify-center p-4">Loading publishing plans...</div>}>
+      <PublishingPlansClient />
+    </Suspense>
+  );
 }
