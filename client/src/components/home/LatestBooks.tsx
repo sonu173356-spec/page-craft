@@ -30,15 +30,15 @@ export default function LatestBooks() {
               className="flex border border-gray-100 rounded-xl overflow-hidden hover:shadow-lg transition-shadow bg-white"
             >
               <div className={`w-1/3 ${book.color} flex items-center justify-center p-4`}>
-                <Book className="w-12 h-12 text-[#1A1A2E]/20" />
+                <Book className="w-12 h-12 text-[#8B1A1A]/20" />
               </div>
               <div className="w-2/3 p-4 flex flex-col justify-center">
                 <span className="text-xs font-semibold text-[#8B1A1A] uppercase tracking-wider mb-1">{book.category}</span>
-                <h4 className="font-playfair font-bold text-lg text-[#1A1A2E] leading-tight mb-1 line-clamp-1">{book.title}</h4>
+                <h4 className="font-playfair font-bold text-lg text-gray-900 leading-tight mb-1 line-clamp-1">{book.title}</h4>
                 <p className="text-[#6B7280] text-sm mb-3">{book.author}</p>
                 <div className="flex items-center justify-between mt-auto">
-                  <span className="font-bold text-[#1A1A2E]">{book.price}</span>
-                  <Button variant="outline" size="sm" className="text-xs px-3 h-8 border-[#C5A55A] text-[#C5A55A] hover:bg-[#C5A55A] hover:text-white">
+                  <span className="font-bold text-gray-900">{book.price}</span>
+                  <Button variant="outline" size="sm" className="text-xs px-3 h-8 border-[#C5A55A] text-[#C5A55A] hover:bg-[#C5A55A] hover:text-white cursor-pointer">
                     Add to Cart
                   </Button>
                 </div>
@@ -49,7 +49,7 @@ export default function LatestBooks() {
         
         <div className="mt-12 text-center">
           <Link href="/bookstore">
-            <Button size="lg" className="bg-[#1A1A2E] hover:bg-[#2D2D44] text-white">
+            <Button size="lg" className="bg-[#8B1A1A] hover:bg-[#722F37] text-white shadow-md cursor-pointer">
               View All Books
             </Button>
           </Link>

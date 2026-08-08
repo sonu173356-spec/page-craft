@@ -56,20 +56,20 @@ export default function AdminDashboardPage() {
       </div>
 
       {/* Quick Access Bar */}
-      <div className="bg-gradient-to-r from-[#1A1A2E] to-[#2D2D44] p-6 rounded-2xl text-white shadow-sm flex flex-col md:flex-row justify-between items-center gap-4">
+      <div className="bg-[#8B1A1A] p-6 rounded-2xl text-white shadow-sm flex flex-col md:flex-row justify-between items-center gap-4">
         <div className="flex items-center gap-4">
           <div className="p-3 bg-white/10 rounded-xl text-[#C5A55A]">
             <Settings className="w-6 h-6" />
           </div>
           <div>
             <h4 className="font-playfair text-lg font-bold">Internal Content Dashboard & Live Editor</h4>
-            <p className="text-xs text-gray-300">Edit author books, update prices, change cover images, and publish to the live site.</p>
+            <p className="text-xs text-rose-100">Edit author books, update prices, change cover images, and publish to the live site.</p>
           </div>
         </div>
 
         <Link
           href="/admin/internal-dashboard"
-          className="flex items-center gap-2 px-5 py-2.5 bg-[#C5A55A] hover:bg-[#b09148] text-[#1A1A2E] font-bold text-sm rounded-xl transition-all shadow"
+          className="flex items-center gap-2 px-5 py-2.5 bg-[#C5A55A] hover:bg-[#b09148] text-[#2C1810] font-bold text-sm rounded-xl transition-all shadow cursor-pointer"
         >
           Open Internal Dashboard
           <ArrowRight className="w-4 h-4" />

@@ -118,7 +118,7 @@ export function Tooltip({
                   zIndex: 9999,
                 }}
                 className={cn(
-                  'px-2.5 py-1.5 bg-[#1A1A2E] text-white text-xs font-medium rounded shadow-lg whitespace-nowrap',
+                  'px-2.5 py-1.5 bg-gray-900 text-white text-xs font-medium rounded shadow-lg whitespace-nowrap',
                   className
                 )}
                 role="tooltip"
@@ -127,7 +127,7 @@ export function Tooltip({
                 {/* Arrow */}
                 <div
                   className={cn(
-                    'absolute w-2 h-2 bg-[#1A1A2E] rotate-45',
+                    'absolute w-2 h-2 bg-gray-900 rotate-45',
                     position === 'top' && 'bottom-[-4px] left-1/2 -translate-x-1/2',
                     position === 'bottom' && 'top-[-4px] left-1/2 -translate-x-1/2',
                     position === 'left' && 'right-[-4px] top-1/2 -translate-y-1/2',

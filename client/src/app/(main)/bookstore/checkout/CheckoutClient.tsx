@@ -172,7 +172,7 @@ export default function CheckoutClient() {
                   <p className="text-gray-600 text-lg">Thank you for your purchase. Your order #ORD-{Math.floor(Math.random() * 100000)} is being processed.</p>
                   <p className="text-gray-500">We've sent a confirmation email to john.doe@example.com</p>
                   <div className="pt-8">
-                    <Link href="/bookstore" className="bg-[#1A1A2E] text-white px-8 py-3 rounded-xl font-medium hover:bg-[#2D2D44] transition-colors inline-block">
+                    <Link href="/bookstore" className="bg-[#8B1A1A] text-white px-8 py-3 rounded-xl font-medium hover:bg-[#722F37] transition-colors inline-block cursor-pointer">
                       Continue Shopping
                     </Link>
                   </div>

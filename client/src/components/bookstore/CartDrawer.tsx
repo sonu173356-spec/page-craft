@@ -30,7 +30,7 @@ export default function CartDrawer() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={closeCart}
-            className="fixed inset-0 bg-[#1A1A2E]/40 backdrop-blur-sm z-50"
+            className="fixed inset-0 bg-black/40 backdrop-blur-xs z-50"
           />
 
           <motion.div
@@ -41,13 +41,13 @@ export default function CartDrawer() {
             className="fixed inset-y-0 right-0 w-full max-w-md bg-white shadow-2xl z-50 flex flex-col"
           >
             <div className="flex items-center justify-between p-6 border-b border-gray-100">
-              <h2 className="font-playfair text-xl font-bold text-[#1A1A2E] flex items-center gap-2">
-                <ShoppingBag className="w-5 h-5" />
+              <h2 className="font-playfair text-xl font-bold text-gray-900 flex items-center gap-2">
+                <ShoppingBag className="w-5 h-5 text-[#8B1A1A]" />
                 Shopping Cart
               </h2>
               <button
                 onClick={closeCart}
-                className="p-2 text-gray-400 hover:text-[#1A1A2E] transition-colors rounded-full hover:bg-gray-100"
+                className="p-2 text-gray-400 hover:text-gray-700 transition-colors rounded-full hover:bg-gray-100 cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>

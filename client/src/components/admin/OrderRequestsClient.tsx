@@ -169,7 +169,7 @@ export default function OrderRequestsClient() {
   return (
     <div className="space-y-8">
       {/* Top Banner */}
-      <div className="bg-gradient-to-r from-[#8B1A1A] via-[#A02020] to-[#1A1A2E] rounded-2xl p-6 sm:p-8 text-white shadow-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+      <div className="bg-[#8B1A1A] rounded-2xl p-6 sm:p-8 text-white shadow-md flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div>
           <div className="flex items-center gap-3 mb-2">
             <span className="px-3 py-1 bg-white/20 text-white text-xs font-bold rounded-full uppercase tracking-wider backdrop-blur-sm">
@@ -189,7 +189,7 @@ export default function OrderRequestsClient() {
         <div className="flex items-center gap-3">
           <button
             onClick={handleExportCSV}
-            className="flex items-center gap-2 px-5 py-2.5 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-xl transition-all border border-white/20 text-sm"
+            className="flex items-center gap-2 px-5 py-2.5 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-xl transition-all border border-white/20 text-sm cursor-pointer"
           >
             <Download className="w-4 h-4" />
             Export CSV
@@ -370,10 +370,10 @@ export default function OrderRequestsClient() {
               exit={{ opacity: 0, scale: 0.95 }}
               className="bg-white w-full max-w-3xl rounded-2xl shadow-2xl overflow-hidden border border-gray-100 flex flex-col max-h-[90vh]"
             >
-              <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-[#1A1A2E] text-white">
+              <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-[#8B1A1A] text-white">
                 <div>
                   <h3 className="font-playfair text-xl font-bold">Fulfill Order: {selectedOrder.orderNumber}</h3>
-                  <p className="text-xs text-gray-300">Placed on {selectedOrder.orderDate}</p>
+                  <p className="text-xs text-rose-100">Placed on {selectedOrder.orderDate}</p>
                 </div>
                 <button onClick={() => setSelectedOrder(null)} className="text-gray-400 hover:text-white">
                   <X className="w-5 h-5" />

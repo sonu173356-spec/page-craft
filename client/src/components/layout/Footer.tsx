@@ -25,16 +25,16 @@ export default function Footer() {
   };
 
   return (
-    <footer className="bg-[#1A1A2E] text-[#FDFAF6]">
+    <footer className="bg-[#FAF6F0] text-[#2C1810] border-t border-[#EDE4DB]">
       {/* Top Section: Newsletter */}
-      <div className="border-b border-white/10">
+      <div className="border-b border-[#EDE4DB]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
             <div>
-              <h3 className="text-2xl font-playfair font-bold text-white mb-2">
+              <h3 className="text-2xl font-playfair font-bold text-[#8B1A1A] mb-2">
                 Join our newsletter
               </h3>
-              <p className="text-gray-400">
+              <p className="text-gray-600">
                 Get the latest publishing tips, author interviews, and exclusive offers delivered to your inbox.
               </p>
             </div>
@@ -45,11 +45,11 @@ export default function Footer() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your email address"
-                className="flex-1 bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-[#C5A55A] focus:border-transparent transition-all"
+                className="flex-1 bg-white border border-[#EDE4DB] rounded-lg px-4 py-3 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#8B1A1A] focus:border-transparent transition-all"
               />
               <button
                 type="submit"
-                className="inline-flex items-center justify-center px-6 py-3 font-medium bg-[#C5A55A] text-[#1A1A2E] rounded-lg hover:bg-[#b0934f] transition-colors whitespace-nowrap"
+                className="inline-flex items-center justify-center px-6 py-3 font-bold bg-[#8B1A1A] text-white rounded-lg hover:bg-[#722F37] transition-colors whitespace-nowrap cursor-pointer shadow-xs"
               >
                 Subscribe
               </button>
@@ -65,9 +65,9 @@ export default function Footer() {
           {/* Column 1: Brand */}
           <div className="lg:col-span-4 space-y-6">
             <Link href="/" className="inline-block">
-              <Logo darkBg size="lg" />
+              <Logo size="lg" />
             </Link>
-            <p className="text-gray-400 leading-relaxed max-w-sm">
+            <p className="text-gray-600 leading-relaxed max-w-sm">
               {SITE_CONFIG.description}
             </p>
             <div className="flex items-center gap-4 pt-2">
@@ -79,7 +79,7 @@ export default function Footer() {
                   rel="noopener noreferrer"
                   whileHover={{ scale: 1.1, y: -2 }}
                   whileTap={{ scale: 0.95 }}
-                  className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-gray-400 hover:bg-[#C5A55A] hover:text-[#1A1A2E] transition-colors"
+                  className="w-10 h-10 rounded-full bg-white border border-[#EDE4DB] shadow-2xs flex items-center justify-center text-gray-600 hover:bg-[#8B1A1A] hover:text-white transition-colors"
                   aria-label={`Visit our ${platform} page`}
                 >
                   {socialIconMap[platform]}
@@ -90,15 +90,15 @@ export default function Footer() {
 
           {/* Column 2: Services */}
           <div className="lg:col-span-2">
-            <h4 className="text-lg font-playfair font-semibold text-white mb-6">Services</h4>
+            <h4 className="text-lg font-playfair font-bold text-[#8B1A1A] mb-6">Services</h4>
             <ul className="space-y-4">
               {FOOTER_LINKS.services.map((link) => (
                 <li key={link.label}>
                   <Link
                     href={link.href}
-                    className="text-gray-400 hover:text-[#C5A55A] transition-colors inline-flex items-center group text-sm"
+                    className="text-gray-600 hover:text-[#8B1A1A] transition-colors inline-flex items-center group text-sm font-medium"
                   >
-                    <ArrowRight className="w-4 h-4 opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all mr-2" />
+                    <ArrowRight className="w-4 h-4 opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all mr-2 text-[#8B1A1A]" />
                     {link.label}
                   </Link>
                 </li>
@@ -109,7 +109,7 @@ export default function Footer() {
           {/* Column 3: Dashboards & Portals */}
           <div className="lg:col-span-3 space-y-6">
             <div>
-              <h4 className="text-lg font-playfair font-semibold text-white mb-4">Dashboards & Portals</h4>
+              <h4 className="text-lg font-playfair font-bold text-[#8B1A1A] mb-4">Dashboards & Portals</h4>
               <ul className="space-y-3">
                 {FOOTER_LINKS.dashboards?.map((link) => (
                   <li key={link.label}>
@@ -117,10 +117,10 @@ export default function Footer() {
                       href={`/login?redirect=${encodeURIComponent(link.href)}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-gray-300 hover:text-[#C5A55A] transition-colors text-sm flex items-center gap-1.5 font-medium"
+                      className="text-gray-600 hover:text-[#8B1A1A] transition-colors text-sm flex items-center gap-1.5 font-medium"
                     >
                       {link.label}
-                      <ExternalLink className="w-3 h-3 text-[#C5A55A]" />
+                      <ExternalLink className="w-3 h-3 text-[#8B1A1A]" />
                     </Link>
                   </li>
                 ))}
@@ -128,13 +128,13 @@ export default function Footer() {
             </div>
 
             <div>
-              <h4 className="text-lg font-playfair font-semibold text-white mb-4">Company</h4>
+              <h4 className="text-lg font-playfair font-bold text-[#8B1A1A] mb-4">Company</h4>
               <ul className="space-y-2">
                 {FOOTER_LINKS.company.slice(0, 3).map((link) => (
                   <li key={link.label}>
                     <Link
                       href={link.href}
-                      className="text-sm text-gray-400 hover:text-[#C5A55A] transition-colors"
+                      className="text-sm text-gray-600 hover:text-[#8B1A1A] transition-colors font-medium"
                     >
                       {link.label}
                     </Link>
@@ -146,36 +146,36 @@ export default function Footer() {
 
           {/* Column 4: Legal & Contact */}
           <div className="lg:col-span-3">
-            <h4 className="text-lg font-playfair font-semibold text-white mb-6">Contact Us</h4>
-            <ul className="space-y-4 text-gray-400 mb-8 text-sm">
+            <h4 className="text-lg font-playfair font-bold text-[#8B1A1A] mb-6">Contact Us</h4>
+            <ul className="space-y-4 text-gray-600 mb-8 text-sm">
               <li className="flex items-start gap-3">
-                <MapPin className="w-5 h-5 text-[#C5A55A] flex-shrink-0 mt-1" />
+                <MapPin className="w-5 h-5 text-[#8B1A1A] shrink-0 mt-1" />
                 <span>
                   {SITE_CONFIG.address.line1}<br />
                   {SITE_CONFIG.address.city}, {SITE_CONFIG.address.state} {SITE_CONFIG.address.zip}
                 </span>
               </li>
               <li className="flex items-center gap-3">
-                <Phone className="w-5 h-5 text-[#C5A55A] flex-shrink-0" />
-                <a href={`tel:${SITE_CONFIG.phone}`} className="hover:text-white transition-colors">
+                <Phone className="w-5 h-5 text-[#8B1A1A] shrink-0" />
+                <a href={`tel:${SITE_CONFIG.phone}`} className="hover:text-[#8B1A1A] transition-colors">
                   {SITE_CONFIG.phone}
                 </a>
               </li>
               <li className="flex items-center gap-3">
-                <Mail className="w-5 h-5 text-[#C5A55A] flex-shrink-0" />
-                <a href={`mailto:${SITE_CONFIG.email}`} className="hover:text-white transition-colors">
+                <Mail className="w-5 h-5 text-[#8B1A1A] shrink-0" />
+                <a href={`mailto:${SITE_CONFIG.email}`} className="hover:text-[#8B1A1A] transition-colors">
                   {SITE_CONFIG.email}
                 </a>
               </li>
             </ul>
 
-            <h4 className="text-lg font-playfair font-semibold text-white mb-4">Legal</h4>
+            <h4 className="text-lg font-playfair font-bold text-[#8B1A1A] mb-4">Legal</h4>
             <ul className="flex flex-wrap gap-x-6 gap-y-2">
               {FOOTER_LINKS.legal.map((link) => (
                 <li key={link.label}>
                   <Link
                     href={link.href}
-                    className="text-sm text-gray-400 hover:text-[#C5A55A] transition-colors"
+                    className="text-sm text-gray-600 hover:text-[#8B1A1A] transition-colors font-medium"
                   >
                     {link.label}
                   </Link>
@@ -187,13 +187,13 @@ export default function Footer() {
       </div>
 
       {/* Bottom Bar */}
-      <div className="border-t border-white/10 bg-black/20">
+      <div className="border-t border-[#EDE4DB] bg-[#F5EFE6]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <p className="text-gray-400 text-sm">
+            <p className="text-gray-600 text-sm">
               © {new Date().getFullYear()} {SITE_CONFIG.name}. All rights reserved.
             </p>
-            <p className="text-gray-400 text-sm flex items-center gap-1">
+            <p className="text-gray-600 text-sm flex items-center gap-1">
               Made with <span className="text-red-500 animate-pulse">❤️</span> by Page Craft
             </p>
           </div>
