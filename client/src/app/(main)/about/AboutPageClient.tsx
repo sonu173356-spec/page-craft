@@ -4,7 +4,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { SectionHeading } from '@/components/ui/SectionHeading';
 import { Breadcrumb } from '@/components/ui/Breadcrumb';
-import { BookOpen, Target, Heart, Lightbulb, ExternalLink, Sparkles, CheckCircle, ShieldCheck, Zap, Award } from 'lucide-react';
+import { BookOpen, Target, Heart, Lightbulb, ExternalLink, Sparkles, CheckCircle, ShieldCheck, Zap } from 'lucide-react';
 import Link from 'next/link';
 
 const stats = [
@@ -27,24 +27,6 @@ const milestones = [
     stage: 'Phase 01',
     title: 'The Beginning',
     description: 'Founded with a simple vision: to make publishing more accessible, transparent, and author-friendly. We began building a modern publishing platform focused on helping writers bring their stories to readers.',
-  },
-  {
-    year: '2026',
-    stage: 'Phase 02',
-    title: 'Building Our Foundation',
-    description: 'We started developing our publishing ecosystem, author services, digital infrastructure, and creative workflow to create a smooth experience for emerging and independent authors.',
-  },
-  {
-    year: '2026',
-    stage: 'Phase 03',
-    title: 'Growing With Authors',
-    description: 'Our focus is on building meaningful relationships with authors, supporting their publishing journeys, and creating opportunities for new voices and stories to reach readers.',
-  },
-  {
-    year: '2026',
-    stage: 'Looking Forward',
-    title: 'Our Journey Ahead',
-    description: 'We are a growing publishing house with a long-term vision. As we grow, we aim to expand our catalogue, strengthen our author community, and bring more stories to readers across India and beyond.',
   },
 ];
 
@@ -195,7 +177,7 @@ export default function AboutPageClient() {
         </div>
       </section>
 
-      {/* 🌟 Refined "Our Journey" Timeline Starting in 2026 */}
+      {/* 🌟 Refined "Our Journey" Timeline — Exclusively 2026 Phase 01 */}
       <section className="py-24 px-4 bg-white border-y border-gray-100">
         <div className="container mx-auto max-w-4xl">
           {/* Centered Heading */}
@@ -212,90 +194,61 @@ export default function AboutPageClient() {
             </p>
           </div>
 
-          {/* Desktop Timeline (Alternating / Centered Layout) */}
-          <div className="hidden md:block relative">
+          {/* Desktop Timeline (Clean Centered 2026 Phase 01) */}
+          <div className="hidden md:block relative max-w-3xl mx-auto">
             {/* Center Continuous Vertical Line */}
             <div className="absolute left-1/2 top-4 bottom-4 w-0.5 bg-gradient-to-b from-rose-200 via-[#8B1A1A]/30 to-rose-200 -translate-x-1/2" />
 
-            <div className="space-y-16">
-              {milestones.map((item, index) => {
-                const isEven = index % 2 === 0;
-
-                return (
-                  <motion.div
-                    key={index}
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, margin: '-50px' }}
-                    transition={{ duration: 0.6, delay: index * 0.1 }}
-                    className="relative grid grid-cols-2 gap-12 items-center"
-                  >
-                    {/* Left Column */}
-                    <div className={`flex items-center ${isEven ? 'justify-end text-right pr-6' : 'justify-end pr-6'}`}>
-                      {isEven ? (
-                        <div className="space-y-1">
-                          <span className="text-xs font-bold text-[#C5A55A] uppercase tracking-widest block">
-                            {item.stage}
-                          </span>
-                          <span className="text-4xl md:text-5xl font-playfair font-bold text-[#8B1A1A]">
-                            {item.year}
-                          </span>
-                        </div>
-                      ) : (
-                        <div className="bg-[#FDFAF6] p-7 rounded-2xl shadow-sm border border-gray-100 text-left w-full hover:shadow-md transition-shadow">
-                          <span className="text-[11px] font-bold text-[#C5A55A] uppercase tracking-wider block mb-1">
-                            {item.stage}
-                          </span>
-                          <h3 className="text-xl font-playfair font-bold text-[#1A1A2E] mb-2">
-                            {item.title}
-                          </h3>
-                          <p className="text-gray-600 text-xs md:text-sm leading-relaxed font-inter">
-                            {item.description}
-                          </p>
-                        </div>
-                      )}
+            <div className="space-y-12">
+              {milestones.map((item, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 25 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6 }}
+                  className="relative grid grid-cols-2 gap-12 items-center"
+                >
+                  {/* Left Column: Year & Phase */}
+                  <div className="flex items-center justify-end text-right pr-8">
+                    <div className="space-y-1">
+                      <span className="text-xs font-bold text-[#C5A55A] uppercase tracking-widest block">
+                        {item.stage}
+                      </span>
+                      <span className="text-5xl md:text-6xl font-playfair font-bold text-[#8B1A1A]">
+                        {item.year}
+                      </span>
                     </div>
+                  </div>
 
-                    {/* Central Timeline Dot */}
-                    <div className="absolute left-1/2 -translate-x-1/2 z-10">
-                      <div className="w-5 h-5 rounded-full bg-[#8B1A1A] ring-4 ring-rose-100 flex items-center justify-center shadow-md">
-                        <div className="w-1.5 h-1.5 rounded-full bg-white" />
-                      </div>
+                  {/* Central Timeline Dot */}
+                  <div className="absolute left-1/2 -translate-x-1/2 z-10">
+                    <div className="w-6 h-6 rounded-full bg-[#8B1A1A] ring-4 ring-rose-100 flex items-center justify-center shadow-md">
+                      <div className="w-2 h-2 rounded-full bg-white" />
                     </div>
+                  </div>
 
-                    {/* Right Column */}
-                    <div className={`flex items-center ${isEven ? 'justify-start pl-6' : 'justify-start text-left pl-6'}`}>
-                      {isEven ? (
-                        <div className="bg-[#FDFAF6] p-7 rounded-2xl shadow-sm border border-gray-100 text-left w-full hover:shadow-md transition-shadow">
-                          <span className="text-[11px] font-bold text-[#C5A55A] uppercase tracking-wider block mb-1">
-                            {item.stage}
-                          </span>
-                          <h3 className="text-xl font-playfair font-bold text-[#1A1A2E] mb-2">
-                            {item.title}
-                          </h3>
-                          <p className="text-gray-600 text-xs md:text-sm leading-relaxed font-inter">
-                            {item.description}
-                          </p>
-                        </div>
-                      ) : (
-                        <div className="space-y-1">
-                          <span className="text-xs font-bold text-[#C5A55A] uppercase tracking-widest block">
-                            {item.stage}
-                          </span>
-                          <span className="text-4xl md:text-5xl font-playfair font-bold text-[#8B1A1A]">
-                            {item.year}
-                          </span>
-                        </div>
-                      )}
+                  {/* Right Column: Information Card */}
+                  <div className="flex items-center justify-start pl-8 text-left">
+                    <div className="bg-[#FDFAF6] p-8 rounded-3xl shadow-sm border border-gray-100 w-full hover:shadow-md transition-shadow">
+                      <span className="text-xs font-bold text-[#C5A55A] uppercase tracking-wider block mb-1">
+                        {item.stage}
+                      </span>
+                      <h3 className="text-2xl font-playfair font-bold text-[#1A1A2E] mb-3">
+                        {item.title}
+                      </h3>
+                      <p className="text-gray-600 text-sm leading-relaxed font-inter">
+                        {item.description}
+                      </p>
                     </div>
-                  </motion.div>
-                );
-              })}
+                  </div>
+                </motion.div>
+              ))}
             </div>
           </div>
 
           {/* Mobile / Tablet Single Column Timeline */}
-          <div className="md:hidden relative pl-8 border-l-2 border-rose-200 ml-4 space-y-10">
+          <div className="md:hidden relative pl-8 border-l-2 border-rose-200 ml-4">
             {milestones.map((item, index) => (
               <motion.div
                 key={index}
@@ -309,12 +262,12 @@ export default function AboutPageClient() {
                 <div className="absolute -left-[41px] top-1.5 w-4 h-4 rounded-full bg-[#8B1A1A] ring-4 ring-rose-100" />
                 
                 <div className="mb-2 flex items-baseline gap-2">
-                  <span className="text-2xl font-playfair font-bold text-[#8B1A1A]">{item.year}</span>
-                  <span className="text-[11px] font-bold text-[#C5A55A] uppercase tracking-wider">• {item.stage}</span>
+                  <span className="text-3xl font-playfair font-bold text-[#8B1A1A]">{item.year}</span>
+                  <span className="text-xs font-bold text-[#C5A55A] uppercase tracking-wider">• {item.stage}</span>
                 </div>
 
-                <div className="bg-[#FDFAF6] p-5 rounded-2xl shadow-sm border border-gray-100">
-                  <h3 className="text-lg font-playfair font-bold text-[#1A1A2E] mb-1.5">
+                <div className="bg-[#FDFAF6] p-6 rounded-2xl shadow-sm border border-gray-100">
+                  <h3 className="text-xl font-playfair font-bold text-[#1A1A2E] mb-2">
                     {item.title}
                   </h3>
                   <p className="text-gray-600 text-xs leading-relaxed font-inter">
@@ -326,7 +279,7 @@ export default function AboutPageClient() {
           </div>
 
           {/* Bottom Emotional Takeaway */}
-          <div className="mt-16 text-center">
+          <div className="mt-14 text-center">
             <p className="text-sm font-playfair italic text-[#8B1A1A] font-semibold">
               “2026 is where our story begins — and this is only the beginning.”
             </p>
