@@ -125,7 +125,7 @@ export function BookIllustration({
             width={636}
             height={435}
             priority={priority}
-            className="w-full h-auto object-contain pointer-events-none"
+            className="w-full h-auto object-contain pointer-events-none mix-blend-multiply"
             sizes="(max-width: 768px) 85vw, (max-width: 1200px) 45vw, 520px"
           />
         </motion.div>
