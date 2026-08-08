@@ -29,24 +29,51 @@ export interface Book {
   tags: string[];
 }
 
+export interface AuthorBook {
+  id: string;
+  title: string;
+  slug?: string;
+  category: string;
+  genre?: string[];
+  description: string;
+  coverImage?: string;
+  color?: string;
+  price?: number;
+  format?: string;
+  publishDate?: string;
+  pages?: number;
+  isbn?: string;
+}
+
 export interface Author {
   id: string;
   name: string;
   slug: string;
-  avatar: string;
+  title?: string;
+  initials?: string;
+  color?: string;
+  avatar?: string;
+  photo?: string;
   bio: string;
-  shortBio: string;
-  email: string;
+  shortBio?: string;
+  longBio?: string;
+  email?: string;
   website?: string;
   social?: {
     twitter?: string;
     instagram?: string;
     linkedin?: string;
+    facebook?: string;
+    goodreads?: string;
+    website?: string;
   };
   booksPublished: number;
-  joinDate: string;
+  bookCount?: number;
+  joinDate?: string;
+  authorSince?: string;
   isFeatured?: boolean;
   genres: string[];
+  books?: AuthorBook[];
 }
 
 export interface User {
