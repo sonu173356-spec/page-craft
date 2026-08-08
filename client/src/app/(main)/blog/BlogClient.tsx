@@ -42,12 +42,12 @@ export default function BlogClient() {
   return (
     <div className="min-h-screen bg-[#FDFAF6]">
       {/* Hero */}
-      <section className="bg-[#1A1A2E] text-white py-20 px-4">
+      <section className="bg-[#FAF6F0] text-[#2C1810] border-b border-[#EDE4DB] py-20 px-4">
         <div className="max-w-4xl mx-auto text-center">
-          <h1 className="font-playfair text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
+          <h1 className="font-playfair text-4xl md:text-5xl lg:text-6xl font-bold text-[#8B1A1A] mb-6">
             Publishing Insights & Author Tips
           </h1>
-          <p className="text-xl text-gray-300 max-w-2xl mx-auto">
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
             Expert advice, industry news, and practical guides to help you navigate your publishing journey.
           </p>
         </div>
@@ -63,7 +63,7 @@ export default function BlogClient() {
         )}
 
         {/* Filters & Search */}
-        <div className="flex flex-col md:flex-row gap-6 justify-between items-center bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
+        <div className="flex flex-col md:flex-row gap-6 justify-between items-center bg-white p-4 rounded-2xl shadow-xs border border-[#EDE4DB]">
           <div className="flex overflow-x-auto pb-2 md:pb-0 hide-scrollbar w-full md:w-auto gap-2">
             {CATEGORIES.map(cat => (
               <button
@@ -81,7 +81,7 @@ export default function BlogClient() {
               placeholder="Search articles..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-[#8B1A1A]"
+              className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-[#EDE4DB] rounded-full focus:outline-none focus:ring-2 focus:ring-[#8B1A1A]"
             />
             <Search className="w-4 h-4 text-gray-400 absolute left-4 top-3" />
           </div>
@@ -103,13 +103,13 @@ export default function BlogClient() {
           </main>
           
           <aside className="w-full lg:w-80 flex-shrink-0 space-y-8">
-            <div className="bg-[#1A1A2E] rounded-2xl p-8 text-white text-center">
-              <Mail className="w-8 h-8 mx-auto mb-4 text-[#C5A55A]" />
-              <h3 className="font-playfair text-xl font-bold mb-2">Subscribe to our Newsletter</h3>
-              <p className="text-gray-400 text-sm mb-6">Get the latest publishing tips delivered straight to your inbox.</p>
+            <div className="bg-[#FAF6F0] border border-[#EDE4DB] rounded-2xl p-8 text-[#2C1810] text-center shadow-xs">
+              <Mail className="w-8 h-8 mx-auto mb-4 text-[#8B1A1A]" />
+              <h3 className="font-playfair text-xl font-bold text-[#8B1A1A] mb-2">Subscribe to our Newsletter</h3>
+              <p className="text-gray-600 text-sm mb-6">Get the latest publishing tips delivered straight to your inbox.</p>
               <form className="space-y-3" onSubmit={(e) => e.preventDefault()}>
-                <input type="email" placeholder="Your email address" className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 focus:outline-none focus:border-[#C5A55A] text-white placeholder-gray-400 text-sm" required />
-                <button type="submit" className="w-full bg-[#C5A55A] text-[#1A1A2E] font-bold py-3 rounded-xl hover:bg-[#D4B872] transition-colors">
+                <input type="email" placeholder="Your email address" className="w-full px-4 py-3 rounded-xl bg-white border border-[#EDE4DB] focus:outline-none focus:ring-2 focus:ring-[#8B1A1A] text-gray-900 placeholder-gray-400 text-sm" required />
+                <button type="submit" className="w-full bg-[#8B1A1A] text-white font-bold py-3 rounded-xl hover:bg-[#722F37] transition-colors cursor-pointer">
                   Subscribe Now
                 </button>
               </form>
