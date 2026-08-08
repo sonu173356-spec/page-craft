@@ -10,14 +10,14 @@ interface LogoProps {
 }
 
 const dimensions = {
-  sm: { width: 110, height: 38, iconWidth: 24, iconHeight: 38 },
-  md: { width: 145, height: 50, iconWidth: 32, iconHeight: 50 },
-  lg: { width: 185, height: 64, iconWidth: 42, iconHeight: 64 },
+  sm: { height: 36, iconHeight: 36 },
+  md: { height: 48, iconHeight: 48 },
+  lg: { height: 62, iconHeight: 62 },
 };
 
 /**
- * Page Craft Transparent PNG Logo Component
- * Renders the official publishing house logo with transparent background
+ * Page Craft Transparent Logo Component
+ * Renders the brand mark with 100% alpha transparency (no white box)
  */
 export function Logo({
   variant = 'full',
@@ -29,13 +29,13 @@ export function Logo({
 
   if (variant === 'icon') {
     return (
-      <span className={`inline-flex items-center select-none bg-transparent ${className}`}>
+      <span className={`inline-flex items-center justify-center bg-transparent select-none ${className}`}>
         <img
           src="/logo-icon.png"
           alt="The Page Craft Icon"
-          style={{ height: dim.iconHeight, width: 'auto' }}
-          className={`object-contain bg-transparent transition-all ${
-            darkBg ? 'brightness-0 invert opacity-95' : 'mix-blend-multiply'
+          style={{ height: `${dim.iconHeight}px`, width: 'auto' }}
+          className={`object-contain bg-transparent ${
+            darkBg ? 'brightness-0 invert' : 'mix-blend-multiply'
           }`}
         />
       </span>
@@ -43,13 +43,13 @@ export function Logo({
   }
 
   return (
-    <span className={`inline-flex items-center select-none bg-transparent ${className}`}>
+    <span className={`inline-flex items-center justify-center bg-transparent select-none ${className}`}>
       <img
         src="/logo-full.png"
         alt="The Page Craft"
-        style={{ height: dim.height, width: 'auto' }}
-        className={`object-contain bg-transparent transition-all ${
-          darkBg ? 'brightness-0 invert opacity-95' : 'mix-blend-multiply'
+        style={{ height: `${dim.height}px`, width: 'auto' }}
+        className={`object-contain bg-transparent ${
+          darkBg ? 'brightness-0 invert' : 'mix-blend-multiply'
         }`}
       />
     </span>
