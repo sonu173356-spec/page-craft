@@ -3,7 +3,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { CloudBackground } from '@/components/ui';
-import { Star, ExternalLink } from 'lucide-react';
+import { ExternalLink } from 'lucide-react';
 import Link from 'next/link';
 
 export default function HeroSection() {
@@ -51,55 +51,19 @@ export default function HeroSection() {
             Publish in paperback and eBook, sell across India and earn 100% royalty.
           </motion.p>
 
-          {/* CTA Buttons + Reviews Badge Stack - Aligned & Crimson Logo Color */}
+          {/* CTA Button */}
           <motion.div
             variants={itemVariants}
-            className="flex flex-col sm:flex-row justify-center items-center gap-4 sm:gap-5 mb-16"
+            className="flex justify-center items-center mb-16"
           >
             <Link href="/packages?source=publish">
               <button
-                className="bg-[#8B1A1A] hover:bg-[#722F37] text-white rounded-full font-bold px-8 py-3.5 text-base shadow-md hover:shadow-xl transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-2 h-[52px] cursor-pointer"
+                className="bg-[#8B1A1A] hover:bg-[#722F37] text-white rounded-full font-bold px-9 py-4 text-base shadow-md hover:shadow-xl transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-2 h-[52px] cursor-pointer"
               >
                 Publish My Book
                 <ExternalLink className="w-4 h-4 opacity-80" />
               </button>
             </Link>
-
-            {/* Author Avatars Stack + Rating Badge */}
-            <div className="flex items-center gap-3 bg-white/90 backdrop-blur-md px-5 h-[52px] rounded-full shadow-sm border border-rose-100">
-              <div className="flex -space-x-3 overflow-hidden">
-                <div className="w-8 h-8 rounded-full bg-rose-400 border-2 border-white flex items-center justify-center text-white text-[10px] font-bold">
-                  AK
-                </div>
-                <div className="w-8 h-8 rounded-full bg-amber-400 border-2 border-white flex items-center justify-center text-white text-[10px] font-bold">
-                  SR
-                </div>
-                <div className="w-8 h-8 rounded-full bg-teal-500 border-2 border-white flex items-center justify-center text-white text-[10px] font-bold">
-                  PM
-                </div>
-                <div className="w-8 h-8 rounded-full bg-[#8B1A1A] text-white border-2 border-white flex items-center justify-center text-[9px] font-bold">
-                  +100
-                </div>
-              </div>
-
-              <div className="flex flex-col text-left">
-                <div className="flex items-center gap-1">
-                  <span className="font-bold text-[#1A1A2E] text-sm leading-none">
-                    5,100+
-                  </span>
-                  <div className="flex text-amber-400 ml-0.5">
-                    <Star className="w-3 h-3 fill-amber-400" />
-                    <Star className="w-3 h-3 fill-amber-400" />
-                    <Star className="w-3 h-3 fill-amber-400" />
-                    <Star className="w-3 h-3 fill-amber-400" />
-                    <Star className="w-3 h-3 fill-amber-400" />
-                  </div>
-                </div>
-                <span className="text-[10px] text-gray-500 font-medium">
-                  google reviews
-                </span>
-              </div>
-            </div>
           </motion.div>
 
           {/* Key Metrics Strip */}
