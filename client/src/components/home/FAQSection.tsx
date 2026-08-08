@@ -15,7 +15,7 @@ const faqs = [
   },
   {
     question: 'How long does the publishing process take?',
-    answer: 'Depending on the package and services required (like editing or custom illustrations), the process typically takes between 4 to 12 weeks from manuscript submission to global availability.'
+    answer: 'Depending on the package and services required (like editing or custom illustrations), the process typically takes between 4 to 12 weeks from book interior submission to global availability.'
   },
   {
     question: 'Where will my book be sold?',

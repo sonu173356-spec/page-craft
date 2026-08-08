@@ -267,7 +267,7 @@ export default function AuthorProfileClient({ author, slug }: AuthorProfileClien
                   `${author.name} is an esteemed voice in contemporary literature, having published multiple celebrated works in ${author.genres.join(' and ')}. With a passion for storytelling that bridges compelling narrative craft with rich character dimensions, ${author.name} continues to connect deeply with readers across physical bookstores and digital platforms.`}
               </p>
               <p>
-                Through their partnership with Page Craft, {author.name} maintains complete creative autonomy and 100% intellectual property ownership, ensuring that every published edition preserves the pristine vision of the original manuscript.
+                Through their partnership with Page Craft, {author.name} maintains complete creative autonomy and 100% intellectual property ownership, ensuring that every published edition preserves the pristine vision of the original book interior.
               </p>
             </div>
           </div>

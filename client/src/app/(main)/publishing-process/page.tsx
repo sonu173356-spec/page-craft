@@ -6,11 +6,11 @@ import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: 'Publishing Process | Page Craft',
-  description: 'From manuscript to bookshelf, learn about our 6-step book publishing process.',
+  description: 'From book interior to bookshelf, learn about our 6-step book publishing process.',
 };
 
 const steps = [
-  { icon: FileText, title: 'Submit Manuscript', desc: 'Send us your completed manuscript for review.', time: '1-2 Days' },
+  { icon: FileText, title: 'Submit Book Interior', desc: 'Send us your completed book interior for review.', time: '1-2 Days' },
   { icon: Edit3, title: 'Editorial Review & Editing', desc: 'Professional editing and proofreading.', time: '7-14 Days' },
   { icon: PenTool, title: 'Cover Design & Typesetting', desc: 'Custom cover design and beautiful interior.', time: '7-10 Days' },
   { icon: Hash, title: 'ISBN & Legal', desc: 'Assigning ISBNs and registering your copyright.', time: '3-5 Days' },
@@ -22,7 +22,7 @@ export default function PublishingProcessPage() {
   return (
     <main className="min-h-screen bg-[#FDFAF6] py-16">
       <div className="container mx-auto px-4 max-w-5xl">
-        <SectionHeading title="From Manuscript to Bookshelf" subtitle="A transparent, guided journey." />
+        <SectionHeading title="From Book Interior to Bookshelf" subtitle="A transparent, guided journey." />
         <div className="mt-16 space-y-12">
           {steps.map((step, i) => {
             const Icon = step.icon;

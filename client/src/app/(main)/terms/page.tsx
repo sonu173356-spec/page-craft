@@ -31,7 +31,7 @@ export default function TermsPage() {
             <p>You are responsible for safeguarding the password that you use to access the Service and for any activities or actions under your password.</p>
 
             <h2>3. Publishing Terms</h2>
-            <p>Authors retain all intellectual property rights to their original works published through Page Craft. By submitting your manuscript, you grant us a non-exclusive license to format, distribute, and sell the work as agreed in your specific publishing contract.</p>
+            <p>Authors retain all intellectual property rights to their original works published through Page Craft. By submitting your book interior, you grant us a non-exclusive license to format, distribute, and sell the work as agreed in your specific publishing contract.</p>
 
             <h2>4. Intellectual Property</h2>
             <p>The Service and its original content (excluding Content provided by users), features and functionality are and will remain the exclusive property of Page Craft and its licensors. The Service is protected by copyright, trademark, and other laws of both the country and foreign countries.</p>

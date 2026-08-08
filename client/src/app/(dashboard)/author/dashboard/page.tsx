@@ -305,14 +305,14 @@ export default function AuthorDashboardPage() {
         )}
       </div>
 
-      {/* Manuscript & Production Timeline */}
+      {/* Book Interior & Production Timeline */}
       {hasManuscript && (
         <div className="bg-white p-6 sm:p-8 rounded-3xl shadow-2xs border border-[#E5DED3] space-y-4">
           <div className="flex items-center justify-between border-b border-[#E5DED3] pb-4">
             <div className="flex items-center gap-2">
               <FileCheck className="w-5 h-5 text-[#8B1A1A]" />
               <h3 className="font-playfair text-xl font-bold text-[#171717]">
-                Manuscript & Production Pipeline
+                Book Interior & Production Pipeline
               </h3>
             </div>
             <Link
@@ -326,7 +326,7 @@ export default function AuthorDashboardPage() {
           <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 text-xs">
             <div className="p-4 bg-[#FBF8F2] border border-[#E5DED3] rounded-2xl">
               <span className="text-[10px] font-bold uppercase text-[#8B1A1A] block">Stage 1</span>
-              <strong className="text-sm text-[#171717] block mt-1">Manuscript Review</strong>
+              <strong className="text-sm text-[#171717] block mt-1">Book Interior Review</strong>
               <p className="text-gray-500 text-[11px] mt-0.5">Editorial check completed</p>
             </div>
             <div className="p-4 bg-[#FBF8F2] border border-[#E5DED3] rounded-2xl">

@@ -94,7 +94,7 @@ const faqs = [
   {
     id: 'faq-2',
     title: 'How long does the publishing process take?',
-    content: 'Our standard publishing timeline is 30 to 45 days after manuscript submission.',
+    content: 'Our standard publishing timeline is 30 to 45 days after book interior submission.',
   },
   {
     id: 'faq-3',

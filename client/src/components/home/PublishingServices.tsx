@@ -31,7 +31,7 @@ export default function PublishingServices() {
       <div className="container mx-auto px-4">
         <SectionHeading
           title="Our Publishing Services"
-          subtitle="Everything you need to turn your manuscript into a masterpiece."
+          subtitle="Everything you need to turn your book interior into a masterpiece."
         />
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">

@@ -9,7 +9,7 @@ import { Star, Quote } from 'lucide-react';
 import Link from 'next/link';
 
 const testimonials = [
-  { id: 1, name: 'Sarah Jenkins', book: 'Whispers of the Wind', quote: 'Page Craft turned my messy manuscript into a beautiful, polished novel. Their editing team was phenomenal and respected my voice throughout the entire process.', rating: 5, avatar: 'SJ' },
+  { id: 1, name: 'Sarah Jenkins', book: 'Whispers of the Wind', quote: 'Page Craft turned my messy book interior into a beautiful, polished novel. Their editing team was phenomenal and respected my voice throughout the entire process.', rating: 5, avatar: 'SJ' },
   { id: 2, name: 'David Chen', book: 'The Silent Code', quote: 'As a first-time author, I was overwhelmed. The dedicated publishing manager walked me through every step. My book hit the bestsellers list in its first week!', rating: 5, avatar: 'DC' },
   { id: 3, name: 'Elena Rodriguez', book: 'Taste of Home', quote: 'The cover design process was a dream. They perfectly captured the essence of my memoir.', rating: 4, avatar: 'ER' },
   { id: 4, name: 'Marcus Sterling', book: 'Echoes in the Dark', quote: 'Their marketing package delivered exactly what was promised. I saw a 300% increase in my pre-orders compared to my previous self-published book.', rating: 5, avatar: 'MS' },
@@ -142,7 +142,7 @@ export default function TestimonialsPageClient() {
         <div className="container mx-auto max-w-3xl">
           <h2 className="text-4xl font-playfair font-bold mb-6">Ready to write your success story?</h2>
           <p className="text-lg text-gray-400 mb-8">
-            Join the ranks of our successful authors and let us help you bring your manuscript to the world.
+            Join the ranks of our successful authors and let us help you bring your book interior to the world.
           </p>
           <Link href="/contact">
             <Button size="lg" className="bg-accent hover:bg-[#b09350] text-white rounded-full px-8">

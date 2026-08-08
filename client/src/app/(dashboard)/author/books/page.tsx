@@ -144,7 +144,7 @@ export default function AuthorBooksPage() {
           <span className="px-3 py-1 bg-red-100 text-[#8B1A1A] text-xs font-bold rounded-full uppercase tracking-wider">
             Author Catalog
           </span>
-          <h1 className="text-3xl font-bold font-playfair text-[#1A1A2E] mt-2">My Books & Manuscripts</h1>
+          <h1 className="text-3xl font-bold font-playfair text-[#1A1A2E] mt-2">My Books & Book Interiors</h1>
           <p className="text-xs text-gray-500 mt-1">
             Create, edit, preview, and track the publishing progress of all your titles.
           </p>
@@ -325,7 +325,7 @@ export default function AuthorBooksPage() {
               <div className="bg-[#FDFAF6] p-4 rounded-2xl border border-gray-200 text-xs space-y-1.5 text-gray-700">
                 <span className="font-bold text-[#8B1A1A] block">Publishing & Storage Summary:</span>
                 <p>• Readiness Progress: <strong>{selectedPreviewBook.progress || 85}% complete</strong></p>
-                <p>• Manuscript Status: <strong>Validated & Typeset Ready</strong></p>
+                <p>• Book Interior Status: <strong>Validated & Typeset Ready</strong></p>
                 <p>• Net Royalty: <strong>100% Net Royalty Retention</strong></p>
               </div>
 

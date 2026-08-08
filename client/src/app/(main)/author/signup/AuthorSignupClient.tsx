@@ -139,7 +139,7 @@ export default function AuthorSignupClient() {
           Create Author Account
         </h1>
         <p className="mt-2 text-sm text-[#666666] max-w-md mx-auto">
-          Activate your verified publishing desk to manage manuscript production, distribution, and royalty earnings.
+          Activate your verified publishing desk to manage book interior production, distribution, and royalty earnings.
         </p>
       </div>
 

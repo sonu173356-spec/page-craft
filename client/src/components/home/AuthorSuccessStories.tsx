@@ -7,7 +7,7 @@ const stories = [
   {
     name: 'Sarah Jenkins',
     book: 'Whispers of Time',
-    quote: '"Page Craft transformed my rough manuscript into a bestseller. Their editorial team is world-class, and the marketing support helped me reach readers globally. I kept 100% of my rights and couldn\'t be happier."',
+    quote: '"Page Craft transformed my rough book interior into a bestseller. Their editorial team is world-class, and the marketing support helped me reach readers globally. I kept 100% of my rights and couldn\'t be happier."',
     initials: 'SJ',
     color: 'bg-amber-100 text-amber-700'
   },

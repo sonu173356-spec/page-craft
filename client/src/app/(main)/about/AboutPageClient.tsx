@@ -41,7 +41,7 @@ const teamMembers = [
   {
     name: 'Dr. Priya Sharma',
     role: 'Chief Editorial Officer',
-    bio: 'Overseeing manuscript assessment, developmental editing, and editorial standards for emerging writers.',
+    bio: 'Overseeing book interior assessment, developmental editing, and editorial standards for emerging writers.',
     initials: 'PS',
     color: 'bg-amber-600',
   },
@@ -165,7 +165,7 @@ export default function AboutPageClient() {
                 Empowering Voices & New Stories
               </h2>
               <p className="text-gray-300 text-sm leading-relaxed">
-                We envision a world where every compelling manuscript finds its readers. Through modern print-on-demand technology, transparent author dashboards, and personalized support, we are building the future of author-first publishing.
+                We envision a world where every compelling book interior finds its readers. Through modern print-on-demand technology, transparent author dashboards, and personalized support, we are building the future of author-first publishing.
               </p>
               <div className="pt-2 flex items-center gap-4 text-xs font-bold text-[#C5A55A]">
                 <span>⭐ Author-First Publishing</span>

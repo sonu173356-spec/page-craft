@@ -8,7 +8,7 @@ const packages = [
   {
     name: 'Starter',
     price: '₹9,999',
-    description: 'Perfect for authors ready to publish an already edited manuscript.',
+    description: 'Perfect for authors ready to publish an already edited book interior.',
     features: [
       'Basic Cover Design',
       'Interior Formatting',

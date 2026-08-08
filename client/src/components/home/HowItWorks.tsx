@@ -6,8 +6,8 @@ import { SectionHeading } from '@/components/ui';
 const steps = [
   {
     icon: FileText,
-    title: 'Submit Manuscript',
-    description: 'Share your completed manuscript with our expert team for initial review.'
+    title: 'Submit Book Interior',
+    description: 'Share your completed book interior with our expert team for initial review.'
   },
   {
     icon: PenTool,
@@ -30,7 +30,7 @@ export default function HowItWorks() {
   return (
     <section className="py-20 bg-white overflow-hidden">
       <div className="container mx-auto px-4">
-        <SectionHeading title="How Publishing Works" subtitle="Your journey from manuscript to published book in four simple steps." />
+        <SectionHeading title="How Publishing Works" subtitle="Your journey from book interior to published book in four simple steps." />
         
         <div className="mt-16 relative">
           <div className="hidden lg:block absolute top-1/2 left-0 w-full h-0.5 bg-gradient-to-r from-[#8B1A1A]/20 via-[#C5A55A]/50 to-[#8B1A1A]/20 -translate-y-1/2 z-0" />

@@ -43,7 +43,7 @@ const STEPS = [
   { id: 1, name: 'Book Info', icon: BookOpen, desc: 'Title, metadata & genre' },
   { id: 2, name: 'Book Specs', icon: Layers, desc: 'Trim size & package limits' },
   { id: 3, name: 'Cover Creator', icon: Palette, desc: 'Design or upload cover' },
-  { id: 4, name: 'Manuscript', icon: Upload, desc: 'PDF / DOCX & validation' },
+  { id: 4, name: 'Book Interior', icon: Upload, desc: 'PDF / DOCX & validation' },
   { id: 5, name: 'Chapter Editor', icon: FileText, desc: 'Simple text & formatting' },
   { id: 6, name: 'Live Preview', icon: Eye, desc: 'Turn pages & 3D view' },
   { id: 7, name: 'Final Review', icon: CheckCircle, desc: 'Checklist & submission' },
@@ -336,14 +336,14 @@ export default function DIYBookStudio({ initialProjectId, initialPackage }: DIYB
     currentStep,
   ]);
 
-  // Handle Manuscript File Upload & Simulation
+  // Handle Book Interior File Upload & Simulation
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
     const file = files[0];
     if (!file.name.endsWith('.pdf') && !file.name.endsWith('.docx')) {
-      toast.error('Please upload a valid PDF or DOCX manuscript file.');
+      toast.error('Please upload a valid PDF or DOCX book interior file.');
       return;
     }
 
@@ -363,7 +363,7 @@ export default function DIYBookStudio({ initialProjectId, initialPackage }: DIYB
         toast.error(`Warning: Detected ${estimatedPages} pages. Your ${packageSpecs.name} limit is ${packageSpecs.maxPages} pages.`);
       } else {
         setManuscriptStatus('validated');
-        toast.success(`Manuscript "${file.name}" uploaded & validated (${estimatedPages} pages).`);
+        toast.success(`Book Interior "${file.name}" uploaded & validated (${estimatedPages} pages).`);
       }
       setIsUploadingFile(false);
       triggerAutosave();
@@ -794,7 +794,7 @@ export default function DIYBookStudio({ initialProjectId, initialPackage }: DIYB
                       rows={4}
                       value={description}
                       onChange={(e) => setDescription(e.target.value)}
-                      placeholder="Write a captivating blurb describing your manuscript..."
+                      placeholder="Write a captivating blurb describing your book interior..."
                       className="w-full px-4 py-3 bg-[#FDFAF6] border border-gray-200 rounded-xl font-medium text-xs text-[#1A1A2E] focus:outline-none focus:ring-2 focus:ring-[#8B1A1A]/30 leading-relaxed"
                     />
                   </div>
@@ -941,7 +941,7 @@ export default function DIYBookStudio({ initialProjectId, initialPackage }: DIYB
                       <span className="text-[11px] text-[#8B1A1A] font-bold">Max: {packageSpecs.maxPages}</span>
                     </div>
                     <p className="text-[11px] text-gray-500">
-                      Adjust or let the manuscript detector set this automatically.
+                      Adjust or let the book interior detector set this automatically.
                     </p>
                     <input
                       type="range"
@@ -1318,7 +1318,7 @@ export default function DIYBookStudio({ initialProjectId, initialPackage }: DIYB
                     onClick={() => setCurrentStep(4)}
                     className="px-6 py-2.5 bg-[#8B1A1A] hover:bg-[#722F37] text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center gap-2 cursor-pointer"
                   >
-                    Continue to Manuscript
+                    Continue to Book Interior
                     <ArrowRight className="w-4 h-4" />
                   </button>
                 </div>
@@ -1326,7 +1326,7 @@ export default function DIYBookStudio({ initialProjectId, initialPackage }: DIYB
             )}
 
             {/* ------------------------------------------------------------ */}
-            {/* STEP 4: INTERIOR MANUSCRIPT UPLOAD & VALIDATION */}
+            {/* STEP 4: INTERIOR BOOK INTERIOR UPLOAD & VALIDATION */}
             {/* ------------------------------------------------------------ */}
             {currentStep === 4 && (
               <motion.div
@@ -1341,10 +1341,10 @@ export default function DIYBookStudio({ initialProjectId, initialPackage }: DIYB
                     Step 4 of 7
                   </span>
                   <h2 className="text-2xl font-playfair font-bold text-[#1A1A2E] mt-2">
-                    Interior Manuscript Upload & Pre-Flight Validation
+                    Book Interior Upload & Pre-Flight Validation
                   </h2>
                   <p className="text-xs text-gray-500 mt-1">
-                    Upload your completed manuscript in PDF or DOCX format. Our automated pre-flight engine will check page count, trim size, margins, and bleed settings.
+                    Upload your completed book interior in PDF or DOCX format. Our automated pre-flight engine will check page count, trim size, margins, and bleed settings.
                   </p>
                 </div>
 
@@ -1356,7 +1356,7 @@ export default function DIYBookStudio({ initialProjectId, initialPackage }: DIYB
 
                   <div>
                     <h3 className="font-playfair font-bold text-lg text-[#1A1A2E]">
-                      Drag & drop your manuscript file here
+                      Drag & drop your book interior file here
                     </h3>
                     <p className="text-xs text-gray-500 mt-1">
                       Supports PDF (Recommended) and Microsoft Word (.docx) up to 100 MB.
@@ -1366,7 +1366,7 @@ export default function DIYBookStudio({ initialProjectId, initialPackage }: DIYB
                   <div>
                     <label className="inline-flex items-center gap-2 px-6 py-3 bg-[#8B1A1A] hover:bg-[#722F37] text-white rounded-xl font-bold text-xs cursor-pointer shadow-xs transition-all">
                       <Upload className="w-4 h-4" />
-                      <span>{isUploadingFile ? 'Analyzing Manuscript...' : 'Select File from Computer'}</span>
+                      <span>{isUploadingFile ? 'Analyzing Book Interior...' : 'Select File from Computer'}</span>
                       <input
                         type="file"
                         accept=".pdf,.docx,.doc"
@@ -1584,7 +1584,7 @@ export default function DIYBookStudio({ initialProjectId, initialPackage }: DIYB
                     className="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer"
                   >
                     <ArrowLeft className="w-4 h-4" />
-                    Back to Manuscript
+                    Back to Book Interior
                   </button>
                   <button
                     type="button"
@@ -1919,7 +1919,7 @@ export default function DIYBookStudio({ initialProjectId, initialPackage }: DIYB
                       { name: 'Trim Size Geometry', status: `${trimSize} in (Package Verified)`, ok: true },
                       { name: 'Cover Canvas Resolution', status: '300 DPI (Print Ready)', ok: true },
                       { name: 'Spine Width Calculation', status: `${spineWidthMm} mm (Verified)`, ok: true },
-                      { name: 'Manuscript Interior', status: manuscriptFileName ? 'PDF Validated' : 'Ready', ok: true },
+                      { name: 'Book Interior Formats', status: manuscriptFileName ? 'PDF Validated' : 'Ready', ok: true },
                       { name: 'ISBN-13 Allocation', status: isbn || 'Assigned', ok: true },
                     ].map((item, idx) => (
                       <div
@@ -1968,7 +1968,7 @@ export default function DIYBookStudio({ initialProjectId, initialPackage }: DIYB
 
                   <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2">
                     <p className="text-xs text-gray-500 leading-relaxed max-w-md">
-                      Upon submission, your manuscript and cover assets will be locked for typesetting. You will receive real-time updates on your author dashboard.
+                      Upon submission, your book interior and cover assets will be locked for typesetting. You will receive real-time updates on your author dashboard.
                     </p>
                     <button
                       type="button"
