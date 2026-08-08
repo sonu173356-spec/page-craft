@@ -17,7 +17,6 @@ const iconMap: Record<string, React.ReactNode> = {
   'Marketing Services': <Megaphone className="w-5 h-5" />,
   'Book Editing': <BookType className="w-5 h-5" />,
   'Author Portal': <LayoutDashboard className="w-5 h-5 text-[#8B1A1A]" />,
-  'Upload Book Desk': <PenTool className="w-5 h-5 text-[#8B1A1A]" />,
   'Content Manager': <Sparkles className="w-5 h-5 text-[#8B1A1A]" />,
   'Order Requests Desk': <ShieldCheck className="w-5 h-5 text-[#8B1A1A]" />,
 };
