@@ -367,19 +367,19 @@ export default function PublishingPlansClient() {
 
                   <div className="pt-2 grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <Link
-                      href={`/author/signup?email=${encodeURIComponent(authorEmail)}&name=${encodeURIComponent(authorName)}&purchaseId=${purchaseId}`}
+                      href={`/author/books/new?package=${encodeURIComponent(selectedPlan.name.toLowerCase())}&email=${encodeURIComponent(authorEmail)}`}
                       className="w-full py-3.5 bg-[#8B1A1A] hover:bg-[#722F37] text-white font-bold rounded-xl text-xs sm:text-sm shadow-md transition-all flex items-center justify-center gap-2"
                     >
-                      <UserCheck className="w-4 h-4" />
-                      Create Author Account
+                      <Sparkles className="w-4 h-4" />
+                      Open DIY Book Studio
                     </Link>
 
                     <Link
-                      href="/author/login"
+                      href={`/author/signup?email=${encodeURIComponent(authorEmail)}&name=${encodeURIComponent(authorName)}&package=${encodeURIComponent(selectedPlan.name.toLowerCase())}&purchaseId=${purchaseId}`}
                       className="w-full py-3.5 bg-[#F7F1E8] hover:bg-[#EDE4D8] border border-[#E5DED3] text-[#171717] font-bold rounded-xl text-xs sm:text-sm transition-all flex items-center justify-center gap-2"
                     >
-                      <Lock className="w-4 h-4" />
-                      Login to Author Portal
+                      <UserCheck className="w-4 h-4" />
+                      Create Author Account
                     </Link>
                   </div>
                 </div>
