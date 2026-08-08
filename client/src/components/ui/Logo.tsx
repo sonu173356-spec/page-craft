@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import Image from 'next/image';
 
 interface LogoProps {
   variant?: 'full' | 'icon' | 'text';
@@ -17,8 +16,8 @@ const dimensions = {
 };
 
 /**
- * Page Craft Exact PNG Logo Component
- * Renders the official exact PNG image uploaded by the user
+ * Page Craft Transparent PNG Logo Component
+ * Renders the official publishing house logo with transparent background
  */
 export function Logo({
   variant = 'full',
@@ -30,25 +29,27 @@ export function Logo({
 
   if (variant === 'icon') {
     return (
-      <span className={`inline-flex items-center select-none ${className}`}>
+      <span className={`inline-flex items-center select-none bg-transparent ${className}`}>
         <img
           src="/logo-icon.png"
-          alt="Page Craft Icon"
+          alt="The Page Craft Icon"
           style={{ height: dim.iconHeight, width: 'auto' }}
-          className="object-contain"
+          className={`object-contain bg-transparent transition-all ${
+            darkBg ? 'brightness-0 invert opacity-95' : 'mix-blend-multiply'
+          }`}
         />
       </span>
     );
   }
 
   return (
-    <span className={`inline-flex items-center select-none ${className}`}>
+    <span className={`inline-flex items-center select-none bg-transparent ${className}`}>
       <img
         src="/logo-full.png"
-        alt="the page craft"
+        alt="The Page Craft"
         style={{ height: dim.height, width: 'auto' }}
-        className={`object-contain transition-all ${
-          darkBg ? 'brightness-0 invert opacity-95' : ''
+        className={`object-contain bg-transparent transition-all ${
+          darkBg ? 'brightness-0 invert opacity-95' : 'mix-blend-multiply'
         }`}
       />
     </span>
