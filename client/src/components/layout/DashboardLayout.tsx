@@ -28,6 +28,7 @@ export default function DashboardLayout({
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   
   const pathname = usePathname();
   const router = useRouter();
@@ -36,10 +37,13 @@ export default function DashboardLayout({
   useEffect(() => {
     setIsMounted(true);
     const handleResize = () => {
-      if (window.innerWidth < 1024) {
+      const mobile = window.innerWidth < 1024;
+      setIsMobile(mobile);
+      if (mobile) {
         setIsSidebarOpen(false);
       } else {
         setIsSidebarOpen(true);
+        setIsMobileSidebarOpen(false);
       }
     };
     
@@ -60,6 +64,8 @@ export default function DashboardLayout({
     router.push('/');
   };
 
+  const showLabels = isSidebarOpen || isMobileSidebarOpen;
+
   return (
     <div className="min-h-screen bg-gray-50 flex dashboard-root font-sans text-sm">
       {/* Mobile Sidebar Overlay */}
@@ -75,40 +81,47 @@ export default function DashboardLayout({
         )}
       </AnimatePresence>
 
-      {/* Sidebar */}
-      <motion.aside
-        initial={false}
-        animate={{ 
-          width: isSidebarOpen ? 280 : 80,
-          x: isMobileSidebarOpen ? 0 : (window.innerWidth < 1024 ? -280 : 0)
-        }}
-        transition={{ duration: 0.3, ease: 'easeInOut' }}
-        className={`fixed lg:sticky top-0 left-0 h-screen bg-white border-r border-gray-200 z-50 flex flex-col transition-all overflow-hidden ${
-          window.innerWidth < 1024 && !isMobileSidebarOpen ? '-translate-x-full absolute' : ''
-        }`}
+      {/* Sidebar — Desktop: sticky, Mobile: fixed overlay */}
+      <aside
+        className={`
+          ${isMobile
+            ? `fixed top-0 left-0 h-full z-50 transition-transform duration-300 ease-in-out ${
+                isMobileSidebarOpen ? 'translate-x-0' : '-translate-x-full'
+              }`
+            : 'sticky top-0 h-screen z-30'
+          }
+          bg-white border-r border-gray-200 flex flex-col overflow-hidden flex-shrink-0
+        `}
+        style={{ width: isMobile ? 280 : (isSidebarOpen ? 280 : 80) }}
       >
         <div className="h-16 flex items-center justify-between px-4 border-b border-gray-100 flex-shrink-0">
           <Link href="/" className="flex items-center gap-2 overflow-hidden whitespace-nowrap">
-            {isSidebarOpen || isMobileSidebarOpen ? (
+            {showLabels ? (
               <Logo size="sm" />
             ) : (
               <Logo variant="icon" size="sm" />
             )}
           </Link>
           
-          <button
-            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-            className="hidden lg:flex p-1.5 rounded-lg text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors"
-          >
-            <ChevronLeft className={`w-5 h-5 transition-transform duration-300 ${!isSidebarOpen ? 'rotate-180' : ''}`} />
-          </button>
+          {/* Desktop collapse toggle */}
+          {!isMobile && (
+            <button
+              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+              className="p-1.5 rounded-lg text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors"
+            >
+              <ChevronLeft className={`w-5 h-5 transition-transform duration-300 ${!isSidebarOpen ? 'rotate-180' : ''}`} />
+            </button>
+          )}
           
-          <button
-            onClick={() => setIsMobileSidebarOpen(false)}
-            className="lg:hidden p-1.5 rounded-lg text-gray-400 hover:bg-gray-100"
-          >
-            <X className="w-5 h-5" />
-          </button>
+          {/* Mobile close button */}
+          {isMobile && (
+            <button
+              onClick={() => setIsMobileSidebarOpen(false)}
+              className="p-1.5 rounded-lg text-gray-400 hover:bg-gray-100"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          )}
         </div>
 
         <div className="flex-1 overflow-y-auto py-6 px-3 space-y-1">
@@ -123,23 +136,16 @@ export default function DashboardLayout({
                     ? 'bg-[#8B1A1A] text-white shadow-md shadow-red-900/10'
                     : 'text-gray-600 hover:bg-gray-50 hover:text-[#8B1A1A]'
                 }`}
-                title={!isSidebarOpen ? item.label : undefined}
+                title={!showLabels ? item.label : undefined}
               >
-                <span className={`${isActive ? 'text-white' : 'text-gray-400 group-hover:text-[#8B1A1A]'}`}>
+                <span className={`flex-shrink-0 ${isActive ? 'text-white' : 'text-gray-400 group-hover:text-[#8B1A1A]'}`}>
                   {item.icon}
                 </span>
-                <AnimatePresence>
-                  {(isSidebarOpen || isMobileSidebarOpen) && (
-                    <motion.span
-                      initial={{ opacity: 0, width: 0 }}
-                      animate={{ opacity: 1, width: 'auto' }}
-                      exit={{ opacity: 0, width: 0 }}
-                      className="ml-3 whitespace-nowrap font-medium text-sm"
-                    >
-                      {item.label}
-                    </motion.span>
-                  )}
-                </AnimatePresence>
+                {showLabels && (
+                  <span className="ml-3 whitespace-nowrap font-medium text-sm">
+                    {item.label}
+                  </span>
+                )}
               </Link>
             );
           })}
@@ -149,27 +155,30 @@ export default function DashboardLayout({
           <button
             onClick={handleLogout}
             className="w-full flex items-center px-3 py-3 text-gray-600 hover:bg-red-50 hover:text-red-600 rounded-xl transition-colors group"
-            title={!isSidebarOpen ? 'Logout' : undefined}
+            title={!showLabels ? 'Logout' : undefined}
           >
-            <LogOut className="w-5 h-5 text-gray-400 group-hover:text-red-600" />
-            {(isSidebarOpen || isMobileSidebarOpen) && (
+            <LogOut className="w-5 h-5 flex-shrink-0 text-gray-400 group-hover:text-red-600" />
+            {showLabels && (
               <span className="ml-3 font-medium text-sm">Logout</span>
             )}
           </button>
         </div>
-      </motion.aside>
+      </aside>
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
         {/* Topbar */}
         <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-4 lg:px-8 z-30 flex-shrink-0">
           <div className="flex items-center gap-4">
-            <button
-              onClick={() => setIsMobileSidebarOpen(true)}
-              className="lg:hidden p-2 text-gray-600 hover:bg-gray-100 rounded-lg"
-            >
-              <Menu className="w-6 h-6" />
-            </button>
+            {/* Mobile hamburger */}
+            {isMobile && (
+              <button
+                onClick={() => setIsMobileSidebarOpen(true)}
+                className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg"
+              >
+                <Menu className="w-6 h-6" />
+              </button>
+            )}
 
             <div className="hidden md:flex relative max-w-md w-full">
               <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
