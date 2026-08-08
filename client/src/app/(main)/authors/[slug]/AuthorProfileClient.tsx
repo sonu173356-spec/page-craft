@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { Author } from '@/types';
 import { Breadcrumb } from '@/components/ui/Breadcrumb';
+import RealisticBookCover from '@/components/ui/RealisticBookCover';
 import { toast } from 'react-hot-toast';
 
 interface AuthorProfileClientProps {
@@ -324,17 +325,10 @@ export default function AuthorProfileClient({ author, slug }: AuthorProfileClien
                 className="bg-white rounded-2xl border border-[#E5DED3] p-6 flex flex-col justify-between shadow-2xs hover:shadow-md hover:border-[#8B1A1A] hover:-translate-y-1 transition-all duration-300"
               >
                 <div>
-                  {/* Book Spine / Cover Mock Representation */}
-                  <div
-                    className={`h-48 rounded-xl flex flex-col items-center justify-center p-6 text-center border mb-6 relative overflow-hidden ${
-                      book.color || 'bg-[#F7F1E8] border-[#E5DED3] text-[#171717]'
-                    }`}
-                  >
-                    <BookOpen className="w-10 h-10 mb-2 opacity-30 text-[#8B1A1A]" />
-                    <h4 className="font-playfair font-bold text-base line-clamp-2 px-2">
-                      {book.title}
-                    </h4>
-                    <span className="text-[11px] font-semibold text-[#8B1A1A] uppercase tracking-wider mt-1">
+                  {/* Book Spine / Realistic Physical Cover Presentation */}
+                  <div className="h-56 bg-[#FBF8F3] rounded-2xl flex items-center justify-center p-4 border border-[#F0EAE1] mb-6 relative overflow-hidden">
+                    <RealisticBookCover book={book} size="md" />
+                    <span className="absolute top-3 right-3 text-[10px] font-bold text-[#8B1A1A] bg-white border border-rose-100 px-2.5 py-0.5 rounded-full uppercase tracking-wider shadow-2xs">
                       {book.category}
                     </span>
                   </div>

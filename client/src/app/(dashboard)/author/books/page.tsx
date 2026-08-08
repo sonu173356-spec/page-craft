@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Filter, Plus, Edit, Eye, Trash2, X, Check, BookOpen, Sparkles, Clock, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { toast } from 'react-hot-toast';
+import RealisticBookCover from '@/components/ui/RealisticBookCover';
 
 const initialBooks = [
   { id: 'proj-001', title: 'The Silent Echo of Whispers', status: 'Ready for Review', sales: 1245, price: '₹399', date: '2026-08-01', category: 'Literary Fiction', progress: 95, image: 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?q=80&w=300&auto=format&fit=crop' },
@@ -201,21 +202,13 @@ export default function AuthorBooksPage() {
               className="bg-white rounded-3xl shadow-xs border border-[#E5DED3] overflow-hidden group hover:shadow-md transition-all flex flex-col justify-between"
             >
               <div>
-                <div className="h-52 bg-gray-100 relative overflow-hidden flex justify-center items-center">
-                  <img
-                    src={book.image}
-                    alt={book.title}
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).src =
-                        'https://images.unsplash.com/photo-1544947950-fa07a98d237f?q=80&w=300&auto=format&fit=crop';
-                    }}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                  <div className="absolute top-3 right-3">
+                <div className="h-56 bg-[#FBF8F3] border-b border-[#F0EAE1] relative overflow-hidden flex justify-center items-center p-3">
+                  <RealisticBookCover book={{ ...book, cover_image_url: book.image, author: 'Author' }} size="md" />
+                  <div className="absolute top-3 right-3 z-20">
                     <span
-                      className={`px-3 py-1 rounded-full text-[11px] font-bold shadow-xs ${
+                      className={`px-3 py-1 rounded-full text-[10px] font-bold shadow-xs ${
                         book.status === 'Published'
-                          ? 'bg-green-100 text-green-800 border border-green-200'
+                          ? 'bg-emerald-100 text-emerald-800 border border-emerald-200'
                           : book.status === 'Ready for Review' || book.status === 'Submitted' || book.status === 'Under Review'
                           ? 'bg-amber-100 text-amber-800 border border-amber-200'
                           : 'bg-gray-100 text-gray-700 border border-gray-200'
@@ -225,7 +218,7 @@ export default function AuthorBooksPage() {
                     </span>
                   </div>
 
-                  <div className="absolute bottom-3 left-3 bg-black/60 backdrop-blur-xs text-white px-2.5 py-0.5 rounded-md text-[10px] font-medium">
+                  <div className="absolute bottom-3 left-3 bg-[#1A1A2E]/80 backdrop-blur-xs text-white px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider z-20">
                     {book.category}
                   </div>
                 </div>

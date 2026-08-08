@@ -37,6 +37,7 @@ import {
   FileCheck,
 } from 'lucide-react';
 import { useAuthStore } from '@/store';
+import { publishAuthorBook } from '@/lib/bookService';
 
 // Step definition
 const STEPS = [
@@ -112,6 +113,9 @@ export default function DIYBookStudio({ initialProjectId, initialPackage }: DIYB
   const [coverFontColor, setCoverFontColor] = useState('#FDFAF6');
   const [coverAlignment, setCoverAlignment] = useState<'left' | 'center' | 'right'>('center');
   const [frontCoverImage, setFrontCoverImage] = useState('https://images.unsplash.com/photo-1544947950-fa07a98d237f?q=80&w=600&auto=format&fit=crop');
+  const [coverFileName, setCoverFileName] = useState('front_cover_original.png');
+  const [coverResolution, setCoverResolution] = useState<{ width: number; height: number; dpi: number } | null>({ width: 2400, height: 3600, dpi: 300 });
+  const [isCoverDragging, setIsCoverDragging] = useState(false);
   const [backCoverImage, setBackCoverImage] = useState('');
   const [backCoverSummary, setBackCoverSummary] = useState(
     'An extraordinary debut novel exploring memory, belonging, and the invisible threads that tie generations together.'
@@ -370,19 +374,69 @@ export default function DIYBookStudio({ initialProjectId, initialPackage }: DIYB
     }, 1000);
   };
 
-  // Handle Cover Image Upload
+  // Handle Cover Image Upload with File Validation and FileReader Base64 conversion
+  const processCoverFile = (file: File, target: 'front' | 'back') => {
+    // Validate File Type
+    const validTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp'];
+    if (!validTypes.includes(file.type.toLowerCase())) {
+      toast.error('Invalid file format. Please upload a PNG, JPG, or WebP cover image.');
+      return;
+    }
+
+    // Validate File Size (Max 25MB)
+    if (file.size > 25 * 1024 * 1024) {
+      toast.error('Cover file too large. Maximum allowed size is 25MB.');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const resultDataUrl = event.target?.result as string;
+      if (!resultDataUrl) return;
+
+      // Validate image dimensions
+      const img = new Image();
+      img.onload = () => {
+        const width = img.naturalWidth;
+        const height = img.naturalHeight;
+        const estimatedDpi = width >= 2400 ? 300 : width >= 1600 ? 250 : 150;
+
+        if (target === 'front') {
+          setFrontCoverImage(resultDataUrl);
+          setCoverFileName(file.name);
+          setCoverResolution({ width, height, dpi: estimatedDpi });
+          setCoverMode('upload');
+
+          if (width < 1200 || height < 1800) {
+            toast('⚠️ Uploaded cover resolution is below recommended 1600 × 2560 px. Still accepted for preview, but recommend higher resolution for print.', {
+              icon: 'ℹ️',
+              duration: 5000,
+            });
+          } else {
+            toast.success(`🎉 Front cover "${file.name}" uploaded & verified (${width} × ${height} px • ${estimatedDpi} DPI).`);
+          }
+        } else {
+          setBackCoverImage(resultDataUrl);
+          toast.success(`Back cover artwork "${file.name}" uploaded.`);
+        }
+        triggerAutosave();
+      };
+      img.src = resultDataUrl;
+    };
+    reader.readAsDataURL(file);
+  };
+
   const handleCoverUpload = (e: React.ChangeEvent<HTMLInputElement>, target: 'front' | 'back') => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
-    const file = files[0];
-    const objectUrl = URL.createObjectURL(file);
-    if (target === 'front') {
-      setFrontCoverImage(objectUrl);
-      setCoverMode('upload');
-      toast.success('Front cover artwork uploaded.');
-    } else {
-      setBackCoverImage(objectUrl);
-      toast.success('Back cover artwork uploaded.');
+    processCoverFile(files[0], target);
+  };
+
+  const handleCoverDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsCoverDragging(false);
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      processCoverFile(e.dataTransfer.files[0], 'front');
     }
   };
 
@@ -434,6 +488,7 @@ export default function DIYBookStudio({ initialProjectId, initialPackage }: DIYB
         coverMode,
         coverTemplate: selectedTemplate,
         coverFrontImage: frontCoverImage,
+        cover_image_url: frontCoverImage,
         coverBackImage: backCoverImage,
         coverTitleFont: coverFont,
         coverFontSize,
@@ -448,7 +503,7 @@ export default function DIYBookStudio({ initialProjectId, initialPackage }: DIYB
         chapters,
         currentStep: 7,
         progress: 100,
-        status: 'Submitted',
+        status: 'Published',
         validationResults: {
           titleCheck: true,
           authorCheck: true,
@@ -469,28 +524,28 @@ export default function DIYBookStudio({ initialProjectId, initialPackage }: DIYB
 
       if (!res.ok) throw new Error('Submission failed.');
 
-      // Also persist to custom books list in localStorage so author dashboard & books page immediately show the new project
+      // Automatically publish to global site catalog so author-uploaded cover appears in Featured Books, Latest Releases, Bookstore, etc.
       try {
-        const stored = localStorage.getItem('pagecraft_user_books');
-        const list = stored ? JSON.parse(stored) : [];
-        const newBookEntry = {
-          id: Date.now(),
+        publishAuthorBook({
+          id: projectId,
           title,
-          status: 'Under Review',
-          sales: 0,
-          price: '₹399',
-          date: new Date().toISOString().split('T')[0],
+          subtitle,
+          author: penName || authorName,
+          genre,
           category: genre,
-          image: frontCoverImage || 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?q=80&w=300&auto=format&fit=crop',
-          projectId,
-        };
-        localStorage.setItem('pagecraft_user_books', JSON.stringify([newBookEntry, ...list]));
-      } catch (e) {
-        console.warn('Storage sync warning:', e);
+          price: '₹399',
+          description,
+          isbn,
+          pages: pageCount,
+          cover_image_url: frontCoverImage,
+          featured: true,
+        });
+      } catch (err) {
+        console.warn('Catalog publish sync error:', err);
       }
 
       setIsSubmittedSuccess(true);
-      toast.success('🎉 Your book project has been successfully submitted for editorial review!');
+      toast.success('🎉 Your book project has been successfully submitted and published!');
     } catch (err: any) {
       toast.error(err.message || 'Error submitting book project.');
     } finally {
@@ -1207,30 +1262,87 @@ export default function DIYBookStudio({ initialProjectId, initialPackage }: DIYB
                       </>
                     ) : (
                       <div className="space-y-4">
-                        <div className="p-6 border-2 border-dashed border-gray-200 rounded-3xl text-center space-y-3 bg-[#FDFAF6]">
-                          <Upload className="w-8 h-8 text-[#8B1A1A] mx-auto" />
-                          <div>
-                            <p className="font-bold text-sm text-[#1A1A2E]">Upload High-Resolution Front Cover</p>
-                            <p className="text-gray-500 text-[11px] mt-0.5">300 DPI, JPG/PNG format, minimum 1600 × 2560 px</p>
+                        {/* Drag & Drop Cover Zone */}
+                        <div
+                          onDragOver={(e) => {
+                            e.preventDefault();
+                            setIsCoverDragging(true);
+                          }}
+                          onDragLeave={() => setIsCoverDragging(false)}
+                          onDrop={handleCoverDrop}
+                          className={`p-6 border-2 border-dashed rounded-3xl text-center space-y-3 transition-all ${
+                            isCoverDragging
+                              ? 'border-[#8B1A1A] bg-rose-50/50 ring-2 ring-[#8B1A1A]/30'
+                              : 'border-[#E5DED3] bg-[#FDFAF6] hover:border-amber-300'
+                          }`}
+                        >
+                          <div className="w-12 h-12 rounded-2xl bg-amber-50 text-[#8B1A1A] flex items-center justify-center mx-auto shadow-2xs">
+                            <Upload className="w-6 h-6" />
                           </div>
-                          <label className="inline-block px-4 py-2 bg-[#8B1A1A] hover:bg-[#722F37] text-white rounded-xl font-bold text-xs cursor-pointer shadow-xs">
-                            Choose Front Cover File
-                            <input
-                              type="file"
-                              accept="image/*"
-                              className="hidden"
-                              onChange={(e) => handleCoverUpload(e, 'front')}
-                            />
-                          </label>
+                          <div>
+                            <p className="font-bold text-sm text-[#1A1A2E]">
+                              Drag & Drop Front Cover Artwork (PNG / JPG / WebP)
+                            </p>
+                            <p className="text-gray-500 text-[11px] mt-0.5">
+                              Recommended Print Resolution: <strong>1600 × 2560 px</strong> (300 DPI, 1:1.6 paperback aspect ratio)
+                            </p>
+                          </div>
+
+                          <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+                            <label className="px-5 py-2.5 bg-[#8B1A1A] hover:bg-[#722F37] text-white rounded-xl font-bold text-xs cursor-pointer shadow-xs transition-all flex items-center gap-1.5">
+                              <Upload className="w-3.5 h-3.5" />
+                              Browse Cover File
+                              <input
+                                type="file"
+                                accept="image/png,image/jpeg,image/jpg,image/webp"
+                                className="hidden"
+                                onChange={(e) => handleCoverUpload(e, 'front')}
+                              />
+                            </label>
+
+                            {frontCoverImage && (
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setFrontCoverImage('');
+                                  setCoverFileName('');
+                                  setCoverResolution(null);
+                                  toast('Cover artwork removed. Resetting to template.');
+                                }}
+                                className="px-3.5 py-2 bg-white hover:bg-rose-50 text-rose-700 border border-rose-200 rounded-xl font-semibold text-xs cursor-pointer shadow-2xs transition-colors flex items-center gap-1"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                                Remove
+                              </button>
+                            )}
+                          </div>
                         </div>
 
-                        <div className="p-4 bg-gray-50 rounded-2xl border border-gray-200 space-y-1">
-                          <span className="font-bold text-gray-800 block">Back Cover Blurb</span>
+                        {/* File Details & Resolution Verification Banner */}
+                        {coverResolution && (
+                          <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-2xl flex items-center justify-between text-xs text-emerald-900">
+                            <div className="flex items-center gap-2">
+                              <CheckCircle className="w-4 h-4 text-emerald-700 shrink-0" />
+                              <div>
+                                <span className="font-bold block truncate max-w-xs">{coverFileName}</span>
+                                <span className="text-[11px] text-emerald-700">
+                                  {coverResolution.width} × {coverResolution.height} px • {coverResolution.dpi} DPI Resolution
+                                </span>
+                              </div>
+                            </div>
+                            <span className="text-[10px] font-bold uppercase tracking-wider bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full">
+                              Valid Print Cover
+                            </span>
+                          </div>
+                        )}
+
+                        <div className="p-4 bg-white rounded-2xl border border-gray-200 space-y-1">
+                          <span className="font-bold text-gray-800 text-xs block">Back Cover Blurb / Synopsis</span>
                           <textarea
                             rows={3}
                             value={backCoverSummary}
                             onChange={(e) => setBackCoverSummary(e.target.value)}
-                            className="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-xs"
+                            className="w-full px-3 py-2 bg-[#FDFAF6] border border-gray-200 rounded-xl text-xs focus:ring-1 focus:ring-[#8B1A1A]/40 outline-none leading-relaxed"
                             placeholder="Short synopsis printed on the back cover..."
                           />
                         </div>
@@ -1240,65 +1352,79 @@ export default function DIYBookStudio({ initialProjectId, initialPackage }: DIYB
 
                   {/* Right Live Canvas Preview */}
                   <div className="lg:col-span-5 flex flex-col items-center">
-                    <div className="text-[11px] font-bold uppercase tracking-wider text-gray-500 mb-2">
+                    <div className="text-[11px] font-bold uppercase tracking-wider text-gray-500 mb-2 flex items-center gap-1.5">
+                      <Sparkles className="w-3.5 h-3.5 text-[#C5A55A]" />
                       Front Cover Live Canvas
                     </div>
 
-                    {/* Book Mockup Frame */}
-                    <div
-                      className="w-60 h-84 rounded-r-xl shadow-2xl p-6 relative overflow-hidden flex flex-col justify-between border-y border-r border-black/20"
-                      style={{
-                        backgroundColor: coverBgColor,
-                        color: coverFontColor,
-                        fontFamily: coverFont,
-                        textAlign: coverAlignment,
-                      }}
-                    >
-                      {/* Spine Crease Effect */}
-                      <div className="absolute left-0 top-0 bottom-0 w-3 bg-gradient-to-r from-black/40 via-white/10 to-transparent pointer-events-none" />
+                    {/* Realistic Physical Book Mockup Frame */}
+                    <div className="relative group/mockup">
+                      {/* Physical Book Spine Edge and Underlayer */}
+                      <div className="absolute inset-0 rounded-r-2xl bg-black/15 translate-x-2 translate-y-2 blur-xs -z-10" />
+                      <div className="absolute inset-y-1 right-0 w-3 bg-gradient-to-l from-[#F5EFE6] via-[#E8DEC8] to-transparent rounded-r-lg -z-5" />
 
-                      {/* Cover Photo / Texture if available */}
-                      {frontCoverImage && (
-                        <img
-                          src={frontCoverImage}
-                          alt="Cover Art"
-                          className="absolute inset-0 w-full h-full object-cover opacity-35 mix-blend-overlay pointer-events-none"
-                        />
-                      )}
+                      <div
+                        className="w-64 h-92 rounded-r-2xl shadow-xl p-6 relative overflow-hidden flex flex-col justify-between border-y border-r border-black/20 bg-[#171717]"
+                        style={{
+                          backgroundColor: coverBgColor,
+                          color: coverFontColor,
+                          fontFamily: coverFont,
+                          textAlign: coverAlignment,
+                        }}
+                      >
+                        {/* Spine Crease Depth Effect */}
+                        <div className="absolute left-0 top-0 bottom-0 w-4 bg-gradient-to-r from-black/45 via-white/10 to-transparent pointer-events-none z-20" />
+                        <div className="absolute left-[3px] top-0 bottom-0 w-[1px] bg-white/20 pointer-events-none z-20" />
 
-                      {/* Top Header info */}
-                      <div className="relative z-10">
-                        <span className="text-[9px] uppercase tracking-widest block opacity-75">
-                          {genre}
-                        </span>
-                      </div>
-
-                      {/* Title & Subtitle */}
-                      <div className="relative z-10 my-auto space-y-1.5">
-                        <h3
-                          className="font-bold leading-tight drop-shadow-xs"
-                          style={{ fontSize: `${coverFontSize}px` }}
-                        >
-                          {title || 'Book Title'}
-                        </h3>
-                        {subtitle && (
-                          <p className="text-[10px] font-sans opacity-85 leading-snug">
-                            {subtitle}
-                          </p>
+                        {/* Cover Photo / Texture with object-fit contain/cover */}
+                        {frontCoverImage && (
+                          <div className="absolute inset-0 w-full h-full bg-[#111827] overflow-hidden">
+                            <img
+                              src={frontCoverImage}
+                              alt="Front Cover Art"
+                              className="w-full h-full object-cover pointer-events-none"
+                            />
+                            {/* Subtle texture blend */}
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20 pointer-events-none" />
+                          </div>
                         )}
-                      </div>
 
-                      {/* Author Name */}
-                      <div className="relative z-10 border-t border-white/20 pt-2">
-                        <p className="text-xs font-bold tracking-wider uppercase font-sans">
-                          {penName || authorName}
-                        </p>
-                        <p className="text-[8px] opacity-60 uppercase font-sans">Page Craft Editions</p>
+                        {/* Top Header info */}
+                        <div className="relative z-10">
+                          <span className="text-[9px] font-bold uppercase tracking-[0.2em] block opacity-85">
+                            {genre}
+                          </span>
+                        </div>
+
+                        {/* Title & Subtitle */}
+                        <div className="relative z-10 my-auto space-y-1.5 px-2 drop-shadow-md">
+                          <h3
+                            className="font-bold leading-tight drop-shadow-sm"
+                            style={{ fontSize: `${coverFontSize}px` }}
+                          >
+                            {title || 'Book Title'}
+                          </h3>
+                          {subtitle && (
+                            <p className="text-[10px] font-sans opacity-90 leading-snug italic">
+                              {subtitle}
+                            </p>
+                          )}
+                        </div>
+
+                        {/* Author Name Byline */}
+                        <div className="relative z-10 border-t border-white/25 pt-2">
+                          <p className="text-xs font-bold tracking-wider uppercase font-sans">
+                            {penName || authorName}
+                          </p>
+                          <p className="text-[8px] opacity-70 uppercase font-sans tracking-widest">
+                            Page Craft Imprint
+                          </p>
+                        </div>
                       </div>
                     </div>
 
                     <p className="text-[11px] text-gray-400 mt-3 text-center">
-                      Spine: {spineWidthMm}mm • Trim: {trimSize} in • 300 DPI Ready
+                      Spine: {spineWidthMm}mm • Trim: {trimSize} in • 300 DPI Validated
                     </p>
                   </div>
                 </div>

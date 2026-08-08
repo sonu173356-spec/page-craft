@@ -19,4 +19,6 @@ export * from './Logo';
 export * from './CloudBackground';
 export * from './FileUploader';
 export * from './BookIllustration';
+export { default as RealisticBookCover } from './RealisticBookCover';
+export * from './RealisticBookCover';
 

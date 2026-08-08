@@ -1,50 +1,85 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
-import { Search } from 'lucide-react';
+import React, { useState, useMemo, useEffect } from 'react';
+import { Search, Sparkles } from 'lucide-react';
 import BookFilters from '@/components/bookstore/BookFilters';
 import BookGrid from '@/components/bookstore/BookGrid';
 import CartDrawer from '@/components/bookstore/CartDrawer';
 import { Book } from '@/types';
+import { getStoredPublishedBooks, BOOKS_UPDATED_EVENT } from '@/lib/bookService';
+import { PublishedBook } from '@/lib/bookCovers';
 
-// Mock Data
-const MOCK_BOOKS: Book[] = Array.from({ length: 20 }).map((_, i) => ({
-  id: `book-${i + 1}`,
-  title: `The Art of Typography ${i + 1}`,
-  slug: `the-art-of-typography-${i + 1}`,
-  author: {
-    id: 'a1', name: 'Elena Rostova', slug: 'elena-rostova', bio: '', shortBio: '', avatar: '', email: '', booksPublished: 1, joinDate: '', genres: []
-  },
-  authorId: 'a1',
-  description: 'A comprehensive guide to modern typography...',
-  shortDescription: 'Modern typography guide',
-  coverImage: '',
-  price: 24.99 + (i % 5) * 5,
-  originalPrice: i % 3 === 0 ? 34.99 + (i % 5) * 5 : undefined,
-  isbn: `978-3-16-148410-${i}`,
-  pages: 320,
-  language: 'English',
-  category: ['Fiction', 'Non-Fiction', 'Poetry', 'Self-Help', 'Design'][i % 5],
-  genre: ['Design'],
-  format: ['paperback', 'ebook'],
-  publishDate: '2023-10-15',
-  rating: 4.0 + (i % 5) * 0.2,
-  reviewCount: 120 + i * 10,
-  stock: 50,
-  tags: []
-}));
-
-const CATEGORIES = ['All', 'Fiction', 'Non-Fiction', 'Poetry', 'Self-Help', 'Design'];
+const CATEGORIES = ['All', 'Fiction', 'Mystery', 'Adventure', 'Historical', 'Sci-Fi', 'Cookbook', 'Business', 'Poetry', 'Non-Fiction'];
 
 export default function BookstoreClient() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
-  const [priceRange, setPriceRange] = useState<[number, number]>([0, 100]);
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000]);
   const [sortBy, setSortBy] = useState('newest');
+  const [catalogBooks, setCatalogBooks] = useState<Book[]>([]);
+
+  const loadBooks = () => {
+    const published: PublishedBook[] = getStoredPublishedBooks();
+    const mapped: Book[] = published.map((b) => ({
+      id: b.id,
+      title: b.title,
+      slug: b.id,
+      author: {
+        id: b.authorId || 'a1',
+        name: b.author,
+        slug: b.authorSlug || 'author',
+        bio: '',
+        shortBio: '',
+        avatar: '',
+        email: '',
+        booksPublished: 1,
+        joinDate: '2026',
+        genres: [b.genre],
+      },
+      authorId: b.authorId || 'a1',
+      description: b.description,
+      shortDescription: b.subtitle || '',
+      coverImage: b.cover_image_url || '',
+      price: b.numericPrice,
+      originalPrice: b.originalPrice ? Number(b.originalPrice.replace(/[^\d]/g, '')) : undefined,
+      isbn: b.isbn,
+      pages: b.pages,
+      language: 'English',
+      category: b.category,
+      genre: [b.genre],
+      format: ['paperback', 'ebook'] as any,
+      publishDate: b.created_at.split('T')[0],
+      rating: b.rating,
+      reviewCount: b.reviewCount,
+      stock: 50,
+      tags: [b.category],
+    }));
+
+    setCatalogBooks(mapped);
+  };
+
+  useEffect(() => {
+    loadBooks();
+
+    const handleUpdate = () => {
+      loadBooks();
+    };
+
+    window.addEventListener(BOOKS_UPDATED_EVENT, handleUpdate);
+    window.addEventListener('storage', handleUpdate);
+
+    return () => {
+      window.removeEventListener(BOOKS_UPDATED_EVENT, handleUpdate);
+      window.removeEventListener('storage', handleUpdate);
+    };
+  }, []);
 
   const filteredBooks = useMemo(() => {
-    return MOCK_BOOKS.filter(book => {
-      const matchesSearch = book.title.toLowerCase().includes(searchQuery.toLowerCase());
+    return catalogBooks.filter((book) => {
+      const matchesSearch =
+        book.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        book.author.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        book.isbn.toLowerCase().includes(searchQuery.toLowerCase());
       const matchesCategory = selectedCategory === 'All' || book.category === selectedCategory;
       const matchesPrice = book.price >= priceRange[0] && book.price <= priceRange[1];
       return matchesSearch && matchesCategory && matchesPrice;
@@ -54,11 +89,11 @@ export default function BookstoreClient() {
       if (sortBy === 'rating') return b.rating - a.rating;
       return 0; // newest/default
     });
-  }, [searchQuery, selectedCategory, priceRange, sortBy]);
+  }, [catalogBooks, searchQuery, selectedCategory, priceRange, sortBy]);
 
   const handleClearFilters = () => {
     setSelectedCategory('All');
-    setPriceRange([0, 100]);
+    setPriceRange([0, 1000]);
     setSortBy('newest');
     setSearchQuery('');
   };
@@ -67,11 +102,15 @@ export default function BookstoreClient() {
     <div className="min-h-screen bg-[#FDFAF6] py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
-          <h1 className="font-playfair text-4xl md:text-5xl font-bold text-[#1A1A2E] mb-4">
-            Curated Bookstore
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-50 border border-amber-200 text-[#8B1A1A] text-xs font-bold uppercase tracking-wider mb-2">
+            <Sparkles className="w-3.5 h-3.5" />
+            Curated Physical Bookstore
+          </div>
+          <h1 className="font-playfair text-4xl md:text-5xl font-bold text-[#1A1A2E] mb-3">
+            Official Book Catalog
           </h1>
-          <p className="text-gray-600 max-w-2xl mx-auto">
-            Discover our carefully selected collection of premium books, designed to inspire and educate.
+          <p className="text-gray-600 max-w-2xl mx-auto text-sm sm:text-base">
+            Discover verified front-cover releases and independent author titles published across Page Craft.
           </p>
         </div>
 
@@ -93,12 +132,16 @@ export default function BookstoreClient() {
             <div className="relative">
               <input
                 type="text"
-                placeholder="Search by title, author, or ISBN..."
+                placeholder="Search by book title, author name, or ISBN..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-200 bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-[#8B1A1A]"
+                className="w-full pl-12 pr-4 py-3.5 rounded-2xl border border-[#EBE4D8] bg-white shadow-2xs focus:outline-none focus:ring-2 focus:ring-[#8B1A1A]/30 text-sm font-medium"
               />
-              <Search className="absolute left-4 top-3.5 w-5 h-5 text-gray-400" />
+              <Search className="absolute left-4 top-4 w-5 h-5 text-gray-400" />
+            </div>
+
+            <div className="text-xs text-gray-500 font-medium px-1">
+              Showing <strong className="text-gray-900">{filteredBooks.length}</strong> published works
             </div>
 
             <BookGrid books={filteredBooks} />

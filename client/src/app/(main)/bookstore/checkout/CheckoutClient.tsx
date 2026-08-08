@@ -7,6 +7,7 @@ import { Check, CreditCard, Truck, ShoppingBag, ShieldCheck } from 'lucide-react
 import { useCartStore } from '@/store';
 import Link from 'next/link';
 import Image from 'next/image';
+import RealisticBookCover from '@/components/ui/RealisticBookCover';
 
 const STEPS = ['Cart Review', 'Shipping', 'Payment', 'Confirmation'];
 
@@ -82,15 +83,13 @@ export default function CheckoutClient() {
                     {items.map(item => (
                       <div key={`${item.book.id}-${item.format}`} className="flex items-center justify-between border-b border-gray-100 pb-4">
                         <div className="flex items-center gap-4">
-                          <div className="w-16 h-24 bg-gray-100 rounded overflow-hidden relative">
-                            {item.book.coverImage && <Image src={item.book.coverImage} alt={item.book.title} fill className="object-cover" />}
-                          </div>
+                          <RealisticBookCover book={item.book} size="sm" />
                           <div>
                             <h3 className="font-medium text-[#1A1A2E]">{item.book.title}</h3>
                             <p className="text-sm text-gray-500 capitalize">{item.format} x {item.quantity}</p>
                           </div>
                         </div>
-                        <span className="font-bold text-[#1A1A2E]">${(item.book.price * item.quantity).toFixed(2)}</span>
+                        <span className="font-bold text-[#1A1A2E]">₹{(item.book.price * (item.book.price < 100 ? 25 : 1) * item.quantity).toFixed(0)}</span>
                       </div>
                     ))}
                   </div>
