@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { SectionHeading } from '@/components/ui/SectionHeading';
 import { AnimatedCounter } from '@/components/ui/AnimatedCounter';
 import { Breadcrumb } from '@/components/ui/Breadcrumb';
-import { BookOpen, Target, Heart, Lightbulb, Users, Globe, ExternalLink, ShieldCheck, Sparkles } from 'lucide-react';
+import { BookOpen, Target, Heart, Lightbulb, Users, Globe, ExternalLink, ShieldCheck, Sparkles, Award, Star, CheckCircle } from 'lucide-react';
 import Link from 'next/link';
 
 const stats = [
@@ -16,30 +16,61 @@ const stats = [
 ];
 
 const values = [
-  { title: 'Quality First', description: 'We never compromise on the editing, design, or production quality of our books.', icon: BookOpen },
-  { title: 'Transparency', description: 'Clear communication, 100% net royalties, and honest feedback at every stage.', icon: Target },
-  { title: 'Author Centric', description: 'Your vision is our priority. We work to amplify your unique voice worldwide.', icon: Heart },
-  { title: 'Innovation', description: 'Embracing modern technology, automated portals, and global distribution.', icon: Lightbulb },
+  { title: 'Quality First', description: 'We never compromise on the editing, typography, cover design, or print quality of our authors’ books.', icon: BookOpen },
+  { title: '100% Royalty & Transparency', description: 'Authors retain 100% net royalties and all intellectual property rights forever. Zero hidden cuts.', icon: Target },
+  { title: 'Author Centric', description: 'Your creative vision is our highest priority. We assign a personal publishing consultant to every project.', icon: Heart },
+  { title: 'Global Innovation', description: 'State-of-the-art print-on-demand technology and distribution across 150+ countries worldwide.', icon: Lightbulb },
 ];
 
 const milestones = [
-  { year: '2019', title: 'The Beginning', description: 'Page Craft was founded with a mission to make self-publishing transparent, accessible, and author-first.' },
-  { year: '2021', title: 'Going Global', description: 'Expanded distribution across Amazon, Flipkart, Google Books, and 150+ international platforms.' },
-  { year: '2023', title: 'Author Portal & Tech', description: 'Launched our dedicated author dashboard, real-time sales reporting, and automated manuscript systems.' },
-  { year: '2026', title: 'Industry Leaders', description: 'Trusted by over 12,000+ published authors with 25,000+ published books across the globe.' },
+  { year: '2019', title: 'The Inception', description: 'Page Craft was founded with a mission to make self-publishing transparent, accessible, and author-first.' },
+  { year: '2021', title: 'Global Reach', description: 'Expanded distribution across Amazon, Flipkart, Google Books, Apple Books, and 150+ international platforms.' },
+  { year: '2023', title: 'Author Portal & Tech', description: 'Launched our dedicated author dashboard, real-time sales reporting, and automated manuscript validation.' },
+  { year: '2026', title: 'India’s #1 Publishing House', description: 'Trusted by over 12,000+ published authors with 25,000+ published titles worldwide.' },
+];
+
+const teamMembers = [
+  {
+    name: 'Vikramaditya Rao',
+    role: 'Founder & CEO',
+    bio: 'Former senior publishing editor with 15+ years of experience helping thousands of authors build bestselling careers.',
+    initials: 'VR',
+    color: 'bg-rose-700',
+  },
+  {
+    name: 'Dr. Priya Sharma',
+    role: 'Chief Editorial Officer',
+    bio: 'Renowned literary consultant and editor who oversees manuscript quality and developmental editing standards.',
+    initials: 'PS',
+    color: 'bg-amber-600',
+  },
+  {
+    name: 'Arjun Menon',
+    role: 'Head of Global Distribution',
+    bio: 'Logistics and international distribution specialist managing print channels across 150+ countries and major retailers.',
+    initials: 'AM',
+    color: 'bg-teal-700',
+  },
+  {
+    name: 'Aisha Khan',
+    role: 'Lead Cover & Interior Designer',
+    bio: 'Award-winning book designer crafting market-ready paperback covers and bespoke typography layouts for authors.',
+    initials: 'AK',
+    color: 'bg-[#8B1A1A]',
+  },
 ];
 
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: { staggerChildren: 0.15 }
+    transition: { staggerChildren: 0.12 }
   }
 };
 
 const itemVariants = {
   hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }
 };
 
 export default function AboutPageClient() {
@@ -56,18 +87,21 @@ export default function AboutPageClient() {
             transition={{ duration: 0.8 }}
             className="text-center max-w-4xl mx-auto"
           >
-            <h1 className="text-5xl md:text-6xl font-playfair font-bold text-[#1A1A2E] mb-6">
+            <span className="px-3.5 py-1 bg-red-100 text-[#8B1A1A] text-xs font-bold rounded-full uppercase tracking-wider">
+              About Page Craft
+            </span>
+            <h1 className="text-5xl md:text-6xl font-playfair font-bold text-[#1A1A2E] mt-4 mb-6 leading-tight">
               Crafting Stories, <span className="text-[#8B1A1A]">Building Legacies</span>
             </h1>
-            <p className="text-lg md:text-xl text-[#4A4A5A] leading-relaxed font-inter">
-              We are a modern self-publishing house dedicated to bringing extraordinary stories to life. 
+            <p className="text-lg md:text-xl text-[#4A4A5A] leading-relaxed font-inter max-w-3xl mx-auto">
+              We are India’s most trusted self-publishing house dedicated to bringing extraordinary stories to life. 
               By combining premium editorial standards with state-of-the-art technology, we empower authors to publish globally and retain 100% royalty.
             </p>
           </motion.div>
         </div>
       </section>
 
-      {/* Stats Section with Updated Metrics */}
+      {/* Stats Section */}
       <section className="py-16 bg-white border-y border-gray-100 shadow-sm">
         <div className="container mx-auto max-w-6xl px-4">
           <motion.div 
@@ -95,8 +129,55 @@ export default function AboutPageClient() {
         </div>
       </section>
 
-      {/* Timeline Section */}
-      <section className="py-24 px-4">
+      {/* Our Mission & Vision */}
+      <section className="py-20 px-4">
+        <div className="container mx-auto max-w-6xl">
+          <div className="grid md:grid-cols-2 gap-10 items-center">
+            <div className="bg-white p-8 md:p-10 rounded-3xl shadow-sm border border-gray-100 space-y-4">
+              <span className="px-3 py-1 bg-amber-100 text-[#C5A55A] font-bold text-xs rounded-full uppercase">
+                Our Mission
+              </span>
+              <h2 className="text-3xl font-playfair font-bold text-[#1A1A2E]">
+                Democratizing Global Publishing
+              </h2>
+              <p className="text-gray-600 text-sm leading-relaxed">
+                To eliminate the barriers of traditional publishing by providing every writer with world-class editorial, design, printing, and global distribution services without forfeiting rights or royalties.
+              </p>
+              <ul className="space-y-2 pt-2 text-xs font-semibold text-gray-700">
+                <li className="flex items-center gap-2 text-emerald-700">
+                  <CheckCircle className="w-4 h-4 text-emerald-600" /> 100% Net Royalty retention
+                </li>
+                <li className="flex items-center gap-2 text-emerald-700">
+                  <CheckCircle className="w-4 h-4 text-emerald-600" /> Fast turnaround in 30-45 days
+                </li>
+                <li className="flex items-center gap-2 text-emerald-700">
+                  <CheckCircle className="w-4 h-4 text-emerald-600" /> Global listing in 150+ countries
+                </li>
+              </ul>
+            </div>
+
+            <div className="bg-[#1A1A2E] text-white p-8 md:p-10 rounded-3xl shadow-xl space-y-4">
+              <span className="px-3 py-1 bg-white/10 text-[#C5A55A] font-bold text-xs rounded-full uppercase">
+                Our Vision
+              </span>
+              <h2 className="text-3xl font-playfair font-bold text-white">
+                Empowering 100,000+ Voices
+              </h2>
+              <p className="text-gray-300 text-sm leading-relaxed">
+                We envision a literary world where every compelling story finds its audience. Through cutting-edge print-on-demand technology and author-first business models, we are building the future of independent publishing.
+              </p>
+              <div className="pt-2 flex items-center gap-4 text-xs font-bold text-[#C5A55A]">
+                <span>⭐ 4.9/5 Author Rating</span>
+                <span>•</span>
+                <span>🚀 2M+ Readers Reached</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Milestones / Journey */}
+      <section className="py-20 px-4 bg-white border-y border-gray-100">
         <div className="container mx-auto max-w-4xl">
           <SectionHeading title="Our Journey" subtitle="How we got here" align="center" className="mb-16" />
           
@@ -114,7 +195,7 @@ export default function AboutPageClient() {
                   {index % 2 === 0 ? (
                     <div className="text-4xl font-playfair font-bold text-[#C5A55A]">{milestone.year}</div>
                   ) : (
-                    <div className="text-left bg-white p-6 rounded-2xl shadow-sm border border-gray-100 w-full">
+                    <div className="text-left bg-[#FDFAF6] p-6 rounded-2xl shadow-sm border border-gray-100 w-full">
                       <h3 className="text-xl font-bold text-[#1A1A2E] mb-1 font-playfair">{milestone.title}</h3>
                       <p className="text-gray-600 text-sm leading-relaxed">{milestone.description}</p>
                     </div>
@@ -125,7 +206,7 @@ export default function AboutPageClient() {
                   {index % 2 !== 0 ? (
                     <div className="text-4xl font-playfair font-bold text-[#C5A55A]">{milestone.year}</div>
                   ) : (
-                    <div className="text-left bg-white p-6 rounded-2xl shadow-sm border border-gray-100 w-full">
+                    <div className="text-left bg-[#FDFAF6] p-6 rounded-2xl shadow-sm border border-gray-100 w-full">
                       <h3 className="text-xl font-bold text-[#1A1A2E] mb-1 font-playfair">{milestone.title}</h3>
                       <p className="text-gray-600 text-sm leading-relaxed">{milestone.description}</p>
                     </div>
@@ -137,10 +218,32 @@ export default function AboutPageClient() {
         </div>
       </section>
 
-      {/* Values Section */}
+      {/* Leadership Team */}
+      <section className="py-20 px-4">
+        <div className="container mx-auto max-w-6xl">
+          <SectionHeading title="Meet Our Leadership" subtitle="The publishing professionals and book craft experts behind your success." align="center" className="mb-14" />
+          
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            {teamMembers.map((m) => (
+              <div key={m.name} className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 text-center hover:shadow-md transition-all space-y-3">
+                <div className={`w-20 h-20 rounded-full ${m.color} text-white font-bold text-xl flex items-center justify-center mx-auto shadow-md`}>
+                  {m.initials}
+                </div>
+                <div>
+                  <h3 className="font-playfair font-bold text-lg text-[#1A1A2E]">{m.name}</h3>
+                  <p className="text-xs font-bold text-[#8B1A1A] uppercase tracking-wider">{m.role}</p>
+                </div>
+                <p className="text-xs text-gray-500 leading-relaxed pt-1">{m.bio}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Core Values */}
       <section className="py-24 bg-[#1A1A2E] text-white px-4">
         <div className="container mx-auto max-w-6xl">
-          <SectionHeading title="Core Values" subtitle="What drives us forward" align="center" className="mb-16 text-white" />
+          <SectionHeading title="Core Values" subtitle="What drives us forward every single day" align="center" className="mb-16 text-white" />
           
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             {values.map((value, index) => {
@@ -164,7 +267,7 @@ export default function AboutPageClient() {
         </div>
       </section>
 
-      {/* CTA Section - Logo Crimson & Target Blank Secondary Window */}
+      {/* CTA Section */}
       <section className="py-20 bg-gradient-to-b from-[#FDFAF6] to-[#FFF5F5] px-4 text-center border-t border-rose-100">
         <div className="container mx-auto max-w-3xl space-y-6">
           <div className="w-12 h-12 rounded-full bg-red-100 text-[#8B1A1A] flex items-center justify-center mx-auto shadow-inner">
