@@ -324,13 +324,141 @@ export const SAMPLE_PUBLISHED_BOOKS: PublishedBook[] = [
       moodBadge: 'Archaeological Thriller',
     },
   },
+  {
+    id: 'book-si-10',
+    title: 'Chronicles of the Sunken Isles',
+    subtitle: 'Book One: Rise of the Dragon Kings',
+    author: 'Elara Vance',
+    authorSlug: 'eleanor-vance',
+    authorId: 'author-1',
+    genre: 'Epic Fantasy / Adventure',
+    category: 'Fantasy',
+    price: '₹499',
+    numericPrice: 499,
+    originalPrice: '₹649',
+    rating: 4.9,
+    reviewCount: 220,
+    description:
+      'A mythical sunken island kingdom rises from the roaring ocean tides, guarded by ancient dragons and lost celestial magic.',
+    isbn: '978-93-84729-19-7',
+    pages: 480,
+    format: 'Hardcover • Collector Edition',
+    featured: true,
+    status: 'published',
+    created_at: '2026-08-09T12:00:00.000Z',
+    cover_image_url: '/books/sunken-isles.jpg',
+    coverStyle: {
+      bgGradient: 'from-[#0B1E36] via-[#1E3A5F] to-[#D97706]',
+      accentColor: '#FBBF24',
+      textColor: '#FFFFFF',
+      fontFamily: 'Playfair Display, serif',
+      textureImage: '/books/sunken-isles.jpg',
+      moodBadge: 'Epic High Fantasy',
+    },
+  },
+  {
+    id: 'book-uf-11',
+    title: 'The Secret Life of Urban Flora',
+    subtitle: 'Unveiling the Wild Nature Within Our Cities',
+    author: 'Eliza J. Reed',
+    authorSlug: 'eliza-reed',
+    authorId: 'author-9',
+    genre: 'Nature / Botany / Non-Fiction',
+    category: 'Non-Fiction',
+    price: '₹429',
+    numericPrice: 429,
+    originalPrice: '₹549',
+    rating: 4.8,
+    reviewCount: 135,
+    description:
+      'An inspiring, beautifully illustrated exploration of the resilient wild ferns, mosses, and flora thriving in the heart of modern stone cities.',
+    isbn: '978-93-84729-20-3',
+    pages: 272,
+    format: 'Clothbound Hardcover',
+    featured: true,
+    status: 'published',
+    created_at: '2026-08-10T14:30:00.000Z',
+    cover_image_url: '/books/urban-flora.jpg',
+    coverStyle: {
+      bgGradient: 'from-[#143621] via-[#1E4D2B] to-[#2D6A4F]',
+      accentColor: '#D4AF37',
+      textColor: '#F3F4F6',
+      fontFamily: 'Playfair Display, serif',
+      textureImage: '/books/urban-flora.jpg',
+      moodBadge: 'Botanical Discovery',
+    },
+  },
+  {
+    id: 'book-wc-12',
+    title: 'Summer at Willow Creek',
+    subtitle: 'A Heartwarming Tale of Love, Healing, and Summer Sun',
+    author: 'Clara Hughes',
+    authorSlug: 'clara-hughes',
+    authorId: 'author-10',
+    genre: 'Romance / Contemporary Fiction',
+    category: 'Romance',
+    price: '₹349',
+    numericPrice: 349,
+    originalPrice: '₹449',
+    rating: 4.9,
+    reviewCount: 198,
+    description:
+      'Returning to her family cottage by Willow Creek, an artist finds unexpected solace and rekindled passion with a childhood neighbor.',
+    isbn: '978-93-84729-21-0',
+    pages: 310,
+    format: 'Paperback • eBook',
+    featured: true,
+    status: 'published',
+    created_at: '2026-08-11T16:00:00.000Z',
+    cover_image_url: '/books/willow-creek.jpg',
+    coverStyle: {
+      bgGradient: 'from-[#854D0E] via-[#CA8A04] to-[#FEF08A]',
+      accentColor: '#FEF9C3',
+      textColor: '#FFFFFF',
+      fontFamily: 'Playfair Display, serif',
+      textureImage: '/books/willow-creek.jpg',
+      moodBadge: 'Heartfelt Romance',
+    },
+  },
+  {
+    id: 'book-lp-13',
+    title: 'The Little Paws Adventure',
+    subtitle: 'A Whimsical Tale of Friendship in the Enchanted Woods',
+    author: 'Mia Sterling',
+    authorSlug: 'marcus-sterling',
+    authorId: 'author-2',
+    genre: "Children's / Picture Book",
+    category: "Children's",
+    price: '₹299',
+    numericPrice: 299,
+    originalPrice: '₹399',
+    rating: 5.0,
+    reviewCount: 142,
+    description:
+      'Join an adventurous golden puppy and a fluffy kitten on a joyful quest across the fairy forest to find the Rainbow Butterfly.',
+    isbn: '978-93-84729-22-7',
+    pages: 48,
+    format: 'Full Color Hardcover',
+    featured: true,
+    status: 'published',
+    created_at: '2026-08-12T10:00:00.000Z',
+    cover_image_url: '/books/little-paws.jpg',
+    coverStyle: {
+      bgGradient: 'from-[#1E3A8A] via-[#0284C7] to-[#38BDF8]',
+      accentColor: '#FEF08A',
+      textColor: '#FFFFFF',
+      fontFamily: 'Inter, sans-serif',
+      textureImage: '/books/little-paws.jpg',
+      moodBadge: "Children's Adventure",
+    },
+  },
 ];
 
 // ============================================================
 // Cover Image Resolver Utility
 // ============================================================
-// 1. Author's uploaded front cover PNG always takes first priority.
-// 2. If null or undefined, falls back to genre-specific artistic book cover.
+// 1. Author's uploaded front cover PNG / local asset always takes first priority.
+// 2. Fallback to genre-specific designed cover artwork.
 export function resolveBookCover(book: Partial<PublishedBook> | any): {
   url: string | null;
   hasCustomUpload: boolean;
@@ -345,10 +473,11 @@ export function resolveBookCover(book: Partial<PublishedBook> | any): {
     null;
 
   const title = book?.title || 'Untitled Book';
-  const author = book?.author || book?.authorName || book?.penName || 'Page Craft Author';
+  const author = book?.author || book?.authorName || book?.penName || (typeof book?.author === 'object' ? book?.author?.name : 'Page Craft Author');
   const altText = `${title} — Book cover by ${author}`;
 
-  if (uploadedUrl && typeof uploadedUrl === 'string' && uploadedUrl.trim() !== '') {
+  // If local /books/ or valid custom upload is present and not a generic placeholder
+  if (uploadedUrl && typeof uploadedUrl === 'string' && uploadedUrl.trim() !== '' && !uploadedUrl.includes('photo-1544947950-fa07a98d237f')) {
     return {
       url: uploadedUrl,
       hasCustomUpload: true,
@@ -356,11 +485,14 @@ export function resolveBookCover(book: Partial<PublishedBook> | any): {
     };
   }
 
-  // Fallback to sample book artwork if matched by ID or Title
+  // Fallback 1: Match by ID, Title, or partial Title
+  const titleLower = title.toLowerCase().trim();
   const matched = SAMPLE_PUBLISHED_BOOKS.find(
     (b) =>
       b.id === book?.id ||
-      b.title.toLowerCase().trim() === (book?.title || '').toLowerCase().trim()
+      b.title.toLowerCase().trim() === titleLower ||
+      titleLower.includes(b.title.toLowerCase().trim()) ||
+      b.title.toLowerCase().trim().includes(titleLower)
   );
 
   if (matched?.cover_image_url) {
@@ -371,8 +503,45 @@ export function resolveBookCover(book: Partial<PublishedBook> | any): {
     };
   }
 
+  // Fallback 2: Match by Category / Genre to a bespoke cover
+  const cat = String(book?.category || book?.genre || '').toLowerCase();
+  if (cat.includes('scifi') || cat.includes('sci-fi') || cat.includes('space')) {
+    return { url: '/books/echoes-eternity.jpg', hasCustomUpload: false, altText };
+  }
+  if (cat.includes('myster') || cat.includes('thrill') || cat.includes('noir')) {
+    return { url: '/books/silent-echo.jpg', hasCustomUpload: false, altText };
+  }
+  if (cat.includes('fantasy') || cat.includes('magic') || cat.includes('myth')) {
+    return { url: '/books/sunken-isles.jpg', hasCustomUpload: false, altText };
+  }
+  if (cat.includes('adventur') || cat.includes('expedition')) {
+    return { url: '/books/beyond-horizon.jpg', hasCustomUpload: false, altText };
+  }
+  if (cat.includes('historic') || cat.includes('chronicle') || cat.includes('empire')) {
+    return { url: '/books/whispers-time.jpg', hasCustomUpload: false, altText };
+  }
+  if (cat.includes('cook') || cat.includes('food') || cat.includes('culinary')) {
+    return { url: '/books/vegan-kitchen.jpg', hasCustomUpload: false, altText };
+  }
+  if (cat.includes('business') || cat.includes('startup') || cat.includes('strateg') || cat.includes('econom')) {
+    return { url: '/books/startup-playbook.jpg', hasCustomUpload: false, altText };
+  }
+  if (cat.includes('poet') || cat.includes('verse')) {
+    return { url: '/books/poetic-soul.jpg', hasCustomUpload: false, altText };
+  }
+  if (cat.includes('romance') || cat.includes('love')) {
+    return { url: '/books/willow-creek.jpg', hasCustomUpload: false, altText };
+  }
+  if (cat.includes('child') || cat.includes('kid') || cat.includes('picture')) {
+    return { url: '/books/little-paws.jpg', hasCustomUpload: false, altText };
+  }
+  if (cat.includes('nature') || cat.includes('flora') || cat.includes('botan') || cat.includes('non-fiction')) {
+    return { url: '/books/urban-flora.jpg', hasCustomUpload: false, altText };
+  }
+
+  // Default universal fallback
   return {
-    url: null,
+    url: '/books/silent-echo.jpg',
     hasCustomUpload: false,
     altText,
   };

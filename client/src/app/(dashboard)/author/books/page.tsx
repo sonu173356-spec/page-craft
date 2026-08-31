@@ -8,9 +8,9 @@ import { toast } from 'react-hot-toast';
 import RealisticBookCover from '@/components/ui/RealisticBookCover';
 
 const initialBooks = [
-  { id: 'proj-001', title: 'The Silent Echo of Whispers', status: 'Ready for Review', sales: 1245, price: '₹399', date: '2026-08-01', category: 'Literary Fiction', progress: 95, image: 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?q=80&w=300&auto=format&fit=crop' },
-  { id: 'proj-002', title: 'Midnight Verses & Shadows', status: 'In Progress', sales: 0, price: '₹299', date: '2026-08-03', category: 'Poetry', progress: 70, image: 'https://images.unsplash.com/photo-1512820790803-83ca734da794?q=80&w=300&auto=format&fit=crop' },
-  { id: 'proj-003', title: 'Journey to the Unknown Peak', status: 'Draft', sales: 0, price: '₹499', date: '2026-08-05', category: 'Self-Help', progress: 30, image: 'https://images.unsplash.com/photo-1589829085413-56de8ae18c73?q=80&w=300&auto=format&fit=crop' },
+  { id: 'proj-001', title: 'The Silent Echo of Whispers', status: 'Ready for Review', sales: 1245, price: '₹399', date: '2026-08-01', category: 'Literary Fiction', progress: 95, image: '/books/silent-echo.jpg' },
+  { id: 'proj-002', title: 'Midnight Verses & Shadows', status: 'In Progress', sales: 0, price: '₹299', date: '2026-08-03', category: 'Poetry', progress: 70, image: '/books/poetic-soul.jpg' },
+  { id: 'proj-003', title: 'Journey to the Unknown Peak', status: 'Draft', sales: 0, price: '₹499', date: '2026-08-05', category: 'Self-Help', progress: 30, image: '/books/beyond-horizon.jpg' },
 ];
 
 export default function AuthorBooksPage() {
