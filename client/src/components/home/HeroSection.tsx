@@ -41,7 +41,7 @@ export default function HeroSection() {
             {/* Main Hero Title */}
             <motion.h1
               variants={itemVariants}
-              className="text-5xl md:text-6xl lg:text-7xl font-playfair font-bold text-[#8B1A1A] leading-[1.15] mb-6"
+              className="text-5xl md:text-6xl lg:text-7xl font-extrabold text-[#FF5A60] sm:text-[#FF5364] leading-[1.12] mb-6 tracking-tight"
             >
               Publishing Made Easy
             </motion.h1>
@@ -49,10 +49,10 @@ export default function HeroSection() {
             {/* Subtitle */}
             <motion.p
               variants={itemVariants}
-              className="text-lg md:text-xl text-[#4A4A5A] mb-10 max-w-xl mx-auto lg:mx-0 font-inter leading-relaxed"
+              className="text-lg md:text-xl text-[#374151] mb-10 max-w-xl mx-auto lg:mx-0 font-normal leading-relaxed"
             >
-              Realise your dream of becoming a published author with Page Craft, India&apos;s most trusted Self-Publishing Platform.
-              Publish in paperback and eBook, sell across India and earn 100% royalty.
+              Realise your dream of becoming a published author with India&apos;s most trusted Self-Publishing Platform.
+              Publish in paperback and eBook, sell globally in 150+ countries and earn 100% royalty.
             </motion.p>
 
             {/* CTA Button */}
