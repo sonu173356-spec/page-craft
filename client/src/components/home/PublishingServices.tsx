@@ -1,27 +1,27 @@
 'use client';
 import { motion } from 'framer-motion';
-import { BookOpen, Globe, Megaphone } from 'lucide-react';
+import { BookOpen, PenTool, CheckCircle2 } from 'lucide-react';
 import { SectionHeading, Card } from '@/components/ui';
 import Link from 'next/link';
 
 const services = [
   {
-    icon: BookOpen,
+    icon: PenTool,
     title: 'Self-Publishing',
     description: 'Keep 100% of your rights and royalties. We guide you through the entire publishing process.',
     href: '/packages?source=self-publishing',
   },
   {
-    icon: Globe,
-    title: 'Distribution',
-    description: 'Make your book available globally across 150+ countries via major retailers like Amazon.',
-    href: '/packages?source=distribution',
+    icon: BookOpen,
+    title: 'Publishing Plans',
+    description: 'Transparent and affordable publishing packages tailored to every author’s needs and budget.',
+    href: '/publishing-plans',
   },
   {
-    icon: Megaphone,
-    title: 'Marketing',
-    description: 'Strategic book promotion, author branding, and targeted ad campaigns to boost sales.',
-    href: '/packages?source=marketing',
+    icon: CheckCircle2,
+    title: 'Publishing Process',
+    description: 'From initial manuscript review to final publication, step-by-step guidance every stage of the way.',
+    href: '/publishing-process',
   },
 ];
 

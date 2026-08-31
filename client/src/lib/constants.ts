@@ -72,26 +72,9 @@ export const NAV_ITEMS: NavItem[] = [
         href: '/packages?source=self-publishing',
         description: 'Publish on your own terms',
       },
-      {
-        label: 'Distribution',
-        href: '/packages?source=distribution',
-        description: 'Reach readers in 150+ countries',
-      },
-      {
-        label: 'Marketing Services',
-        href: '/marketing-services',
-        description: 'Get your book noticed',
-      },
-      {
-        label: 'Book Editing',
-        href: '/book-editing',
-        description: 'Professional editing & proofreading',
-      },
     ],
   },
-  { label: 'Pricing', href: '/pricing' },
   { label: 'Bookstore', href: '/bookstore' },
-  { label: 'Authors', href: '/authors' },
   {
     label: 'Resources',
     href: '/blog',
@@ -100,11 +83,6 @@ export const NAV_ITEMS: NavItem[] = [
         label: 'Blog',
         href: '/blog',
         description: 'Tips, guides & author interviews',
-      },
-      {
-        label: 'Testimonials',
-        href: '/testimonials',
-        description: 'Hear from our published authors',
       },
       {
         label: 'FAQs',
@@ -144,16 +122,12 @@ export const FOOTER_LINKS = {
   services: [
     { label: 'Publishing Plans', href: '/publishing-plans' },
     { label: 'Self Publishing', href: '/self-publishing' },
-    { label: 'Book Editing', href: '/book-editing' },
-    { label: 'Distribution', href: '/distribution' },
-    { label: 'Marketing', href: '/marketing-services' },
   ],
   company: [
     { label: 'About Us', href: '/about' },
     { label: 'Careers', href: '/careers' },
     { label: 'Blog', href: '/blog' },
     { label: 'Contact', href: '/contact' },
-    { label: 'Testimonials', href: '/testimonials' },
   ],
   dashboards: [
     { label: 'Author Portal (Login) ↗', href: '/author/login', isDashboard: true },
@@ -164,7 +138,6 @@ export const FOOTER_LINKS = {
   ],
   support: [
     { label: 'FAQs', href: '/faq' },
-    { label: 'Pricing', href: '/pricing' },
     { label: 'Publishing Process', href: '/publishing-process' },
   ],
   legal: [

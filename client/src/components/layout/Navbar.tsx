@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, ChevronDown, BookOpen, PenTool, Globe, Printer, BookType, Sparkles, Megaphone, CheckCircle2, ExternalLink, ShieldCheck, LayoutDashboard } from 'lucide-react';
+import { Menu, X, ChevronDown, BookOpen, PenTool, Sparkles, CheckCircle2, ExternalLink, ShieldCheck, LayoutDashboard } from 'lucide-react';
 import { Logo } from '@/components/ui/Logo';
 import { NAV_ITEMS, NavItem } from '@/lib/constants';
 
@@ -13,9 +13,6 @@ const iconMap: Record<string, React.ReactNode> = {
   'Publishing Plans': <BookOpen className="w-5 h-5" />,
   'Publishing Process': <CheckCircle2 className="w-5 h-5" />,
   'Self Publishing': <PenTool className="w-5 h-5" />,
-  'Distribution': <Globe className="w-5 h-5" />,
-  'Marketing Services': <Megaphone className="w-5 h-5" />,
-  'Book Editing': <BookType className="w-5 h-5" />,
   'Author Portal': <LayoutDashboard className="w-5 h-5 text-[#8B1A1A]" />,
   'Content Manager': <Sparkles className="w-5 h-5 text-[#8B1A1A]" />,
   'Order Requests Desk': <ShieldCheck className="w-5 h-5 text-[#8B1A1A]" />,

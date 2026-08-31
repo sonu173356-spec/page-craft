@@ -7,7 +7,6 @@ import AuthorSuccessStories from '@/components/home/AuthorSuccessStories';
 import PublishingPackages from '@/components/home/PublishingPackages';
 import LatestBooks from '@/components/home/LatestBooks';
 import BookCategories from '@/components/home/BookCategories';
-import TestimonialsSection from '@/components/home/TestimonialsSection';
 import FAQSection from '@/components/home/FAQSection';
 import CTASection from '@/components/home/CTASection';
 import NewsletterSection from '@/components/home/NewsletterSection';
@@ -24,7 +23,6 @@ export default function HomePage() {
       <PublishingPackages />
       <LatestBooks />
       <BookCategories />
-      <TestimonialsSection />
       <FAQSection />
       <CTASection />
       <NewsletterSection />

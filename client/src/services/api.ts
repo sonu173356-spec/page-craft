@@ -11,7 +11,6 @@ import type {
   BlogPost,
   PublishingPlan,
   FAQ,
-  Testimonial,
   Career,
   Service,
   Order,
@@ -182,12 +181,6 @@ export const planService = {
 
 export const faqService = {
   getAll: () => apiFetch<FAQ[]>('/faqs'),
-};
-
-// ---- Testimonials / Reviews ----
-
-export const testimonialService = {
-  getAll: () => apiFetch<Testimonial[]>('/reviews'),
 };
 
 // ---- Careers Service ----
