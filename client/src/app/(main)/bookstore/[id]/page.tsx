@@ -7,6 +7,13 @@ export const metadata: Metadata = {
   description: 'View detailed information about this book.',
 };
 
-export default function BookDetailPage({ params }: { params: { id: string } }) {
-  return <BookDetailClient bookId={params.id} />;
+interface PageProps {
+  params: Promise<{
+    id: string;
+  }>;
+}
+
+export default async function BookDetailPage({ params }: PageProps) {
+  const { id } = await params;
+  return <BookDetailClient bookId={id} />;
 }

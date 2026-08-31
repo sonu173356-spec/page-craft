@@ -10,11 +10,21 @@ import CartDrawer from '@/components/bookstore/CartDrawer';
 import BookCard from '@/components/bookstore/BookCard';
 import RealisticBookCover from '@/components/ui/RealisticBookCover';
 import { getStoredPublishedBooks } from '@/lib/bookService';
-import { PublishedBook } from '@/lib/bookCovers';
+import { PublishedBook, SAMPLE_PUBLISHED_BOOKS } from '@/lib/bookCovers';
 import { toast } from 'react-hot-toast';
 
 export default function BookDetailClient({ bookId }: { bookId: string }) {
-  const [currentBook, setCurrentBook] = useState<PublishedBook | null>(null);
+  const [currentBook, setCurrentBook] = useState<PublishedBook | null>(() => {
+    if (!bookId) return SAMPLE_PUBLISHED_BOOKS[0] || null;
+    const cleanId = String(bookId);
+    const found = SAMPLE_PUBLISHED_BOOKS.find(
+      (b) =>
+        b.id === cleanId ||
+        b.id === `book-${cleanId}` ||
+        b.title.toLowerCase().includes(cleanId.replace(/-/g, ' ').toLowerCase())
+    );
+    return found || SAMPLE_PUBLISHED_BOOKS[0] || null;
+  });
   const [relatedList, setRelatedList] = useState<Book[]>([]);
   const [selectedFormat, setSelectedFormat] = useState('paperback');
   const [quantity, setQuantity] = useState(1);
@@ -23,7 +33,13 @@ export default function BookDetailClient({ bookId }: { bookId: string }) {
 
   useEffect(() => {
     const all = getStoredPublishedBooks();
-    const found = all.find((b) => b.id === bookId || b.id === `book-${bookId}` || b.title.toLowerCase().includes(bookId.replace(/-/g, ' ').toLowerCase()));
+    const cleanId = String(bookId || '');
+    const found = all.find(
+      (b) =>
+        b.id === cleanId ||
+        b.id === `book-${cleanId}` ||
+        (cleanId && b.title.toLowerCase().includes(cleanId.replace(/-/g, ' ').toLowerCase()))
+    );
     
     const active = found || all[0];
     setCurrentBook(active);
