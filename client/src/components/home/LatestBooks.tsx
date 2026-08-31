@@ -141,16 +141,15 @@ export default function LatestBooks() {
                     </span>
                   </div>
 
-                  <Button
+                  <button
                     type="button"
-                    size="sm"
                     onClick={(e) => handleAddToCart(book, e)}
-                    className="text-xs font-bold px-3 sm:px-3.5 h-8 sm:h-9 bg-white border border-[#C5A55A] text-[#8B1A1A] hover:bg-[#8B1A1A] hover:text-white hover:border-[#8B1A1A] rounded-xl transition-all cursor-pointer shadow-2xs flex items-center gap-1.5"
+                    className="text-xs font-bold px-3 sm:px-3.5 h-8 sm:h-9 bg-amber-50 border border-[#C5A55A] text-[#8B1A1A] hover:bg-[#8B1A1A] hover:text-white hover:border-[#8B1A1A] rounded-xl transition-all cursor-pointer shadow-2xs flex items-center gap-1.5"
                   >
                     <ShoppingCart className="w-3.5 h-3.5" />
                     <span className="hidden sm:inline">Add to Cart</span>
                     <span className="sm:hidden">Add</span>
-                  </Button>
+                  </button>
                 </div>
               </div>
             </motion.div>
