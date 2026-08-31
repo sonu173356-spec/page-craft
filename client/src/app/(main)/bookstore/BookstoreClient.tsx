@@ -7,55 +7,59 @@ import BookGrid from '@/components/bookstore/BookGrid';
 import CartDrawer from '@/components/bookstore/CartDrawer';
 import { Book } from '@/types';
 import { getStoredPublishedBooks, BOOKS_UPDATED_EVENT } from '@/lib/bookService';
-import { PublishedBook } from '@/lib/bookCovers';
+import { PublishedBook, SAMPLE_PUBLISHED_BOOKS } from '@/lib/bookCovers';
 
 const CATEGORIES = ['All', 'Fiction', 'Mystery', 'Adventure', 'Historical', 'Sci-Fi', 'Cookbook', 'Business', 'Poetry', 'Non-Fiction'];
+
+function mapPublishedToBook(b: PublishedBook): Book {
+  return {
+    id: b.id,
+    title: b.title,
+    slug: b.id,
+    author: {
+      id: b.authorId || 'a1',
+      name: b.author,
+      slug: b.authorSlug || 'author',
+      bio: '',
+      shortBio: '',
+      avatar: '',
+      email: '',
+      booksPublished: 1,
+      joinDate: '2026',
+      genres: [b.genre],
+    },
+    authorId: b.authorId || 'a1',
+    description: b.description,
+    shortDescription: b.subtitle || '',
+    coverImage: b.cover_image_url || '',
+    price: b.numericPrice,
+    originalPrice: b.originalPrice ? Number(b.originalPrice.replace(/[^\d]/g, '')) : undefined,
+    isbn: b.isbn,
+    pages: b.pages,
+    language: 'English',
+    category: b.category,
+    genre: [b.genre],
+    format: ['paperback', 'ebook'] as any,
+    publishDate: b.created_at.split('T')[0],
+    rating: b.rating,
+    reviewCount: b.reviewCount,
+    stock: 50,
+    tags: [b.category],
+  };
+}
 
 export default function BookstoreClient() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000]);
   const [sortBy, setSortBy] = useState('newest');
-  const [catalogBooks, setCatalogBooks] = useState<Book[]>([]);
+  const [catalogBooks, setCatalogBooks] = useState<Book[]>(() => {
+    return SAMPLE_PUBLISHED_BOOKS.map(mapPublishedToBook);
+  });
 
   const loadBooks = () => {
     const published: PublishedBook[] = getStoredPublishedBooks();
-    const mapped: Book[] = published.map((b) => ({
-      id: b.id,
-      title: b.title,
-      slug: b.id,
-      author: {
-        id: b.authorId || 'a1',
-        name: b.author,
-        slug: b.authorSlug || 'author',
-        bio: '',
-        shortBio: '',
-        avatar: '',
-        email: '',
-        booksPublished: 1,
-        joinDate: '2026',
-        genres: [b.genre],
-      },
-      authorId: b.authorId || 'a1',
-      description: b.description,
-      shortDescription: b.subtitle || '',
-      coverImage: b.cover_image_url || '',
-      price: b.numericPrice,
-      originalPrice: b.originalPrice ? Number(b.originalPrice.replace(/[^\d]/g, '')) : undefined,
-      isbn: b.isbn,
-      pages: b.pages,
-      language: 'English',
-      category: b.category,
-      genre: [b.genre],
-      format: ['paperback', 'ebook'] as any,
-      publishDate: b.created_at.split('T')[0],
-      rating: b.rating,
-      reviewCount: b.reviewCount,
-      stock: 50,
-      tags: [b.category],
-    }));
-
-    setCatalogBooks(mapped);
+    setCatalogBooks(published.map(mapPublishedToBook));
   };
 
   useEffect(() => {

@@ -8,7 +8,7 @@ import { Star, Eye, ShoppingCart, Sparkles } from 'lucide-react';
 import { Button, SectionHeading, RealisticBookCover } from '@/components/ui';
 import Link from 'next/link';
 import { getStoredPublishedBooks, BOOKS_UPDATED_EVENT } from '@/lib/bookService';
-import { PublishedBook } from '@/lib/bookCovers';
+import { PublishedBook, SAMPLE_PUBLISHED_BOOKS } from '@/lib/bookCovers';
 import { useCartStore } from '@/store';
 import { toast } from 'react-hot-toast';
 
@@ -17,7 +17,9 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 
 export default function FeaturedBooks() {
-  const [books, setBooks] = useState<PublishedBook[]>([]);
+  const [books, setBooks] = useState<PublishedBook[]>(() => {
+    return SAMPLE_PUBLISHED_BOOKS.filter((b) => b.featured);
+  });
   const { addItem, openCart } = useCartStore();
 
   const loadBooks = () => {
