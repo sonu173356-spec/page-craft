@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useMemo, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { Search, Sparkles } from 'lucide-react';
 import BookFilters from '@/components/bookstore/BookFilters';
 import BookGrid from '@/components/bookstore/BookGrid';
@@ -49,8 +50,15 @@ function mapPublishedToBook(b: PublishedBook): Book {
 }
 
 export default function BookstoreClient() {
+  const searchParams = useSearchParams();
+  const initialCategoryParam = searchParams.get('category');
+
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('All');
+  const [selectedCategory, setSelectedCategory] = useState(
+    initialCategoryParam && CATEGORIES.some(c => c.toLowerCase() === initialCategoryParam.toLowerCase())
+      ? CATEGORIES.find(c => c.toLowerCase() === initialCategoryParam.toLowerCase()) || 'All'
+      : 'All'
+  );
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000]);
   const [sortBy, setSortBy] = useState('newest');
   const [catalogBooks, setCatalogBooks] = useState<Book[]>(() => {

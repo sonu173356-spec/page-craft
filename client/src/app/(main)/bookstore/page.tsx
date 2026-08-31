@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import React from 'react';
+import React, { Suspense } from 'react';
 import BookstoreClient from './BookstoreClient';
 
 export const metadata: Metadata = {
@@ -8,5 +8,9 @@ export const metadata: Metadata = {
 };
 
 export default function BookstorePage() {
-  return <BookstoreClient />;
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-[#FDFAF6] py-24 flex items-center justify-center text-sm font-medium text-gray-500">Loading bookstore catalog...</div>}>
+      <BookstoreClient />
+    </Suspense>
+  );
 }

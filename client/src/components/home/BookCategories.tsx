@@ -30,7 +30,7 @@ export default function BookCategories() {
               viewport={{ once: true }}
               transition={{ duration: 0.4, delay: idx * 0.05 }}
             >
-              <Link href={`/category/${cat.name.toLowerCase()}`}>
+              <Link href={`/bookstore?category=${encodeURIComponent(cat.name)}`}>
                 <div className="group bg-white p-6 rounded-xl border border-gray-100 text-center hover:border-[#C5A55A] hover:shadow-md transition-all cursor-pointer h-full flex flex-col items-center justify-center">
                   <cat.icon className={`w-10 h-10 mb-4 text-[#1A1A2E] transition-colors ${cat.color}`} />
                   <h4 className="font-bold text-[#1A1A2E] mb-1">{cat.name}</h4>

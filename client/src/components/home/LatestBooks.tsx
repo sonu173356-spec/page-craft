@@ -6,12 +6,17 @@ import { ShoppingCart, ArrowRight, Sparkles, BookOpen } from 'lucide-react';
 import { SectionHeading, Button, RealisticBookCover } from '@/components/ui';
 import Link from 'next/link';
 import { getStoredPublishedBooks, BOOKS_UPDATED_EVENT } from '@/lib/bookService';
-import { PublishedBook } from '@/lib/bookCovers';
+import { PublishedBook, SAMPLE_PUBLISHED_BOOKS } from '@/lib/bookCovers';
 import { useCartStore } from '@/store';
 import { toast } from 'react-hot-toast';
 
 export default function LatestBooks() {
-  const [latestBooks, setLatestBooks] = useState<PublishedBook[]>([]);
+  const [latestBooks, setLatestBooks] = useState<PublishedBook[]>(() => {
+    return [...SAMPLE_PUBLISHED_BOOKS]
+      .filter((b) => b.status === 'published')
+      .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+      .slice(0, 6);
+  });
   const { addItem, openCart } = useCartStore();
 
   const loadLatest = () => {
