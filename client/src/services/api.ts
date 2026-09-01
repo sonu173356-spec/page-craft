@@ -26,32 +26,28 @@ async function apiFetch<T>(
   endpoint: string,
   options: RequestInit = {}
 ): Promise<ApiResponse<T>> {
-  const token =
-    typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null;
-
   const headers: HeadersInit = {
     'Content-Type': 'application/json',
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
     ...options.headers,
   };
 
   try {
     const res = await fetch(`${API_BASE_URL}${endpoint}`, {
       ...options,
+      credentials: 'same-origin',
       headers,
     });
 
     const data = await res.json();
 
     if (!res.ok) {
-      throw new Error(data.message || 'Something went wrong');
+      throw new Error(data.message || data.error || 'Something went wrong');
     }
 
     return data;
   } catch (error) {
-    // If the server isn't running, return mock-friendly error
     if (error instanceof TypeError && error.message.includes('fetch')) {
-      console.warn('API server not available, using client-side fallback');
+      console.warn('API server not available, using fallback response');
       throw new Error('API server is not available');
     }
     throw error;
@@ -62,22 +58,16 @@ async function apiFetch<T>(
 
 export const authService = {
   login: (email: string, password: string) =>
-    apiFetch<{ user: { id: string; name: string; email: string; role: string }; accessToken: string; refreshToken: string }>(
+    apiFetch<{ user: { id: string; name: string; email: string; role: string } }>(
       '/auth/login',
       { method: 'POST', body: JSON.stringify({ email, password }) }
     ),
 
   register: (data: { name: string; email: string; password: string; role?: string }) =>
-    apiFetch<{ user: { id: string; name: string; email: string; role: string }; accessToken: string }>(
+    apiFetch<{ user: { id: string; name: string; email: string; role: string } }>(
       '/auth/register',
       { method: 'POST', body: JSON.stringify(data) }
     ),
-
-  refreshToken: (refreshToken: string) =>
-    apiFetch<{ accessToken: string }>('/auth/refresh', {
-      method: 'POST',
-      body: JSON.stringify({ refreshToken }),
-    }),
 
   forgotPassword: (email: string) =>
     apiFetch<{ message: string }>('/auth/forgot-password', {

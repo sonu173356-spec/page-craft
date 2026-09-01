@@ -52,7 +52,7 @@ export default function AuthorDashboardPage() {
     loadPurchases();
   }, []);
 
-  const authorName = user?.name || 'Eleanor Vance';
+  const authorName = user?.name || 'Author';
   const authorTitle = 'Author & Novelist';
 
   // Determine authorized feature sets

@@ -2,22 +2,26 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { Lock, Mail, ArrowRight, Shield, UserCheck, AlertCircle, Eye, EyeOff, BookOpen, Key, Copy, Check } from 'lucide-react';
+import { Lock, Mail, ArrowRight, AlertCircle, Eye, EyeOff, BookOpen } from 'lucide-react';
 import { Logo } from '@/components/ui/Logo';
 import { useAuthStore } from '@/store';
 import { toast } from 'react-hot-toast';
+import { validateRedirectUrl } from '@/lib/redirect';
 
 export default function AuthorLoginClient() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const rawRedirect = searchParams.get('redirect') || '/author/dashboard';
+  const redirectTarget = validateRedirectUrl(rawRedirect, '/author/dashboard');
+
   const { login } = useAuthStore();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
-  const [copiedKey, setCopiedKey] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,46 +43,28 @@ export default function AuthorLoginClient() {
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.error || 'Failed to log in to Author Portal.');
+        throw new Error(data.error || 'Invalid author email or password.');
       }
 
       // Update client session store
-      login(
-        {
-          id: data.user.userId,
-          name: data.user.name,
-          email: data.user.email,
-          role: 'author',
-          isVerified: true,
-          avatar: '/logo-icon.png',
-          createdAt: new Date().toISOString(),
-        },
-        data.token,
-        data.token
-      );
+      login({
+        id: data.user.userId,
+        name: data.user.name,
+        email: data.user.email,
+        role: 'author',
+        isVerified: true,
+        avatar: '/logo-icon.png',
+        createdAt: new Date().toISOString(),
+      });
 
       toast.success(`Welcome back, ${data.user.name}!`);
-      router.push(data.redirectTo || '/author/dashboard');
+      router.push(redirectTarget);
+      router.refresh();
     } catch (err: any) {
-      setErrorMsg(err.message || 'Invalid email or password.');
+      setErrorMsg(err.message || 'Invalid author email or password.');
       toast.error(err.message || 'Login failed.');
     } finally {
       setIsLoading(false);
-    }
-  };
-
-  const handleQuickFill = (demoEmail: string, demoPass: string, demoName: string) => {
-    setEmail(demoEmail);
-    setPassword(demoPass);
-    setErrorMsg('');
-  };
-
-  const handleCopy = (text: string, label: string) => {
-    if (typeof window !== 'undefined') {
-      navigator.clipboard?.writeText(text);
-      setCopiedKey(label);
-      toast.success(`Copied ${label} to clipboard!`);
-      setTimeout(() => setCopiedKey(null), 2000);
     }
   };
 
@@ -105,7 +91,7 @@ export default function AuthorLoginClient() {
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
-          className="bg-white py-8 px-6 sm:px-10 rounded-3xl border border-[#E5DED3] shadow-2xs space-y-6"
+          className="bg-white py-8 px-6 sm:px-10 rounded-3xl border border-[#E5DED3] shadow-xs space-y-6"
         >
           {errorMsg && (
             <div className="p-3.5 bg-red-50 border border-red-200 text-red-700 text-xs rounded-xl flex items-start gap-2.5">
@@ -124,7 +110,8 @@ export default function AuthorLoginClient() {
                 <input
                   type="email"
                   required
-                  placeholder="e.g. eleanor@pagecraft.com"
+                  autoComplete="email"
+                  placeholder="author@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full pl-10 pr-4 py-3 bg-[#FBF8F2] border border-[#E5DED3] rounded-xl text-sm text-[#171717] placeholder:text-[#999999] focus:outline-none focus:ring-2 focus:ring-[#8B1A1A] focus:bg-white transition-all"
@@ -149,6 +136,7 @@ export default function AuthorLoginClient() {
                 <input
                   type={showPassword ? 'text' : 'password'}
                   required
+                  autoComplete="current-password"
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -180,32 +168,6 @@ export default function AuthorLoginClient() {
               )}
             </button>
           </form>
-
-          {/* Demo Helper Box */}
-          <div className="bg-[#F7F1E8] border border-[#E5DED3] p-4 rounded-2xl space-y-2 text-xs">
-            <div className="flex items-center justify-between">
-              <span className="font-bold text-[#8B1A1A] flex items-center gap-1.5">
-                <Key className="w-3.5 h-3.5" />
-                Demo Author Credentials
-              </span>
-              <span className="text-[10px] bg-white border border-[#E5DED3] text-[#666666] px-2 py-0.5 rounded font-bold">
-                Quick Fill
-              </span>
-            </div>
-
-            <div className="flex items-center justify-between bg-white px-3 py-1.5 rounded-lg border border-[#E5DED3]">
-              <span className="text-[#171717]">
-                <strong>Author:</strong> author@pagecraft.com / author123
-              </span>
-              <button
-                type="button"
-                onClick={() => handleQuickFill('author@pagecraft.com', 'author123', 'Elena Vance')}
-                className="text-[#8B1A1A] hover:underline font-bold text-[11px] cursor-pointer"
-              >
-                Use
-              </button>
-            </div>
-          </div>
 
           {/* Footer Call to Action */}
           <div className="pt-4 border-t border-[#E5DED3] text-center space-y-2">

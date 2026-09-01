@@ -98,20 +98,16 @@ export default function AuthorSignupClient() {
       setSuccessMsg('Your Author Portal account has been created successfully.');
       toast.success('Your Author Portal account has been created successfully!');
 
-      if (data.token && data.user) {
-        login(
-          {
-            id: data.user.userId,
-            name: data.user.name,
-            email: data.user.email,
-            role: 'author',
-            isVerified: true,
-            avatar: '/logo-icon.png',
-            createdAt: new Date().toISOString(),
-          },
-          data.token,
-          data.token
-        );
+      if (data.user) {
+        login({
+          id: data.user.userId,
+          name: data.user.name,
+          email: data.user.email,
+          role: 'author',
+          isVerified: true,
+          avatar: '/logo-icon.png',
+          createdAt: new Date().toISOString(),
+        });
       }
 
       setTimeout(() => {

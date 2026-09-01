@@ -1,70 +1,102 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getAuthUserFromRequest } from '@/lib/auth';
+import { getAuthUserFromRequest, isAuthorOrAdmin } from '@/lib/auth';
 import { IN_MEMORY_PURCHASES } from '@/app/api/packages/purchase/route';
+import prisma from '@/lib/prisma';
 
 export async function GET(req: NextRequest) {
   try {
+    // 1. Decisive server-side authentication
     const user = getAuthUserFromRequest(req);
-    const userEmail = user?.email?.toLowerCase() || 'author@pagecraft.com';
-
-    // Retrieve active purchases matching user email, user id, or default author catalog
-    let purchases = IN_MEMORY_PURCHASES.filter(
-      (p) =>
-        p.email.toLowerCase() === userEmail ||
-        (userEmail.includes('eleanor') && p.email.includes('eleanor')) ||
-        (userEmail.includes('author') && p.email.includes('author'))
-    );
-
-    if (purchases.length === 0) {
-      // Default verified purchase record for demo / logged-in author
-      purchases = [
-        {
-          id: 'pch-default',
-          purchaseId: 'PC-2026-000001',
-          authorName: user?.name || 'Author',
-          email: userEmail,
-          packageId: 'professional',
-          packageName: 'Professional Publishing Plan',
-          amount: 24999,
-          currency: 'INR',
-          paymentStatus: 'paid',
-          purchaseStatus: 'active',
-          features: [
-            'manuscript_upload',
-            'cover_upload',
-            'book_formatting',
-            'isbn',
-            'publishing_status',
-            'distribution',
-            'sales_reports',
-            'book_orders',
-            'author_support',
-          ],
-          purchasedAt: new Date().toISOString(),
-          createdAt: new Date().toISOString(),
-        },
-      ];
+    if (!user) {
+      return NextResponse.json(
+        { error: 'Authentication required. Please sign in.' },
+        { status: 401 }
+      );
     }
 
-    // Aggregate unique permissions from all active purchases
+    // 2. Decisive server-side authorization
+    if (!isAuthorOrAdmin(user.role)) {
+      return NextResponse.json(
+        { error: 'Forbidden. Author privileges required.' },
+        { status: 403 }
+      );
+    }
+
+    const sessionEmail = user.email.toLowerCase().trim();
+    const sessionUserId = user.userId;
+
+    // 3. Query Database or fallback store for purchases belonging strictly to this authenticated user
+    let userPurchases: any[] = [];
+
+    try {
+      if (prisma && prisma.order) {
+        const dbOrders = await prisma.order.findMany({
+          where: {
+            OR: [
+              { userId: sessionUserId },
+              { authorName: user.name },
+            ],
+          },
+          include: { orderItems: true, payments: true },
+        });
+
+        if (dbOrders && dbOrders.length > 0) {
+          userPurchases = dbOrders.map((o) => ({
+            id: o.id,
+            purchaseId: o.orderNumber,
+            authorName: o.authorName,
+            packageName: o.bookTitle,
+            amount: o.totalAmount,
+            paymentStatus: o.paymentStatus.toLowerCase(),
+            purchaseStatus: 'active',
+            purchasedAt: o.createdAt.toISOString(),
+          }));
+        }
+      }
+    } catch (dbErr) {
+      console.warn('Database purchase query fallback:', dbErr);
+    }
+
+    // Filter in-memory verified purchases strictly by authenticated session identity
+    if (userPurchases.length === 0) {
+      userPurchases = IN_MEMORY_PURCHASES.filter(
+        (p) =>
+          (p.userId && p.userId === sessionUserId) ||
+          p.email.toLowerCase() === sessionEmail
+      ).map((p) => ({
+        id: p.id,
+        purchaseId: p.purchaseId,
+        authorName: p.authorName,
+        packageName: p.packageName,
+        packageId: p.packageId,
+        amount: p.amount,
+        currency: p.currency,
+        paymentStatus: p.paymentStatus,
+        purchaseStatus: p.purchaseStatus,
+        features: p.features,
+        purchasedAt: p.purchasedAt,
+      }));
+    }
+
+    // 4. Derive permissions strictly from verified active purchases
     const activePermissions = Array.from(
       new Set(
-        purchases
+        userPurchases
           .filter((p) => p.paymentStatus === 'paid' && p.purchaseStatus === 'active')
-          .flatMap((p) => p.features)
+          .flatMap((p) => p.features || [])
       )
     );
 
     return NextResponse.json({
       success: true,
-      purchases,
+      purchases: userPurchases,
       activePermissions,
-      primaryPurchaseId: purchases[0]?.purchaseId || 'PC-2026-000001',
-      totalPurchases: purchases.length,
+      primaryPurchaseId: userPurchases[0]?.purchaseId || null,
+      totalPurchases: userPurchases.length,
     });
   } catch (err: any) {
     return NextResponse.json(
-      { error: err.message || 'Failed to retrieve author purchases.' },
+      { error: 'An error occurred while retrieving purchase records.' },
       { status: 500 }
     );
   }

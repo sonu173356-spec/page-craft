@@ -1,13 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getAuthUserFromRequest } from '@/lib/auth';
 import { recordActivityLog } from '@/lib/logger';
+import { validateCsrfOrigin } from '@/lib/csrf';
+import { checkRateLimit, getClientIp } from '@/lib/rateLimit';
 import prisma from '@/lib/prisma';
 
-// In-memory purchase sequence counter for unique human-readable Purchase IDs
 let purchaseSequence = 1001;
 
 export interface PurchaseRecord {
   id: string;
-  purchaseId: string; // e.g. PC-2026-000001
+  purchaseId: string;
   userId?: string;
   authorId?: string;
   authorName: string;
@@ -23,15 +25,15 @@ export interface PurchaseRecord {
   createdAt: string;
 }
 
-// Pre-seeded verified purchases for demo & live authors
+// Pre-seeded verified purchases with synthetic demonstration data
 export const IN_MEMORY_PURCHASES: PurchaseRecord[] = [
   {
-    id: 'pch-ev-001',
+    id: 'pch-demo-001',
     purchaseId: 'PC-2026-000001',
-    userId: 'usr-eleanor-vance',
+    userId: 'usr-author-1',
     authorId: 'eleanor-vance',
     authorName: 'Eleanor Vance',
-    email: 'eleanor@pagecraft.com',
+    email: 'demo-author-1@example.invalid',
     packageId: 'premium',
     packageName: 'Premium Publishing Plan',
     amount: 49999,
@@ -54,12 +56,12 @@ export const IN_MEMORY_PURCHASES: PurchaseRecord[] = [
     createdAt: '2026-08-01T10:00:00.000Z',
   },
   {
-    id: 'pch-ev-002',
+    id: 'pch-demo-002',
     purchaseId: 'PC-2026-000002',
-    userId: 'usr-eleanor-vance',
-    authorId: 'eleanor-vance',
-    authorName: 'Eleanor Vance',
-    email: 'eleanor@pagecraft.com',
+    userId: 'usr-author-2',
+    authorId: 'marcus-sterling',
+    authorName: 'Marcus Sterling',
+    email: 'demo-author-2@example.invalid',
     packageId: 'distribution',
     packageName: 'Global Distribution Network',
     amount: 14999,
@@ -70,126 +72,133 @@ export const IN_MEMORY_PURCHASES: PurchaseRecord[] = [
     purchasedAt: '2026-08-05T14:30:00.000Z',
     createdAt: '2026-08-05T14:30:00.000Z',
   },
-  {
-    id: 'pch-author-demo',
-    purchaseId: 'PC-2026-000003',
-    userId: 'usr-author-1',
-    authorId: 'author',
-    authorName: 'Author Portal Demo',
-    email: 'author@pagecraft.com',
-    packageId: 'professional',
-    packageName: 'Professional Publishing Plan',
+];
+
+// Official catalog package prices
+const PACKAGE_PRICES: Record<string, { name: string; amount: number; features: string[] }> = {
+  starter: {
+    name: 'Starter Publishing Plan',
+    amount: 9999,
+    features: ['cover_upload', 'isbn', 'book_orders', 'author_support', 'publishing_status'],
+  },
+  professional: {
+    name: 'Professional Publishing Plan',
     amount: 24999,
-    currency: 'INR',
-    paymentStatus: 'paid',
-    purchaseStatus: 'active',
     features: [
       'manuscript_upload',
       'cover_upload',
       'book_formatting',
       'isbn',
-      'publishing_status',
       'distribution',
       'sales_reports',
       'book_orders',
       'author_support',
+      'publishing_status',
     ],
-    purchasedAt: new Date().toISOString(),
-    createdAt: new Date().toISOString(),
   },
-];
+  premium: {
+    name: 'Premium Publishing Plan',
+    amount: 49999,
+    features: [
+      'manuscript_upload',
+      'cover_upload',
+      'book_formatting',
+      'isbn',
+      'distribution',
+      'sales_reports',
+      'book_orders',
+      'marketing',
+      'author_support',
+      'publishing_status',
+    ],
+  },
+  distribution: {
+    name: 'Global Distribution Network',
+    amount: 14999,
+    features: ['distribution', 'sales_reports', 'author_support', 'publishing_status'],
+  },
+};
 
 export async function POST(req: NextRequest) {
+  if (!validateCsrfOrigin(req)) {
+    return NextResponse.json({ error: 'CSRF Origin Validation Failed' }, { status: 403 });
+  }
+
+  const clientIp = getClientIp(req);
+  const rateCheck = checkRateLimit(`pkg-purchase:${clientIp}`, { windowMs: 60 * 1000, maxRequests: 5 });
+  if (!rateCheck.allowed) {
+    return NextResponse.json(
+      { error: 'Too many purchase requests. Please try again later.' },
+      { status: 429, headers: { 'Retry-After': String(rateCheck.retryAfterSeconds) } }
+    );
+  }
+
   try {
     const body = await req.json();
     const {
-      packageName,
       packageId = 'professional',
-      amount = 24999,
       authorName = 'Author',
       authorEmail,
       authorPhone = '',
       paymentMethod = 'UPI',
-      transactionId,
     } = body;
 
-    if (!authorEmail || !packageName) {
+    if (!authorEmail) {
       return NextResponse.json(
-        { error: 'Author email and package details are required.' },
+        { error: 'Author email is required.' },
         { status: 400 }
       );
     }
 
     const normalizedEmail = String(authorEmail).trim().toLowerCase();
+    const sanitizedName = String(authorName).slice(0, 100).trim() || 'Author';
 
-    // 1. Generate unique server-side Purchase ID: PC-2026-000XXX
+    // 1. Resolve server-side pricing & features (never trust client-submitted amount)
+    const normalizedPackageId = String(packageId).toLowerCase().trim();
+    const resolvedPackage = PACKAGE_PRICES[normalizedPackageId] || PACKAGE_PRICES['professional'];
+
+    // 2. Check if an authenticated user session is active
+    const authUser = getAuthUserFromRequest(req);
+    const userId = authUser?.userId;
+
+    // 3. Generate unique server-side Purchase ID: PC-2026-000XXX
     purchaseSequence += 1;
     const currentYear = new Date().getFullYear();
     const uniquePurchaseId = `PC-${currentYear}-${String(purchaseSequence).padStart(6, '0')}`;
 
-    // 2. Map package features dynamically
-    const features: string[] = ['author_support', 'publishing_status'];
-    const pName = packageName.toLowerCase();
-
-    if (pName.includes('starter')) {
-      features.push('cover_upload', 'isbn', 'book_orders');
-    } else if (pName.includes('premium')) {
-      features.push(
-        'manuscript_upload',
-        'cover_upload',
-        'book_formatting',
-        'isbn',
-        'distribution',
-        'sales_reports',
-        'book_orders',
-        'marketing'
-      );
-    } else if (pName.includes('distribution')) {
-      features.push('distribution', 'sales_reports');
-    } else {
-      // Professional / Self-Publishing default
-      features.push(
-        'manuscript_upload',
-        'cover_upload',
-        'book_formatting',
-        'isbn',
-        'distribution',
-        'sales_reports',
-        'book_orders'
-      );
-    }
-
     const newPurchase: PurchaseRecord = {
       id: `pch-${Date.now().toString(36)}`,
       purchaseId: uniquePurchaseId,
-      authorName,
+      userId,
+      authorName: sanitizedName,
       email: normalizedEmail,
-      packageId,
-      packageName,
-      amount: Number(amount) || 24999,
+      packageId: normalizedPackageId,
+      packageName: resolvedPackage.name,
+      amount: resolvedPackage.amount,
       currency: 'INR',
       paymentStatus: 'paid',
       purchaseStatus: 'active',
-      features,
+      features: resolvedPackage.features,
       purchasedAt: new Date().toISOString(),
       createdAt: new Date().toISOString(),
     };
 
     IN_MEMORY_PURCHASES.unshift(newPurchase);
 
-    // 3. Attempt DB persistence in Prisma/Supabase Order & Payment models
+    // 4. Persist Order in database
     try {
       if (prisma && prisma.order) {
         await prisma.order.create({
           data: {
             orderNumber: uniquePurchaseId,
-            authorName,
-            bookTitle: `${packageName} Package`,
+            userId: userId || null,
+            authorName: sanitizedName,
+            bookTitle: `${resolvedPackage.name} Package`,
             copies: 1,
-            totalAmount: Number(amount) || 24999,
+            totalAmount: resolvedPackage.amount,
             status: 'Printing',
             paymentStatus: 'Paid',
-            paymentMethod,
+            paymentMethod: String(paymentMethod).slice(0, 50),
           },
         });
       }
@@ -197,49 +206,30 @@ export async function POST(req: NextRequest) {
       console.warn('DB order creation warning:', dbErr);
     }
 
-    // 4. Record Activity Log
+    // 5. Activity Log
     await recordActivityLog({
-      userId: 'system',
+      userId: userId || 'anonymous',
       userEmail: normalizedEmail,
       userRole: 'AUTHOR',
       action: 'PACKAGE_PURCHASE_VERIFIED',
-      details: `Successful package purchase of ${packageName} (${uniquePurchaseId}) for ${authorName} (${normalizedEmail})`,
-      ipAddress: req.headers.get('x-forwarded-for') || '127.0.0.1',
+      details: `Verified package purchase of ${resolvedPackage.name} (${uniquePurchaseId}) for ${sanitizedName}`,
+      ipAddress: clientIp,
       userAgent: req.headers.get('user-agent') || 'Browser',
     });
 
     return NextResponse.json({
       success: true,
-      message: 'Package purchase verified and author record created successfully.',
+      message: 'Package purchase verified successfully.',
       purchase: newPurchase,
       purchaseId: uniquePurchaseId,
       authorEmail: normalizedEmail,
-      signupUrl: `/author/signup?email=${encodeURIComponent(normalizedEmail)}&name=${encodeURIComponent(authorName)}&purchaseId=${uniquePurchaseId}`,
+      signupUrl: `/author/signup?email=${encodeURIComponent(normalizedEmail)}&name=${encodeURIComponent(sanitizedName)}&purchaseId=${uniquePurchaseId}`,
       loginUrl: '/author/login',
     });
   } catch (err: any) {
-    console.error('Package purchase error:', err);
     return NextResponse.json(
-      { error: err.message || 'An error occurred while processing package purchase.' },
+      { error: 'An error occurred while processing package purchase.' },
       { status: 500 }
     );
   }
-}
-
-export async function GET(req: NextRequest) {
-  const url = new URL(req.url);
-  const email = url.searchParams.get('email');
-
-  if (email) {
-    const normalized = email.trim().toLowerCase();
-    const authorPurchases = IN_MEMORY_PURCHASES.filter(
-      (p) =>
-        p.email.toLowerCase() === normalized ||
-        (normalized.includes('eleanor') && p.email.includes('eleanor')) ||
-        (normalized.includes('author') && p.email.includes('author'))
-    );
-    return NextResponse.json({ purchases: authorPurchases });
-  }
-
-  return NextResponse.json({ purchases: IN_MEMORY_PURCHASES });
 }

@@ -94,9 +94,7 @@ export default function Navbar() {
                   onMouseLeave={handleMouseLeave}
                 >
                   <Link
-                    href={item.isDashboard ? `/login?redirect=${encodeURIComponent(item.href)}` : item.href}
-                    target={item.isDashboard ? '_blank' : undefined}
-                    rel={item.isDashboard ? 'noopener noreferrer' : undefined}
+                    href={item.href}
                     className={`flex items-center text-sm font-medium transition-colors ${
                       isActive
                         ? 'text-[#8B1A1A]'
@@ -122,35 +120,25 @@ export default function Navbar() {
                         >
                           <div className="bg-white rounded-xl shadow-xl ring-1 ring-black/5 overflow-hidden border border-gray-100">
                             <div className="p-6 grid grid-cols-2 gap-6">
-                              {item.children?.map((child) => {
-                                const isDashboardTarget = child.isDashboard || child.href.startsWith('/author') || child.href.startsWith('/admin');
-                                const targetUrl = isDashboardTarget ? `/login?redirect=${encodeURIComponent(child.href)}` : child.href;
-
-                                return (
-                                  <Link
-                                    key={child.label}
-                                    href={targetUrl}
-                                    target={isDashboardTarget ? '_blank' : undefined}
-                                    rel={isDashboardTarget ? 'noopener noreferrer' : undefined}
-                                    className="flex items-start gap-4 p-3 rounded-lg hover:bg-[#FDFAF6] transition-colors group/item"
-                                  >
-                                    <div className="flex-shrink-0 mt-1 text-[#C5A55A] group-hover/item:text-[#8B1A1A] transition-colors">
-                                      {iconMap[child.label] || <BookOpen className="w-5 h-5" />}
-                                    </div>
-                                    <div>
-                                      <h4 className="text-sm font-semibold text-gray-900 mb-1 group-hover/item:text-[#8B1A1A] transition-colors flex items-center gap-1">
-                                        {child.label}
-                                        {isDashboardTarget && (
-                                          <ExternalLink className="w-3 h-3 text-gray-400" />
-                                        )}
-                                      </h4>
-                                      <p className="text-xs text-gray-500 leading-snug">
-                                        {child.description}
-                                      </p>
-                                    </div>
-                                  </Link>
-                                );
-                              })}
+                              {item.children?.map((child) => (
+                                <Link
+                                  key={child.label}
+                                  href={child.href}
+                                  className="flex items-start gap-4 p-3 rounded-lg hover:bg-[#FDFAF6] transition-colors group/item"
+                                >
+                                  <div className="flex-shrink-0 mt-1 text-[#C5A55A] group-hover/item:text-[#8B1A1A] transition-colors">
+                                    {iconMap[child.label] || <BookOpen className="w-5 h-5" />}
+                                  </div>
+                                  <div>
+                                    <h4 className="text-sm font-semibold text-gray-900 mb-1 group-hover/item:text-[#8B1A1A] transition-colors flex items-center gap-1">
+                                      {child.label}
+                                    </h4>
+                                    <p className="text-xs text-gray-500 leading-snug">
+                                      {child.description}
+                                    </p>
+                                  </div>
+                                </Link>
+                              ))}
                             </div>
                           </div>
                         </motion.div>
@@ -237,9 +225,7 @@ function MobileNavItem({
   if (!hasChildren) {
     return (
       <Link
-        href={item.isDashboard ? `/login?redirect=${encodeURIComponent(item.href)}` : item.href}
-        target={item.isDashboard ? '_blank' : undefined}
-        rel={item.isDashboard ? 'noopener noreferrer' : undefined}
+        href={item.href}
         className={`block px-4 py-2 text-base font-medium rounded-lg transition-colors ${
           isActive ? 'text-[#8B1A1A] bg-[#FDFAF6]' : 'text-gray-900 hover:bg-gray-50'
         }`}
@@ -273,24 +259,17 @@ function MobileNavItem({
             className="overflow-hidden"
           >
             <div className="px-4 py-2 space-y-2 pl-8 border-l-2 border-[#FDFAF6] ml-4">
-              {item.children?.map((child) => {
-                const isDashboardTarget = child.isDashboard || child.href.startsWith('/author') || child.href.startsWith('/admin');
-                const targetUrl = isDashboardTarget ? `/login?redirect=${encodeURIComponent(child.href)}` : child.href;
-
-                return (
-                  <Link
-                    key={child.label}
-                    href={targetUrl}
-                    target={isDashboardTarget ? '_blank' : undefined}
-                    rel={isDashboardTarget ? 'noopener noreferrer' : undefined}
-                    className={`block py-2 text-sm transition-colors ${
-                      pathname === child.href ? 'text-[#8B1A1A] font-medium' : 'text-gray-600 hover:text-[#8B1A1A]'
-                    }`}
-                  >
-                    {child.label}
-                  </Link>
-                );
-              })}
+              {item.children?.map((child) => (
+                <Link
+                  key={child.label}
+                  href={child.href}
+                  className={`block py-2 text-sm transition-colors ${
+                    pathname === child.href ? 'text-[#8B1A1A] font-medium' : 'text-gray-600 hover:text-[#8B1A1A]'
+                  }`}
+                >
+                  {child.label}
+                </Link>
+              ))}
             </div>
           </motion.div>
         )}

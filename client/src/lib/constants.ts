@@ -92,26 +92,18 @@ export const NAV_ITEMS: NavItem[] = [
     ],
   },
   {
-    label: 'Dashboards',
+    label: 'Author Portal',
     href: '/author/dashboard',
     children: [
       {
-        label: 'Author Portal',
-        href: '/author/dashboard',
-        isDashboard: true,
+        label: 'Author Portal Login',
+        href: '/author/login',
         description: 'Access author book sales, royalties & tools',
       },
       {
-        label: 'Content Manager',
-        href: '/admin/internal-dashboard',
-        isDashboard: true,
-        description: 'Live admin visual book editor',
-      },
-      {
-        label: 'Order Requests Desk',
-        href: '/admin/orders',
-        isDashboard: true,
-        description: 'Fulfill customer reader orders & tracking',
+        label: 'Create Author Account',
+        href: '/author/signup',
+        description: 'Register for publishing packages & DIY Studio',
       },
     ],
   },
@@ -129,12 +121,10 @@ export const FOOTER_LINKS = {
     { label: 'Blog', href: '/blog' },
     { label: 'Contact', href: '/contact' },
   ],
-  dashboards: [
-    { label: 'Author Portal (Login) ↗', href: '/author/login', isDashboard: true },
-    { label: 'Create Author Account ↗', href: '/author/signup', isDashboard: true },
-    { label: 'Author Dashboard ↗', href: '/author/dashboard', isDashboard: true },
-    { label: 'Content Manager ↗', href: '/admin/internal-dashboard', isDashboard: true },
-    { label: 'Order Desk ↗', href: '/admin/orders', isDashboard: true },
+  authorPortal: [
+    { label: 'Author Portal (Login)', href: '/author/login' },
+    { label: 'Create Author Account', href: '/author/signup' },
+    { label: 'Author Dashboard', href: '/author/dashboard' },
   ],
   support: [
     { label: 'FAQs', href: '/faq' },

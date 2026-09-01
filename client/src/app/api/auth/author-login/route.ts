@@ -1,10 +1,24 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { comparePassword, signJwtToken, setAuthCookie } from '@/lib/auth';
 import { recordActivityLog } from '@/lib/logger';
-import { ALL_AUTHORS } from '@/lib/authorsData';
+import { checkRateLimit, getClientIp } from '@/lib/rateLimit';
+import { validateCsrfOrigin } from '@/lib/csrf';
 import prisma from '@/lib/prisma';
 
 export async function POST(req: NextRequest) {
+  if (!validateCsrfOrigin(req)) {
+    return NextResponse.json({ error: 'CSRF Origin Validation Failed' }, { status: 403 });
+  }
+
+  const clientIp = getClientIp(req);
+  const rateCheck = checkRateLimit(`author-login:${clientIp}`, { windowMs: 60 * 1000, maxRequests: 5 });
+  if (!rateCheck.allowed) {
+    return NextResponse.json(
+      { error: 'Too many login attempts. Please wait a minute and try again.' },
+      { status: 429, headers: { 'Retry-After': String(rateCheck.retryAfterSeconds) } }
+    );
+  }
+
   try {
     const body = await req.json();
     const { email, password } = body;
@@ -18,7 +32,7 @@ export async function POST(req: NextRequest) {
 
     const normalizedEmail = String(email).trim().toLowerCase();
 
-    // 1. Verify User from Prisma Database
+    // 1. Verify User strictly from Database
     let dbUser: any = null;
     try {
       if (prisma && prisma.user) {
@@ -31,54 +45,33 @@ export async function POST(req: NextRequest) {
       console.warn('Prisma author login lookup warning:', e);
     }
 
-    let userId = 'usr-author-1';
-    let authorName = 'Author';
-    let authorSlug = 'author';
-
-    if (dbUser) {
-      const isMatch = await comparePassword(password, dbUser.passwordHash);
-      if (!isMatch) {
-        return NextResponse.json(
-          { error: 'Invalid email or password.' },
-          { status: 401 }
-        );
-      }
-
-      if (dbUser.status === 'DISABLED') {
-        return NextResponse.json(
-          { error: 'Your author account has been deactivated. Please contact support.' },
-          { status: 403 }
-        );
-      }
-
-      userId = dbUser.id;
-      authorName = dbUser.name;
-      authorSlug = dbUser.authors?.[0]?.slug || authorName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-    } else {
-      // 2. Fallback / Catalog Author Check (for verified authors)
-      const matchingAuthor = ALL_AUTHORS.find(
-        (a) =>
-          (a.email && a.email.toLowerCase() === normalizedEmail) ||
-          normalizedEmail.includes(a.slug.replace('-', '')) ||
-          normalizedEmail.includes('author') ||
-          normalizedEmail.includes('vance') ||
-          normalizedEmail.includes('sterling')
+    if (!dbUser) {
+      // Reject non-existent accounts - NO backdoor passwords or arbitrary length acceptances
+      return NextResponse.json(
+        { error: 'Invalid email or password.' },
+        { status: 401 }
       );
-
-      if (
-        (normalizedEmail === 'author@pagecraft.com' && (password === 'author123' || password === 'AuthorPass2026!')) ||
-        (matchingAuthor && (password === 'author123' || password.length >= 6))
-      ) {
-        authorName = matchingAuthor?.name || 'Eleanor Vance';
-        authorSlug = matchingAuthor?.slug || 'eleanor-vance';
-        userId = `usr-${authorSlug}`;
-      } else {
-        return NextResponse.json(
-          { error: 'Invalid email or password.' },
-          { status: 401 }
-        );
-      }
     }
+
+    // 2. Cryptographic password comparison
+    const isMatch = await comparePassword(String(password), dbUser.passwordHash);
+    if (!isMatch) {
+      return NextResponse.json(
+        { error: 'Invalid email or password.' },
+        { status: 401 }
+      );
+    }
+
+    if (dbUser.status === 'DISABLED') {
+      return NextResponse.json(
+        { error: 'Your author account has been deactivated. Please contact support.' },
+        { status: 403 }
+      );
+    }
+
+    const userId = dbUser.id;
+    const authorName = dbUser.name;
+    const authorSlug = dbUser.authors?.[0]?.slug || authorName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
 
     // 3. Sign JWT Token
     const token = signJwtToken({
@@ -96,7 +89,7 @@ export async function POST(req: NextRequest) {
       userRole: 'AUTHOR',
       action: 'AUTHOR_PORTAL_LOGIN',
       details: `Successful login to Author Portal for ${authorName}`,
-      ipAddress: req.headers.get('x-forwarded-for') || '127.0.0.1',
+      ipAddress: clientIp,
       userAgent: req.headers.get('user-agent') || 'Browser',
     });
 
@@ -110,15 +103,13 @@ export async function POST(req: NextRequest) {
         role: 'AUTHOR',
         slug: authorSlug,
       },
-      token,
       redirectTo: '/author/dashboard',
     });
 
     return setAuthCookie(res, token);
   } catch (err: any) {
-    console.error('Author login error:', err);
     return NextResponse.json(
-      { error: err.message || 'An unexpected error occurred during login.' },
+      { error: 'An unexpected error occurred during login.' },
       { status: 500 }
     );
   }

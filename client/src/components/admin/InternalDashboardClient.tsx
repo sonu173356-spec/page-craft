@@ -9,17 +9,17 @@ import {
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 
-// 1. ALL USERS / AUTHORS DATA
+// 1. ALL USERS / AUTHORS DATA (Synthetic demonstration records)
 const AUTHORS_LIST = [
-  { name: 'Ana', userType: 'Author / 1 books limit', date: 'Jun 5, 2024', email: 'ana.alcaza@zeroqode.com' },
-  { name: 'test ana', userType: 'Author / 10 books limit', date: 'Jun 6, 2024', email: 'alcazaana@gmail.com' },
-  { name: 'aliek', userType: 'Author / 10 books limit', date: 'Jun 6, 2024', email: 'alexeigro@gmail.com' },
-  { name: 'Afaam Q.', userType: 'Author / 1 books limit', date: 'Jun 11, 2024', email: 'alexeigro++tr@gmail.com' },
-  { name: 'Afaam Q.', userType: 'Author / 1 books limit', date: 'Jun 11, 2024', email: 'alexeigro++455@gmail.com' },
-  { name: 'Alik', userType: 'Author / 1 books limit', date: 'Jun 11, 2024', email: 'alexeigro++rrr@gmail.com' },
+  { name: 'Alex Morgan', userType: 'Author / 1 books limit', date: 'Jun 5, 2024', email: 'demo-author-1@example.invalid' },
+  { name: 'Jordan Taylor', userType: 'Author / 10 books limit', date: 'Jun 6, 2024', email: 'demo-author-2@example.invalid' },
+  { name: 'Samira Khan', userType: 'Author / 10 books limit', date: 'Jun 6, 2024', email: 'demo-author-3@example.invalid' },
+  { name: 'Taylor Reed', userType: 'Author / 1 books limit', date: 'Jun 11, 2024', email: 'demo-author-4@example.invalid' },
+  { name: 'Casey Bailey', userType: 'Author / 1 books limit', date: 'Jun 11, 2024', email: 'demo-author-5@example.invalid' },
+  { name: 'Riley Bennett', userType: 'Author / 1 books limit', date: 'Jun 11, 2024', email: 'demo-author-6@example.invalid' },
 ];
 
-// 2. VIEWS (SUPER ADMIN 19642) DATA
+// 2. VIEWS (SUPER ADMIN) DATA
 const VIEWS_SUB_MENUS = [
   'Review',
   'BBP India - Published',
@@ -38,39 +38,39 @@ const VIEWS_SUB_MENUS = [
 ];
 
 const VIEWS_BOOKS_DATA = [
-  { title: 'Eta Hae', email: 'wathoreshubhra263@gmail.com', author: 'Shubhra Wathore', address: 'Shri purnima...', country: 'India', cover: 'bg-orange-100' },
-  { title: 'Red string', email: 'suyasha.gosavi29@gmail.com', author: 'Suyasha Gosavi', address: 'flat no. 104...', country: 'India', cover: 'bg-red-100' },
-  { title: 'Paper Luna', email: 'sugandhagupta23@hotmail.com', author: 'Sugandha Gupta', address: 'India', country: 'India', cover: 'bg-pink-200' },
-  { title: "Say 'Yes' to Life", email: 'pratikmiss@gmail.com', author: 'Pratiksha Bhatt', address: '605', country: 'India', cover: 'bg-gray-100' },
-  { title: 'Whispers of Enchantment', email: 'divyashriade@gmail.com', author: 'Divyashri...', address: 'Tukai Darshan...', country: 'India', cover: 'bg-amber-100' },
-  { title: 'Conversations With The...', email: 'namratasingh.ns@gmail.com', author: 'NAMRATA SINGH', address: 'Flat No. 32, Tower...', country: 'India', cover: 'bg-blue-100' },
-  { title: 'Ink', email: 'aasthasharma2214@gmail.com', author: 'Aastha Sharma', address: 'Gulmohar colony...', country: 'India', cover: 'bg-stone-100' },
+  { title: 'The Silent Echo', email: 'demo-author-1@example.invalid', author: 'Eleanor Vance', address: '101 Publishing Ave, Suite 4', country: 'India', cover: 'bg-orange-100' },
+  { title: 'Beyond the Horizon', email: 'demo-author-2@example.invalid', author: 'Marcus Sterling', address: '202 Editorial Way', country: 'India', cover: 'bg-red-100' },
+  { title: 'Whispers of Time', email: 'demo-author-3@example.invalid', author: 'Sarah Jenkins', address: '303 Manuscript Road', country: 'India', cover: 'bg-pink-200' },
+  { title: 'Digital Frontiers', email: 'demo-author-4@example.invalid', author: 'David Chen', address: '404 Chapter Lane', country: 'India', cover: 'bg-gray-100' },
+  { title: 'Culinary Magic', email: 'demo-author-5@example.invalid', author: 'Elena Rodriguez', address: '505 Gourmet Street', country: 'India', cover: 'bg-amber-100' },
+  { title: 'Modern Economics', email: 'demo-author-6@example.invalid', author: 'Dr. Robert Hale', address: '606 Academic Park', country: 'India', cover: 'bg-blue-100' },
+  { title: 'Sunken Isles', email: 'demo-author-7@example.invalid', author: 'Jessica Wong', address: '707 Fantasy Boulevard', country: 'India', cover: 'bg-stone-100' },
 ];
 
-// 3. AUTHOR COPIES ORDERS DATA
+// 3. AUTHOR COPIES ORDERS DATA (Synthetic records)
 const AUTHOR_COPIES_DATA = [
-  { id: 'BLP12136B', email: 'hashmijazan@gmail.com', name: 'Nilofer', title: 'Nilu aur...', isbn: '9789376420629', count: 24, address: 'Civil lines...', status: 'Paid', amount: 'INR 2203.2', phone: '9844668122' },
-  { id: 'BLP12134B', email: 'pba472@aol.com', name: 'Gram P Paul', title: 'Reflections...', isbn: '9789376420056', count: 24, address: '73 Ideal...', status: 'Paid', amount: 'USD 164.16', phone: '5702040411', isHighlight: true },
-  { id: 'BLP12132B', email: 'ritikgautam072@gmail.com', name: 'Ritik Gautam', title: 'Still We Walk', isbn: '9789375100393', count: 24, address: 'Tiwari...', status: 'Paid', amount: 'INR 2592', phone: '9140378733' },
-  { id: 'BLP12130B', email: 'ashmiahuwalia@gmail.com', name: 'Ashmi Ahluwalia', title: 'Entangled', isbn: '9789376423187', count: 24, address: 'B95 Sector...', status: 'Paid', amount: 'INR 2462.4', phone: '9198736299' },
-  { id: 'BLP12128B', email: 'naziafarooq409@gmail.com', name: 'Nazia Farooq', title: 'What if we...', isbn: '9789376429530', count: 24, address: 'Srinagar...', status: 'Paid', amount: 'INR 3787.2', phone: '7006697844' },
-  { id: 'BLP12126B', email: 'saileeb@gmail.com', name: 'Sailee Brahme', title: 'Jazbaaton...', isbn: '9789372138931', count: 28, address: '21 Para...', status: 'Paid', amount: 'INR 2658.4', phone: '9960257355' },
-  { id: 'BLP12125B', email: 'mathur.1992@gmail.com', name: 'Prakhar Mohan Mathur', title: 'Ek Adhoori...', isbn: '9789376426430', count: 24, address: 'Flat 703...', status: 'Paid', amount: 'INR 2404.8', phone: '9873056911' },
-  { id: 'BLP12123B', email: 'manali.amruta@gmail.com', name: 'Anish Gokhale', title: 'Bard of India', isbn: '9789375435747', count: 24, address: 'D1202...', status: 'Paid', amount: 'INR 2318.4', phone: '9096895477' },
-  { id: 'BLP12121B', email: 'healthhackerz@gmail.com', name: 'Mridula K R', title: 'From The...', isbn: '9789376429868', count: 24, address: 'R4-A/G, G...', status: 'Paid', amount: 'INR 2620.8', phone: '9480429288' },
+  { id: 'ORD-DEMO-001', email: 'demo-author-1@example.invalid', name: 'Eleanor Vance', title: 'The Silent Echo', isbn: '978-93-84729-10-4', count: 24, address: '101 Publishing Ave', status: 'Paid', amount: 'INR 2400.0', phone: '+1-555-0101' },
+  { id: 'ORD-DEMO-002', email: 'demo-author-2@example.invalid', name: 'Marcus Sterling', title: 'Beyond the Horizon', isbn: '978-93-84729-11-1', count: 24, address: '202 Editorial Way', status: 'Paid', amount: 'USD 160.00', phone: '+1-555-0102', isHighlight: true },
+  { id: 'ORD-DEMO-003', email: 'demo-author-3@example.invalid', name: 'Sarah Jenkins', title: 'Whispers of Time', isbn: '978-93-84729-12-8', count: 24, address: '303 Manuscript Road', status: 'Paid', amount: 'INR 2500.0', phone: '+1-555-0103' },
+  { id: 'ORD-DEMO-004', email: 'demo-author-4@example.invalid', name: 'David Chen', title: 'Digital Frontiers', isbn: '978-93-84729-13-5', count: 24, address: '404 Chapter Lane', status: 'Paid', amount: 'INR 2450.0', phone: '+1-555-0104' },
+  { id: 'ORD-DEMO-005', email: 'demo-author-5@example.invalid', name: 'Elena Rodriguez', title: 'Culinary Magic', isbn: '978-93-84729-14-2', count: 24, address: '505 Gourmet Street', status: 'Paid', amount: 'INR 3700.0', phone: '+1-555-0105' },
+  { id: 'ORD-DEMO-006', email: 'demo-author-6@example.invalid', name: 'Dr. Robert Hale', title: 'Modern Economics', isbn: '978-93-84729-15-9', count: 28, address: '606 Academic Park', status: 'Paid', amount: 'INR 2650.0', phone: '+1-555-0106' },
+  { id: 'ORD-DEMO-007', email: 'demo-author-7@example.invalid', name: 'Jessica Wong', title: 'Sunken Isles', isbn: '978-93-84729-16-6', count: 24, address: '707 Fantasy Boulevard', status: 'Paid', amount: 'INR 2400.0', phone: '+1-555-0107' },
+  { id: 'ORD-DEMO-008', email: 'demo-author-8@example.invalid', name: 'Tom Baker', title: 'Urban Legends', isbn: '978-93-84729-17-3', count: 24, address: '808 Noir Avenue', status: 'Paid', amount: 'INR 2300.0', phone: '+1-555-0108' },
+  { id: 'ORD-DEMO-009', email: 'demo-author-9@example.invalid', name: 'Amanda Clarke', title: 'Little Paws', isbn: '978-93-84729-18-0', count: 24, address: '909 Illustrated Grove', status: 'Paid', amount: 'INR 2600.0', phone: '+1-555-0109' },
 ];
 
-// 4. ADD-ONS DATA
+// 4. ADD-ONS DATA (Synthetic records)
 const ADD_ONS_DATA = [
-  { email: 'sreekumar.namboodiri@gmail.com', name: 'Sreekumar Maranghat Sambhu', title: 'The Grammar of...', isbn: '9789375272533', phone: '8129969019', country: 'India', date: '14/03/26' },
-  { email: 'sasdmalik@gmail.com', name: 'Saras Malik', title: 'Gratitude', isbn: '9789375279853', phone: '9818124327', country: 'India', date: '13/03/26' },
-  { email: 'siddharthnahar@hotmail.com', name: 'Siddharth Nahar', title: 'Love Written in the...', isbn: '9789375275527', phone: '9783322747', country: 'India', date: '12/03/26' },
-  { email: 'joanna.ann.thomas@gmail.com', name: 'Ivana Rohan Mathews', title: 'Whispers Beneath...', isbn: '9789375272830', phone: '9820238115', country: 'India', date: '12/03/26' },
-  { email: 'reetbarki@gmail.com', name: 'ऋतु बर्की', title: 'बुने हुए ख्वाब', isbn: '9789369534982', phone: '7988788106', country: 'India', date: '11/03/26' },
-  { email: 'amalavs744@gmail.com', name: 'Amala V S', title: 'THYSELF', isbn: '9789375107491', phone: '8590324223', country: 'India', date: '11/03/26' },
-  { email: 'himani.hemu.bisht@gmail.com', name: 'Dr. Himani Bisht', title: 'Echoes Of A Living...', isbn: '9789373143606', phone: '9711173709', country: 'India', date: '10/03/26' },
-  { email: 'amagrande.amanda@gmail.com', name: 'Earra Stonewood', title: '"Radical"...', isbn: '9781807158071', phone: '7754324086', country: 'United States', date: '09/03/26' },
-  { email: 'drvs390@gmail.com', name: 'VAISHNAVI SHARMA', title: 'हर कोना कुछ कहता है', isbn: '9781807158835', phone: '9810605474', country: 'India', date: '09/03/26' },
+  { email: 'demo-author-1@example.invalid', name: 'Eleanor Vance', title: 'The Silent Echo', isbn: '978-93-84729-10-4', phone: '+1-555-0110', country: 'India', date: '14/03/26' },
+  { email: 'demo-author-2@example.invalid', name: 'Marcus Sterling', title: 'Beyond the Horizon', isbn: '978-93-84729-11-1', phone: '+1-555-0111', country: 'India', date: '13/03/26' },
+  { email: 'demo-author-3@example.invalid', name: 'Sarah Jenkins', title: 'Whispers of Time', isbn: '978-93-84729-12-8', phone: '+1-555-0112', country: 'India', date: '12/03/26' },
+  { email: 'demo-author-4@example.invalid', name: 'David Chen', title: 'Digital Frontiers', isbn: '978-93-84729-13-5', phone: '+1-555-0113', country: 'India', date: '12/03/26' },
+  { email: 'demo-author-5@example.invalid', name: 'Elena Rodriguez', title: 'Culinary Magic', isbn: '978-93-84729-14-2', phone: '+1-555-0114', country: 'India', date: '11/03/26' },
+  { email: 'demo-author-6@example.invalid', name: 'Dr. Robert Hale', title: 'Modern Economics', isbn: '978-93-84729-15-9', phone: '+1-555-0115', country: 'India', date: '11/03/26' },
+  { email: 'demo-author-7@example.invalid', name: 'Jessica Wong', title: 'Sunken Isles', isbn: '978-93-84729-16-6', phone: '+1-555-0116', country: 'India', date: '10/03/26' },
+  { email: 'demo-author-8@example.invalid', name: 'Tom Baker', title: 'Urban Legends', isbn: '978-93-84729-17-3', phone: '+1-555-0117', country: 'United States', date: '09/03/26' },
+  { email: 'demo-author-9@example.invalid', name: 'Amanda Clarke', title: 'Little Paws', isbn: '978-93-84729-18-0', phone: '+1-555-0118', country: 'India', date: '09/03/26' },
 ];
 
 function BookLeafDashboard() {

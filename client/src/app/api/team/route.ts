@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getAuthUserFromRequest, canManageTeamMembers, hashPassword, UserRole } from '@/lib/auth';
+import { getAuthUserFromRequest, canManageTeamMembers, hashPassword, UserRole, isAdminRole } from '@/lib/auth';
 import { recordActivityLog } from '@/lib/logger';
+import { validateCsrfOrigin } from '@/lib/csrf';
 import prisma from '@/lib/prisma';
 
 export interface TeamMember {
@@ -14,16 +15,20 @@ export interface TeamMember {
 }
 
 export const inMemoryTeamMembers: TeamMember[] = [
-  { id: 'tm-1', name: 'Super Admin', email: 'admin@thepagecraft.com', role: 'SUPER_ADMIN', status: 'ACTIVE', phone: '+91 9876543210', createdAt: new Date().toISOString() },
-  { id: 'tm-2', name: 'Rajesh Sharma', email: 'rajesh@thepagecraft.com', role: 'MANAGER', status: 'ACTIVE', phone: '+91 9876543211', createdAt: new Date(Date.now() - 86400000).toISOString() },
-  { id: 'tm-3', name: 'Priya Mehta', email: 'priya@thepagecraft.com', role: 'EDITOR', status: 'ACTIVE', phone: '+91 9876543212', createdAt: new Date(Date.now() - 172800000).toISOString() },
-  { id: 'tm-4', name: 'Vikram Singh', email: 'vikram@thepagecraft.com', role: 'FINANCE', status: 'ACTIVE', phone: '+91 9876543213', createdAt: new Date(Date.now() - 259200000).toISOString() },
+  { id: 'tm-1', name: 'Super Admin', email: 'admin@example.invalid', role: 'SUPER_ADMIN', status: 'ACTIVE', phone: '+1-555-0100', createdAt: new Date().toISOString() },
+  { id: 'tm-2', name: 'Editorial Manager', email: 'demo-manager@example.invalid', role: 'MANAGER', status: 'ACTIVE', phone: '+1-555-0101', createdAt: new Date(Date.now() - 86400000).toISOString() },
+  { id: 'tm-3', name: 'Lead Editor', email: 'demo-editor@example.invalid', role: 'EDITOR', status: 'ACTIVE', phone: '+1-555-0102', createdAt: new Date(Date.now() - 172800000).toISOString() },
+  { id: 'tm-4', name: 'Finance Controller', email: 'demo-finance@example.invalid', role: 'FINANCE', status: 'ACTIVE', phone: '+1-555-0103', createdAt: new Date(Date.now() - 259200000).toISOString() },
 ];
 
 export async function GET(req: NextRequest) {
   const user = getAuthUserFromRequest(req);
   if (!user) {
     return NextResponse.json({ error: 'Unauthorized access' }, { status: 401 });
+  }
+
+  if (!isAdminRole(user.role)) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
 
   let members = [...inMemoryTeamMembers];
@@ -50,13 +55,20 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
+  if (!validateCsrfOrigin(req)) {
+    return NextResponse.json({ error: 'CSRF Origin Validation Failed' }, { status: 403 });
+  }
+
   const user = getAuthUserFromRequest(req);
   if (!user) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   if (!canManageTeamMembers(user.role)) {
-    return NextResponse.json({ error: 'Permission Denied. Only Super Admin can create or manage team members.' }, { status: 403 });
+    return NextResponse.json(
+      { error: 'Permission Denied. Only Super Admin can create or manage team members.' },
+      { status: 403 }
+    );
   }
 
   try {
@@ -67,14 +79,18 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Name, email, password, and role are required' }, { status: 400 });
     }
 
+    if (String(password).length < 8) {
+      return NextResponse.json({ error: 'Password must be at least 8 characters long' }, { status: 400 });
+    }
+
     const hashedPassword = await hashPassword(password);
     const newMember: TeamMember = {
       id: `tm-${Date.now()}`,
-      name,
+      name: String(name).slice(0, 100).trim(),
       email: String(email).trim().toLowerCase(),
       role: role as UserRole,
       status: 'ACTIVE',
-      phone: phone || '',
+      phone: phone ? String(phone).slice(0, 30) : '',
       createdAt: new Date().toISOString(),
     };
 
@@ -84,12 +100,12 @@ export async function POST(req: NextRequest) {
       if (prisma && prisma.user) {
         await prisma.user.create({
           data: {
-            name,
-            email: String(email).trim().toLowerCase(),
+            name: newMember.name,
+            email: newMember.email,
             passwordHash: hashedPassword,
             role: role as any,
             status: 'ACTIVE',
-            phone: phone || '',
+            phone: newMember.phone || null,
           },
         });
       }
@@ -102,11 +118,11 @@ export async function POST(req: NextRequest) {
       userEmail: user.email,
       userRole: user.role,
       action: 'TEAM_MEMBER_CREATED',
-      details: `Super Admin created team user "${name}" (${email}) with role ${role}`,
+      details: `Super Admin created team user "${newMember.name}" with role ${role}`,
     });
 
     return NextResponse.json({ success: true, member: newMember });
   } catch (err: any) {
-    return NextResponse.json({ error: err.message || 'Error creating member' }, { status: 500 });
+    return NextResponse.json({ error: 'Error creating member' }, { status: 500 });
   }
 }

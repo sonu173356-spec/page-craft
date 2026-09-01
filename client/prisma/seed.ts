@@ -6,14 +6,16 @@ const prisma = new PrismaClient();
 async function main() {
   console.log('🌱 Seeding Page Craft Enterprise Database...');
 
-  // 1. Seed Default Super Admin Account
-  const adminEmail = 'admin@thepagecraft.com';
+  // 1. Seed Initial Super Admin Account from Secure Environment Variables
+  const adminEmail = process.env.DEFAULT_SUPER_ADMIN_EMAIL || 'admin@example.invalid';
+  const adminPassword = process.env.DEFAULT_SUPER_ADMIN_PASSWORD || 'DevOnlyPassword2026!';
+
   const existingAdmin = await prisma.user.findUnique({
     where: { email: adminEmail },
   });
 
   if (!existingAdmin) {
-    const passwordHash = await bcrypt.hash('AdminPass2026!', 10);
+    const passwordHash = await bcrypt.hash(adminPassword, 10);
     const superAdmin = await prisma.user.create({
       data: {
         name: 'Super Admin',
@@ -22,10 +24,10 @@ async function main() {
         role: 'SUPER_ADMIN',
         status: 'ACTIVE',
         isVerified: true,
-        phone: '+91 9876543210',
+        phone: '+1-555-0100',
       },
     });
-    console.log('✅ Created Default Super Admin:', superAdmin.email);
+    console.log('✅ Created Initial Super Admin account:', superAdmin.email);
   }
 
   // 2. Seed Default Authors

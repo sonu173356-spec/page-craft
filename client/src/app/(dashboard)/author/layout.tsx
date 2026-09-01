@@ -1,11 +1,12 @@
-'use client';
 import DashboardLayout from '@/components/layout/DashboardLayout';
-import DashboardAuthGuard from '@/components/auth/DashboardAuthGuard';
 import { 
   LayoutDashboard, BookOpen, TrendingUp, DollarSign, 
   BarChart2, ShoppingCart, MessageSquare, Bell, Settings
 } from 'lucide-react';
 import React from 'react';
+
+// Force dynamic rendering to prevent static public caching of author layouts
+export const dynamic = 'force-dynamic';
 
 const authorNavItems = [
   { label: 'Dashboard', href: '/author/dashboard', icon: <LayoutDashboard size={20} /> },
@@ -21,10 +22,8 @@ const authorNavItems = [
 
 export default function AuthorLayout({ children }: { children: React.ReactNode }) {
   return (
-    <DashboardAuthGuard requiredRole="Author">
-      <DashboardLayout navItems={authorNavItems} userRole="Author">
-        {children}
-      </DashboardLayout>
-    </DashboardAuthGuard>
+    <DashboardLayout navItems={authorNavItems} userRole="Author">
+      {children}
+    </DashboardLayout>
   );
 }

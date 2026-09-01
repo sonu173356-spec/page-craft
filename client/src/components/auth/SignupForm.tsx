@@ -9,15 +9,16 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import toast from 'react-hot-toast';
 import { useAuthStore } from '@/store';
-import { Shield, ArrowRight, UserCheck, Sparkles, Check } from 'lucide-react';
+import { Sparkles, ArrowRight, Lock } from 'lucide-react';
+import { validateRedirectUrl } from '@/lib/redirect';
 
 const signupSchema = z
   .object({
     name: z.string().min(2, 'Full name must be at least 2 characters'),
     email: z.string().email('Invalid email address'),
     phone: z.string().min(10, 'Please enter a valid phone number'),
-    password: z.string().min(6, 'Password must be at least 6 characters'),
-    confirmPassword: z.string().min(6, 'Confirm password required'),
+    password: z.string().min(8, 'Password must be at least 8 characters'),
+    confirmPassword: z.string().min(8, 'Confirm password is required'),
     agreeTerms: z.boolean().refine((val) => val === true, 'You must accept Terms & Conditions'),
   })
   .refine((data) => data.password === data.confirmPassword, {
@@ -33,10 +34,10 @@ export default function SignupForm() {
   const packageParam = searchParams.get('package') || 'professional';
   const emailParam = searchParams.get('email') || '';
   const nameParam = searchParams.get('name') || '';
-  const purchaseIdParam = searchParams.get('purchaseId') || '';
 
   const [isLoading, setIsLoading] = useState(false);
-  const setAuth = useAuthStore((state: any) => state.setAuth);
+  const [errorMessage, setErrorMessage] = useState('');
+  const login = useAuthStore((state) => state.login);
 
   const {
     register,
@@ -62,28 +63,44 @@ export default function SignupForm() {
 
   const onSubmit = async (data: SignupFormValues) => {
     setIsLoading(true);
+    setErrorMessage('');
+
     try {
-      await new Promise((resolve) => setTimeout(resolve, 800));
+      const res = await fetch('/api/auth/author-signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: data.name,
+          email: data.email,
+          phone: data.phone,
+          password: data.password,
+          confirmPassword: data.confirmPassword,
+          agreeTerms: data.agreeTerms,
+        }),
+      });
 
-      const authorUser = {
-        name: data.name,
-        email: data.email,
-        phone: data.phone,
-        role: 'author',
-        packageId: packageParam,
-        hasPurchasedPackage: true,
-      };
+      const result = await res.json();
 
-      if (setAuth) {
-        setAuth({ user: authorUser, token: `auth-token-${Date.now()}` });
+      if (!res.ok) {
+        throw new Error(result.error || 'Failed to create author account.');
       }
 
-      toast.success(`🎉 Welcome to Page Craft, ${data.name}! Redirecting to DIY Book Studio...`);
-      
-      // Redirect author directly to DIY Book Creation Tool with their selected package!
+      login({
+        id: result.user.userId,
+        name: result.user.name,
+        email: result.user.email,
+        role: 'author',
+        isVerified: true,
+        avatar: '/logo-icon.png',
+        createdAt: new Date().toISOString(),
+      });
+
+      toast.success(`Welcome to Page Craft, ${data.name}!`);
       router.push(`/author/books/new?package=${encodeURIComponent(packageParam)}`);
+      router.refresh();
     } catch (err: any) {
-      toast.error('Signup error. Please try again.');
+      setErrorMessage(err.message || 'Signup failed. Please check your information.');
+      toast.error(err.message || 'Registration failed');
     } finally {
       setIsLoading(false);
     }
@@ -111,6 +128,13 @@ export default function SignupForm() {
             Get instant access to the DIY Book Creation Tool & publish with 100% royalty.
           </p>
         </div>
+
+        {errorMessage && (
+          <div className="p-3.5 bg-red-50 border border-red-200 text-red-700 text-xs rounded-xl flex items-center gap-2">
+            <Lock className="w-4 h-4 flex-shrink-0" />
+            <span>{errorMessage}</span>
+          </div>
+        )}
 
         {/* Selected Package Banner */}
         <div className="p-4 bg-[#FDFAF6] border border-amber-200 rounded-2xl flex items-center justify-between text-xs">
@@ -152,7 +176,7 @@ export default function SignupForm() {
               <input
                 {...register('phone')}
                 type="tel"
-                placeholder="+91 98765 43210"
+                placeholder="+1 555 0100"
                 className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#8B1A1A]/20 focus:border-[#8B1A1A] outline-none text-sm"
               />
               {errors.phone && <p className="text-red-500 text-[10px] mt-1">{errors.phone.message}</p>}
@@ -219,7 +243,7 @@ export default function SignupForm() {
         <p className="text-center text-xs text-gray-500">
           Already have an account?{' '}
           <Link
-            href={`/login?redirect=/author/books/new?package=${encodeURIComponent(packageParam)}`}
+            href={`/author/login?redirect=/author/books/new?package=${encodeURIComponent(packageParam)}`}
             className="font-bold text-[#8B1A1A] hover:underline"
           >
             Login to Author Portal

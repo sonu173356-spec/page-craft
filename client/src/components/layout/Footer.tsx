@@ -106,21 +106,18 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Column 3: Dashboards & Portals */}
+          {/* Column 3: Author Portal */}
           <div className="lg:col-span-3 space-y-6">
             <div>
-              <h4 className="text-lg font-playfair font-bold text-[#8B1A1A] mb-4">Dashboards & Portals</h4>
+              <h4 className="text-lg font-playfair font-bold text-[#8B1A1A] mb-4">Author Portal</h4>
               <ul className="space-y-3">
-                {FOOTER_LINKS.dashboards?.map((link) => (
+                {FOOTER_LINKS.authorPortal?.map((link) => (
                   <li key={link.label}>
                     <Link
-                      href={`/login?redirect=${encodeURIComponent(link.href)}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                      href={link.href}
                       className="text-gray-600 hover:text-[#8B1A1A] transition-colors text-sm flex items-center gap-1.5 font-medium"
                     >
                       {link.label}
-                      <ExternalLink className="w-3 h-3 text-[#8B1A1A]" />
                     </Link>
                   </li>
                 ))}

@@ -1,11 +1,12 @@
-'use client';
 import DashboardLayout from '@/components/layout/DashboardLayout';
-import DashboardAuthGuard from '@/components/auth/DashboardAuthGuard';
 import { 
   LayoutDashboard, BookOpen, Users, ShoppingCart, DollarSign, 
   FileText, Tag, Star, MessageSquare, Mail, LifeBuoy, Settings, Shield
 } from 'lucide-react';
 import React from 'react';
+
+// Force dynamic rendering to prevent static public caching of admin layouts
+export const dynamic = 'force-dynamic';
 
 const adminNavItems = [
   { label: 'Dashboard', href: '/admin/dashboard', icon: <LayoutDashboard size={20} /> },
@@ -27,10 +28,8 @@ const adminNavItems = [
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
-    <DashboardAuthGuard requiredRole="Admin">
-      <DashboardLayout navItems={adminNavItems} userRole="Admin">
-        {children}
-      </DashboardLayout>
-    </DashboardAuthGuard>
+    <DashboardLayout navItems={adminNavItems} userRole="Admin">
+      {children}
+    </DashboardLayout>
   );
 }

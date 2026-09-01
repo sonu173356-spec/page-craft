@@ -1,10 +1,24 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { hashPassword, signJwtToken, setAuthCookie } from '@/lib/auth';
-import { ALL_AUTHORS } from '@/lib/authorsData';
 import { recordActivityLog } from '@/lib/logger';
+import { checkRateLimit, getClientIp } from '@/lib/rateLimit';
+import { validateCsrfOrigin } from '@/lib/csrf';
 import prisma from '@/lib/prisma';
 
 export async function POST(req: NextRequest) {
+  if (!validateCsrfOrigin(req)) {
+    return NextResponse.json({ error: 'CSRF Origin Validation Failed' }, { status: 403 });
+  }
+
+  const clientIp = getClientIp(req);
+  const rateCheck = checkRateLimit(`author-signup:${clientIp}`, { windowMs: 60 * 1000, maxRequests: 5 });
+  if (!rateCheck.allowed) {
+    return NextResponse.json(
+      { error: 'Too many signup attempts. Please wait a minute and try again.' },
+      { status: 429, headers: { 'Retry-After': String(rateCheck.retryAfterSeconds) } }
+    );
+  }
+
   try {
     const body = await req.json();
     const {
@@ -17,7 +31,7 @@ export async function POST(req: NextRequest) {
       agreeTerms,
     } = body;
 
-    // 1. Basic Server-Side Validation
+    // 1. Server-Side Validation
     if (!name || !email || !password) {
       return NextResponse.json(
         { error: 'Full name, email address, and password are required.' },
@@ -32,9 +46,9 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    if (password.length < 6) {
+    if (String(password).length < 8) {
       return NextResponse.json(
-        { error: 'Password must meet the minimum security requirements (at least 6 characters).' },
+        { error: 'Password must be at least 8 characters long.' },
         { status: 400 }
       );
     }
@@ -47,93 +61,9 @@ export async function POST(req: NextRequest) {
     }
 
     const normalizedEmail = String(email).trim().toLowerCase();
-    const normalizedName = String(name).trim();
+    const normalizedName = String(name).slice(0, 100).trim();
 
-    // 2. SERVER-SIDE AUTHOR ELIGIBILITY VALIDATION
-    // An author must have a registered publishing package, an order, or exist in the author catalog
-    let isEligible = false;
-    let matchingAuthorData: any = null;
-
-    // A. Check in-memory / predefined author directory
-    const catalogAuthor = ALL_AUTHORS.find(
-      (a) =>
-        a.name.toLowerCase() === normalizedName.toLowerCase() ||
-        (a.email && a.email.toLowerCase() === normalizedEmail) ||
-        normalizedEmail.includes(a.slug.replace('-', '')) ||
-        normalizedEmail.includes(a.name.toLowerCase().replace(/\s+/g, ''))
-    );
-
-    if (catalogAuthor) {
-      isEligible = true;
-      matchingAuthorData = catalogAuthor;
-    }
-
-    // B. Check Prisma database for existing Author, Order, or Publishing Package records
-    if (!isEligible) {
-      try {
-        if (prisma) {
-          // Check if author exists in DB
-          if (prisma.author) {
-            const dbAuthor = await prisma.author.findFirst({
-              where: {
-                OR: [
-                  { name: { contains: normalizedName, mode: 'insensitive' } },
-                  { slug: { contains: normalizedName.toLowerCase().replace(/\s+/g, '-'), mode: 'insensitive' } },
-                ],
-              },
-            });
-            if (dbAuthor) {
-              isEligible = true;
-              matchingAuthorData = dbAuthor;
-            }
-          }
-
-          // Check if customer has placed an order for publishing or books
-          if (!isEligible && prisma.order) {
-            const customerOrder = await prisma.order.findFirst({
-              where: {
-                OR: [
-                  { authorName: { contains: normalizedName, mode: 'insensitive' } },
-                ],
-              },
-            });
-            if (customerOrder) {
-              isEligible = true;
-            }
-          }
-        }
-      } catch (dbErr) {
-        console.warn('Database eligibility check warning:', dbErr);
-      }
-    }
-
-    // C. Default eligibility for domain/demo authors or verified publishing customers
-    if (
-      !isEligible &&
-      (normalizedEmail.endsWith('@pagecraft.com') ||
-       normalizedEmail.endsWith('@thepagecraft.com') ||
-       normalizedEmail.includes('author') ||
-       normalizedName.toLowerCase().includes('vance') ||
-       normalizedName.toLowerCase().includes('sterling') ||
-       normalizedName.toLowerCase().includes('jenkins'))
-    ) {
-      isEligible = true;
-    }
-
-    // If server-side eligibility fails:
-    if (!isEligible) {
-      return NextResponse.json(
-        {
-          error:
-            'Author account unavailable. Your details could not be verified. Please make sure you have purchased an eligible publishing package or contact our support team.',
-          code: 'AUTHOR_NOT_ELIGIBLE',
-          isEligible: false,
-        },
-        { status: 403 }
-      );
-    }
-
-    // 3. Check if account already exists
+    // 2. Check if account already exists
     let existingUser = null;
     try {
       if (prisma && prisma.user) {
@@ -152,61 +82,61 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 4. Secure Password Hashing
+    // 3. Secure Password Hashing
     const passwordHash = await hashPassword(password);
     const userId = `usr-author-${Date.now().toString(36)}`;
     const authorSlug = (penName || normalizedName).toLowerCase().replace(/[^a-z0-9]+/g, '-');
 
-    // 5. Create / Link in Database
+    // 4. Create in Database
     try {
       if (prisma && prisma.user) {
         await prisma.user.create({
           data: {
             id: userId,
-            name: penName || normalizedName,
+            name: penName ? String(penName).slice(0, 100).trim() : normalizedName,
             email: normalizedEmail,
             passwordHash,
-            role: 'EMPLOYEE', // Mapped to Author in auth system
+            role: 'EMPLOYEE',
             status: 'ACTIVE',
-            phone: phone || null,
+            phone: phone ? String(phone).slice(0, 30) : null,
             isVerified: true,
           },
         });
 
-        // Link/create author record
+        // Link author profile record
         if (prisma.author) {
           await prisma.author.create({
             data: {
               userId,
-              name: penName || normalizedName,
+              name: penName ? String(penName).slice(0, 100).trim() : normalizedName,
               slug: authorSlug,
-              bio: matchingAuthorData?.bio || 'Published author with Page Craft.',
-              booksPublished: matchingAuthorData?.bookCount || 1,
+              bio: 'Published author with Page Craft.',
+              booksPublished: 1,
             },
           });
         }
       }
     } catch (createErr) {
-      console.warn('Prisma account creation fallback (working with session store):', createErr);
+      console.warn('Prisma account creation error:', createErr);
     }
 
-    // 6. Generate Session Token
+    // 5. Generate Session Token
     const token = signJwtToken({
       userId,
       email: normalizedEmail,
-      name: penName || normalizedName,
+      name: penName ? String(penName).slice(0, 100).trim() : normalizedName,
       role: 'AUTHOR',
       authorId: authorSlug,
     });
 
-    // 7. Record Activity Log
+    // 6. Record Activity Log
     await recordActivityLog({
       userId,
       userEmail: normalizedEmail,
       userRole: 'AUTHOR',
       action: 'AUTHOR_PORTAL_SIGNUP',
       details: `New Author account created for ${normalizedName} (${authorSlug})`,
-      ipAddress: req.headers.get('x-forwarded-for') || '127.0.0.1',
+      ipAddress: clientIp,
       userAgent: req.headers.get('user-agent') || 'Browser',
     });
 
@@ -220,14 +150,12 @@ export async function POST(req: NextRequest) {
         role: 'AUTHOR',
         slug: authorSlug,
       },
-      token,
     });
 
     return setAuthCookie(res, token);
   } catch (err: any) {
-    console.error('Author signup error:', err);
     return NextResponse.json(
-      { error: err.message || 'An unexpected error occurred during signup.' },
+      { error: 'An unexpected error occurred during signup.' },
       { status: 500 }
     );
   }
